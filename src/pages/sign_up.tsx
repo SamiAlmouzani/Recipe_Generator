@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import SignIn from "./signin";
+import Link from "next/link";
 
 
 const Sign_up: NextPage = () => {
