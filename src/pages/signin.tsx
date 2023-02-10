@@ -77,14 +77,14 @@ const SignIn: NextPage = () => {
             <div className="flex items-center justify-between">
             <p className="text-sm text-gray-500">
                 No account?
-                <a className="underline" href="">Sign up</a>
+                <a className="underline" href="/sign_up"> Sign up</a>
             </p>
 
             <Link href="/main">
             <button
                 className="ml-3 inline-block rounded-lg bg-red-500 px-5 py-3 text-sm font-medium text-white"
             >
-                Sign in
+                 Sign in
             </button>
             </Link>
             </div>
