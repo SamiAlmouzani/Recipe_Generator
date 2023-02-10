@@ -10,7 +10,6 @@ const Sign_up: NextPage = () => {
                     <h1 className="font-extrabold text-red-700 sm:text-70xl"><strong>No account, no problem!</strong></h1>
                     <h2 className="font-bold text-gray-700 sm:text-15xl">Create an Account for Free</h2>
                 </div>
-
                     <form action="" className="mx-auto mt-8 mb-0 max-w-md space-y-4">
                         <div>
                             <label className="sr-only">Email</label>
