@@ -101,7 +101,6 @@ function getRecipeTitle(recipeText: string):string {
 
 
 //stackoverflow.com/questions/38688822/how-to-parse-json-string-in-typescript
-// Validate this value with a custom type guard (extend to your needs)
 function isRecipe(o: any): o is Recipe {
   return "name" in o && "description" in o
 }
