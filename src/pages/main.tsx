@@ -25,14 +25,12 @@ const RecipeGenerator: NextPage = () => {
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <IngredientsInput />
             <Link href={{
-                pathname: '/results'
-              }}>
+                pathname: '/results',
+                query: {
+                    ingredients:ingredientsList
+                }
+            }} as={`results/${ingredientsList}`}>
               <button
-                onClick={()=>{
-                  //When the button is clicked, set the value of the global ingredients variable to the local variable
-                  setIngredientsList(localIngredientsList);
-                  console.log("local ingredients: "+localIngredientsList+"global ingredients: "+ingredientsList);
-                }}
               className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
                 Enter
               </button>
@@ -45,6 +43,7 @@ const RecipeGenerator: NextPage = () => {
 }
 //Ingredients input field
 function IngredientsInput(){
+    const { ingredientsList,setIngredientsList } = useGlobalContext();
   //Save the state of the value entered into the text box
   const [ingredients, setIngredients] = useState("");
   return (
@@ -53,7 +52,7 @@ function IngredientsInput(){
         type="text"
         value={ingredients}
         //whenever the value of the text box is changed, save it in localIngredientsList so it can be accessed in the outer function above
-        onChange={e => {setIngredients(e.target.value);localIngredientsList=e.target.value;console.log(localIngredientsList)}}
+        onChange={e => {setIngredients(e.target.value);localIngredientsList=e.target.value;console.log(localIngredientsList);setIngredientsList(localIngredientsList)}}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="avocado"
         required
