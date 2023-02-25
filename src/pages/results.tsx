@@ -4,13 +4,14 @@ import {useEffect, useState} from 'react';
 import {set} from "zod";
 
 type Recipe = { text: string; index:number; logprobs: object; finish_reason: string}|null
-type Data = {
+type RecipeArry = {
     recipeList: Recipe[]
 }
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
-const Results: React.FC<Data>= (props) => {
+const Results: React.FC<RecipeArry>= (props) => {
   const [recipeText, setRecipeText] = useState("");
+
     if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
         console.log(props.recipeList[0].text)
     }
@@ -22,16 +23,23 @@ const Results: React.FC<Data>= (props) => {
     return (
       <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto text-left">
-          <h1 className="text-2xl font-bold sm:text-3xl">...Here is a recipe to try:</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">...Here are some recipes to try:</h1>
         </div>
 
         <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+            <Link href={{
+                pathname: '/recipe',
+                query: {
+                    title:getTitle(recipeText),
+                    text:getText(recipeText)
+                }
+            }} as={`recipe/$recipeText}`}>
           <ul className="divide-y-2 divide-gray-100">
             <li className="p-3 hover:bg-red-600 hover:text-red-200">
-              <pre className="italic">{recipeText}</pre>
-
+              <pre className="italic">{getTitle(recipeText)}</pre>
             </li>
           </ul>
+            </Link>
         </div>
 
         <Link href="/main">
@@ -41,10 +49,14 @@ const Results: React.FC<Data>= (props) => {
             Back
           </button>
         </Link>
-
       </div>
     );
 }
+/*
+getServerSideProps runs when the link on the main page is clicked. It makes the API call using the list of ingredients, passed
+through the context object. On the main page, context is being passed in the Link component. Context has two fields - href and query.
+query is an object that has an ingredients field, which is just the text the user entered on the main page.
+ */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/require-await
@@ -63,8 +75,12 @@ export async function getServerSideProps (context) {
                 // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-member-access
                 'prompt': "ingredients and directions for a recipe with "+context.query.ingredients,
                 'temperature': 0.1,
-                'max_tokens':500,
+                //max_tokens is the max number of words that can be returned for one recipe. This is set to 100 just because I didn't need all
+                //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
+                'max_tokens':100,
                 'top_p': 1,
+                //To generate additional recipes, change n
+                'n':1,
                 'frequency_penalty': 0,
                 'presence_penalty': 0.5,
                 'stop': ["\"\"\""],
@@ -77,16 +93,12 @@ export async function getServerSideProps (context) {
                 recipeList=data.choices
                 console.log("returning")
                 console.log(recipeList)
-                console.log("first recipe")
-                console.log(recipeList[0])
                 return {
                     recipeList
                 };
             }).catch(err => {
-            console.log("Ran out of tokens for today! Try tomorrow!");
+            console.log(err);
         });
-        console.log("about to return")
-        console.log(recipeList)
         return {
             props: {recipeList}
         };
@@ -95,6 +107,20 @@ export async function getServerSideProps (context) {
             props: {recipeList}
         };
     }
+}
+const getTitle=(text:string)=>{
+    //All the recipes returned by the openai API begin with two newlines, then the title, another newline,
+    //followed by the ingredients
+
+    //Get everything before "Ingredients" (the title and newlines)
+    let title=text.substring(0,text.indexOf("Ingredients"))
+    //Trim the newlines by removing the first two characters, and the last character
+    title=title.substring(2,title.length-1)
+    return title;
+}
+const getText=(text:string)=>{
+    //Return everything after (and including) "Ingredients"
+    return text.substring(text.indexOf("Ingredients"))
 }
 
 export default Results;
