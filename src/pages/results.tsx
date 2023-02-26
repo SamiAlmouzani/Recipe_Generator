@@ -13,7 +13,7 @@ const Results: React.FC<RecipeArry>= (props) => {
     const [recipe1Text, setRecipe1Text] = useState("");
     const [recipe2Text, setRecipe2Text] = useState("");
     const [recipe3Text, setRecipe3Text] = useState("");
-    const [recipe4Text, setRecipe4Text] = useState("");
+
 
     if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
         console.log(props.recipeList[0].text)
@@ -27,9 +27,6 @@ const Results: React.FC<RecipeArry>= (props) => {
         }
         if(props.recipeList[2]!==undefined&&props.recipeList[2]!==null) {
             setRecipe3Text(props.recipeList[2].text)
-        }
-        if(props.recipeList[3]!==undefined&&props.recipeList[3]!==null) {
-            setRecipe4Text(props.recipeList[3].text)
         }
     }, [props.recipeList])
     return (
@@ -120,9 +117,9 @@ export async function getServerSideProps (context) {
                 // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-member-access
                 'prompt': "ingredients and directions for a recipe that contains "+context.query.ingredients,
                 'temperature': 0.7,
-                //max_tokens is the max number of words that can be returned for one recipe. This is set to 100 just because I didn't need all
+                //max_tokens is the max number of words that can be returned for one recipe. This is set to 20 just because I didn't need all
                 //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
-                'max_tokens':300,
+                'max_tokens':20,
                 'top_p': 1,
                 //To generate additional recipes, change n
                 'n':3,
@@ -155,7 +152,7 @@ export async function getServerSideProps (context) {
 }
 const getTitle=(text:string)=>{
     //All the recipes returned by the openai API begin with two newlines, then the title, another newline,
-    //followed by the ingredients
+    //followed by the ingredients. We probably could add in some input validation here or use a regex if we need to.
 
     //Get everything before "Ingredients" (the title and newlines)
     let title=text.substring(0,text.indexOf("Ingredients"))

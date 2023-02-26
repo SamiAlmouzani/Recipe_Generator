@@ -4,7 +4,7 @@ import {useState} from 'react';
 import placeholder_image from './placeholder_image.jpg'
 import Link from "next/link";
 
-type Recipe={title:string, text:string}
+type Recipe={title:string, text:string}  //The recipe object passed from the results page (props) just has a title and the recipe text
 type RecipeContext={query:Recipe}
 let saved=false;    //Variable to keep track of whether the recipe is saved
 const Recipe: React.FC<Recipe>=(props)=>{
@@ -61,9 +61,9 @@ function StarIcons(){
     const [star5color,setStar5Color]=useState("grey")
     return(
         <div>
-            {/*The fill color for each star icon is grey by default. When the star is clicked, set the rating to the corresponding number, and
-            set the color of the other stars to match the rating (if the rating was 5 and star 3 is clicked, change stars 4 and 5 to grey. Or if the rating is
-            1 and star 4 is clicked, set stars 2, 3, and 4 to yellow)*/}
+            {/*The fill color for each star icon is grey by default. When the star is clicked, the rating is set to the corresponding number, and
+            the color of the other stars is changed to match the new rating (if the rating was 5 and star 3 is clicked, stars 4 and 5 are changed to grey.
+            Or if the rating is 1 and star 4 is clicked, set stars 2, 3, and 4 to yellow)*/}
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star1color} className="w-8 h-8 inline" onClick={()=>
             {
                 if(rating===0){
