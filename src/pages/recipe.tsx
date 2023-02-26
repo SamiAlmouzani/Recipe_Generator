@@ -1,18 +1,43 @@
 import Image from 'next/image'
 import { MdOutlineFavorite } from "react-icons/md";
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import placeholder_image from './placeholder_image.jpg'
 import Link from "next/link";
+
+const SerpApi = require('google-search-results-nodejs');
+const search = new SerpApi.GoogleSearch(process.env.GOOGLE_IMAGES_API_KEY);
 
 type Recipe={title:string, text:string}  //The recipe object passed from the results page (props) just has a title and the recipe text
 type RecipeContext={query:Recipe}
 let saved=false;    //Variable to keep track of whether the recipe is saved
+
+const [recipeTitle, setRecipeTitle] = useState("");
+const [imageURL, setImageURL] = useState("");
+
+console.log("hello everyone")
+
+const params = {
+    q: "apple",
+    tbm: "isch",
+    ijn: "0"
+};
+    
+    const callback = function(data: any) {
+        console.log(data["images_results"]);
+    };
+    
+    // Show result as JSON
+    search.json(params, callback);
+
+
 const Recipe: React.FC<Recipe>=(props)=>{
     const [heartColor,setHeartColor]=useState("808080")
+    setRecipeTitle(props.title);
+    console.log(recipeTitle);
     return(
         <div>
         <div className={"flow-root px-40"}>
-           <div> <p className={"flex justify-center text-3xl font-bold py-2"}>{props.title}</p></div>
+           <div> <p className={"flex justify-center text-3xl font-bold py-2"}>{recipeTitle}</p></div>
                <div id="id" className={"float-left"}>
                    <StarIcons/>
                </div>
@@ -49,6 +74,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
         </div>
         </div>
     )
+      
 }
 
 function StarIcons(){
