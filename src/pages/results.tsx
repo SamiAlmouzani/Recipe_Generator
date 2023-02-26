@@ -7,9 +7,6 @@ type Recipe = { text: string; index:number; logprobs: object; finish_reason: str
 type RecipeArry = {
     recipeList: Recipe[]
 }
-/*
-Need to generate multiple recipes and return that array. Then, create 3 (or 5?) separate divs and load each one with recipelist[0]
- */
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
 const Results: React.FC<RecipeArry>= (props) => {
@@ -125,7 +122,7 @@ export async function getServerSideProps (context) {
                 'temperature': 0.7,
                 //max_tokens is the max number of words that can be returned for one recipe. This is set to 100 just because I didn't need all
                 //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
-                'max_tokens':20,
+                'max_tokens':300,
                 'top_p': 1,
                 //To generate additional recipes, change n
                 'n':3,

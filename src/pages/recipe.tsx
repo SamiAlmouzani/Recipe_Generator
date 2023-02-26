@@ -34,13 +34,14 @@ const Recipe: React.FC<Recipe>=(props)=>{
                 </div>
                 </div>
         <div className={"flex justify-center"}>
-            <div>
+            <div className={"flex w-1/2 justify-center flex-wrap"}>
                 {/*This is a placeholder image*/}
-            <Image className={"flex justify-center"} src={placeholder_image} width={500} height={500} alt="placeholder image"></Image>
-            <pre className={"flex justify-center"}>{props.text}</pre>
-                <Link href="/results">
+            <Image src={placeholder_image} width={500} height={500} alt="placeholder image"></Image>
+                <div className="whitespace-pre-line">{props.text}</div>
+
+                <Link className={""} href="/results">
                     <button
-                        className=" block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
+                        className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
                         Back
                     </button>
                 </Link>
