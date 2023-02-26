@@ -29,7 +29,7 @@ const RecipeGenerator: NextPage = () => {
                 query: {
                     ingredients:ingredientsList
                 }
-            }} as={`results/${ingredientsList}`}>
+            }}>
               <button
               className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
                 Enter

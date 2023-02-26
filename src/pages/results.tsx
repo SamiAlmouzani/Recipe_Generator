@@ -7,17 +7,32 @@ type Recipe = { text: string; index:number; logprobs: object; finish_reason: str
 type RecipeArry = {
     recipeList: Recipe[]
 }
+/*
+Need to generate multiple recipes and return that array. Then, create 3 (or 5?) separate divs and load each one with recipelist[0]
+ */
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
 const Results: React.FC<RecipeArry>= (props) => {
-  const [recipeText, setRecipeText] = useState("");
+    const [recipe1Text, setRecipe1Text] = useState("");
+    const [recipe2Text, setRecipe2Text] = useState("");
+    const [recipe3Text, setRecipe3Text] = useState("");
+    const [recipe4Text, setRecipe4Text] = useState("");
 
     if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
         console.log(props.recipeList[0].text)
     }
     useEffect(()=>{
         if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
-            setRecipeText(props.recipeList[0].text)
+            setRecipe1Text(props.recipeList[0].text)
+        }
+        if(props.recipeList[1]!==undefined&&props.recipeList[1]!==null) {
+            setRecipe2Text(props.recipeList[1].text)
+        }
+        if(props.recipeList[2]!==undefined&&props.recipeList[2]!==null) {
+            setRecipe3Text(props.recipeList[2].text)
+        }
+        if(props.recipeList[3]!==undefined&&props.recipeList[3]!==null) {
+            setRecipe4Text(props.recipeList[3].text)
         }
     }, [props.recipeList])
     return (
@@ -27,20 +42,53 @@ const Results: React.FC<RecipeArry>= (props) => {
         </div>
 
         <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+            {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
             <Link href={{
                 pathname: '/recipe',
                 query: {
-                    title:getTitle(recipeText),
-                    text:getText(recipeText)
+                    title:getTitle(recipe1Text),
+                    text:getText(recipe1Text)
                 }
             }} as={`recipe/$recipeText}`}>
           <ul className="divide-y-2 divide-gray-100">
             <li className="p-3 hover:bg-red-600 hover:text-red-200">
-              <pre className="italic">{getTitle(recipeText)}</pre>
+              <pre className="italic">{getTitle(recipe1Text)}</pre>
             </li>
           </ul>
             </Link>
         </div>
+          <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+              {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
+              <Link href={{
+                  pathname: '/recipe',
+                  query: {
+                      title:getTitle(recipe2Text),
+                      text:getText(recipe2Text)
+                  }
+              }} as={`recipe/$recipeText}`}>
+                  <ul className="divide-y-2 divide-gray-100">
+                      <li className="p-3 hover:bg-red-600 hover:text-red-200">
+                          <pre className="italic">{getTitle(recipe2Text)}</pre>
+                      </li>
+                  </ul>
+              </Link>
+          </div>
+          <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+              {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
+              <Link href={{
+                  pathname: '/recipe',
+                  query: {
+                      title:getTitle(recipe3Text),
+                      text:getText(recipe3Text)
+                  }
+              }}>
+                  <ul className="divide-y-2 divide-gray-100">
+                      <li className="p-3 hover:bg-red-600 hover:text-red-200">
+                          <pre className="italic">{getTitle(recipe3Text)}</pre>
+                      </li>
+                  </ul>
+              </Link>
+          </div>
 
         <Link href="/main">
           <button
@@ -73,14 +121,14 @@ export async function getServerSideProps (context) {
             body: JSON.stringify({
                 'model': "text-davinci-003",
                 // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-member-access
-                'prompt': "ingredients and directions for a recipe with "+context.query.ingredients,
-                'temperature': 0.1,
+                'prompt': "ingredients and directions for a recipe that contains "+context.query.ingredients,
+                'temperature': 0.7,
                 //max_tokens is the max number of words that can be returned for one recipe. This is set to 100 just because I didn't need all
                 //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
-                'max_tokens':100,
+                'max_tokens':20,
                 'top_p': 1,
                 //To generate additional recipes, change n
-                'n':1,
+                'n':3,
                 'frequency_penalty': 0,
                 'presence_penalty': 0.5,
                 'stop': ["\"\"\""],
