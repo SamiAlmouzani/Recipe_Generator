@@ -77,7 +77,7 @@ const SignIn: NextPage = () => {
             <div className="flex items-center justify-between">
             <p className="text-sm text-gray-500">
                 No account?
-                <a className="underline" href="/sign_up"> Sign up</a>
+                <Link className="underline" href="/sign_up"> Sign up </Link>
             </p>
 
             <Link href="/main">
