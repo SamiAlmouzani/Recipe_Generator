@@ -3,11 +3,12 @@ import Link from "next/link";
 
 
 const Sign_up: NextPage = () => {
+
     return (
             <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-lg text-center">
                 <div className="mx-auto max-w-lg text-center">
-                    <h1 className="font-extrabold text-red-700 sm:text-70xl"><strong>No account, no problem!</strong></h1>
+                    <h1 className="text-2xl font-bold sm:text-3xl">No account, no problem!</h1>
                     <h2 className="font-bold text-gray-700 sm:text-15xl">Create an Account for Free</h2>
                 </div>
                     <form action="" className="mx-auto mt-8 mb-0 max-w-md space-y-4">
@@ -36,12 +37,14 @@ const Sign_up: NextPage = () => {
                         </div>
                     </form>
                     <button
-                        className="ml-3 inline-block rounded-lg bg-red-500 px-5 py-4 text-sm font-medium text-white"
-                    > Create an Account
+                        className="ml-3 inline-block rounded-lg bg-red-500 px-5 py-3 text-sm font-medium text-white"
+                    >  Create an Account
                     </button>
+
 
                 </div>
             </div>
+
 
 
 
