@@ -36,6 +36,21 @@ const RecipeGenerator: NextPage = () => {
               </button>
             </Link>
           </div>
+
+          <div className="absolute right-10 top-10">
+            <Link href={{
+              pathname: '/favorites'
+            }}>
+              <button
+                className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
+                Favorites
+              </button>
+            </Link>
+
+          </div>
+
+
+
         </div>
       </div>
     </section>

@@ -4,8 +4,8 @@ import {useState, useEffect} from 'react';
 import placeholder_image from './placeholder_image.jpg'
 import Link from "next/link";
 import { getJson } from "serpapi";
-
-import { getDatabase, ref, set, remove } from "firebase/database";
+import { getDatabase, ref, remove, set } from "firebase/database";
+import { db } from "../context/firebaseSetup"
 
 type Recipe={title:string, text:string, image:string}  //The recipe object passed from the results page (props) just has a title and the recipe text
 type RecipeContext={query:Recipe}
@@ -20,15 +20,16 @@ const Recipe: React.FC<Recipe>=(props)=>{
      a) Save this recipe to the database, if the save button is activated or
      b) Delete this recipe from the databse, if the save button is deactivated
      */
+
     useEffect(() => {
 
       try {
-        // get a reference to the database
-        const db = getDatabase();
 
         if (saved) {
           // note: I'm referencing recipes in the database by recipe title
-          set(ref(db, 'recipes/' + props.title), {
+          // TODO: change the address, right now I'm taking the first
+          // TODO: 5 characters of the title so I don't get an invalid address
+          set(ref(db, 'recipes/' + props.title.substring(0, 5)), {
 
             title: props.title,
             text: props.text,
@@ -36,8 +37,9 @@ const Recipe: React.FC<Recipe>=(props)=>{
           });
 
           console.log("saved recipe");
-        }
 
+
+        }
         else {
 
           remove(ref(db, 'recipes/' + props.title));
@@ -45,8 +47,10 @@ const Recipe: React.FC<Recipe>=(props)=>{
           console.log("unsaved recipe");
         }
       }
-      catch {
+      catch (e) {
         console.log("database error");
+        // @ts-ignore
+        console.log(e.stack);
       }
     }, [saved])
 
@@ -218,7 +222,4 @@ export async function getServerSideProps(context:RecipeContext){
     }
 
 }
-
-
-
 export default Recipe;

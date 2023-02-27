@@ -10,6 +10,7 @@ type RecipeArry = {
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
 const Results: React.FC<RecipeArry>= (props) => {
+
     const [recipe1Text, setRecipe1Text] = useState("");
     const [recipe2Text, setRecipe2Text] = useState("");
     const [recipe3Text, setRecipe3Text] = useState("");
@@ -105,7 +106,10 @@ query is an object that has an ingredients field, which is just the text the use
 export async function getServerSideProps (context) {
     let recipeList:Recipe[]=[null]
     try {
+
         const requestOptions = {
+
+
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
