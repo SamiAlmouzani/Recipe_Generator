@@ -9,18 +9,15 @@
     "start": "next start"
   },
   "dependencies": {
-    "@react-firebase/auth": "^0.2.10",
-    "authentication": "^0.0.4",
-    "bootstrap": "^4.6.0",
-    "firebase": "^8.10.1",
-    "login": "^0.8.0",
+    "google-search-results-nodejs": "^2.1.0",
     "next": "13.1.1",
     "openai": "^3.1.0",
     "react": "18.2.0",
-    "react-bootstrap": "^2.7.2",
     "react-dom": "18.2.0",
     "react-icons": "^4.7.1",
     "react-router-dom": "^6.8.1",
+    "serp": "^2.2.2",
+    "serpapi": "^1.1.1",
     "zod": "^3.20.2"
   },
   "devDependencies": {

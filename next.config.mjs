@@ -15,6 +15,14 @@ const config = {
   },
   images:{
     domains:[''],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+        port: '',
+        pathname: '**',
+      },
+    ],
   }
 };
 
