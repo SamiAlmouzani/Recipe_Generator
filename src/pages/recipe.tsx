@@ -1,48 +1,24 @@
 import Image from 'next/image'
 import { MdOutlineFavorite } from "react-icons/md";
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import placeholder_image from './placeholder_image.jpg'
 import Link from "next/link";
-
-const SerpApi = require('google-search-results-nodejs');
-const search = new SerpApi.GoogleSearch(process.env.GOOGLE_IMAGES_API_KEY);
-
-type Recipe={title:string, text:string}  //The recipe object passed from the results page (props) just has a title and the recipe text
+import { getJson } from "serpapi";
+type Recipe={title:string, text:string, image:string}  //The recipe object passed from the results page (props) just has a title and the recipe text
 type RecipeContext={query:Recipe}
 let saved=false;    //Variable to keep track of whether the recipe is saved
 
-const [recipeTitle, setRecipeTitle] = useState("");
-const [imageURL, setImageURL] = useState("");
-
-console.log("hello everyone")
-
-const params = {
-    q: "apple",
-    tbm: "isch",
-    ijn: "0"
-};
-    
-    const callback = function(data: any) {
-        console.log(data["images_results"]);
-    };
-    
-    // Show result as JSON
-    search.json(params, callback);
-
-
 const Recipe: React.FC<Recipe>=(props)=>{
     const [heartColor,setHeartColor]=useState("808080")
-    setRecipeTitle(props.title);
-    console.log(recipeTitle);
     return(
         <div>
-        <div className={"flow-root px-40"}>
-           <div> <p className={"flex justify-center text-3xl font-bold py-2"}>{recipeTitle}</p></div>
-               <div id="id" className={"float-left"}>
-                   <StarIcons/>
-               </div>
-            <div className={"float-right"}>
-                {/*Heart button*/}
+            <div className={"flow-root px-40"}>
+                <div> <p className={"flex justify-center text-3xl font-bold py-2"}>{props.title}</p></div>
+                <div id="id" className={"float-left"}>
+                    <StarIcons/>
+                </div>
+                <div className={"float-right"}>
+                    {/*Heart button*/}
                     <MdOutlineFavorite
                         color={heartColor}
                         size={48}
@@ -55,26 +31,23 @@ const Recipe: React.FC<Recipe>=(props)=>{
                                 setHeartColor("808080")
                             }
                         }}
-                        />
+                    />
                 </div>
+            </div>
+            <div className={"flex justify-center"}>
+                <div className={" w-1/2 justify-center flex-wrap"}>
+                   <div><Image src={props.image} width={500} height={500} alt="placeholder image"></Image></div>
+                    <div className="whitespace-pre-line">{props.text}</div>
+                    <Link className={""} href="/results">
+                        <button
+                            className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
+                            Back
+                        </button>
+                    </Link>
                 </div>
-        <div className={"flex justify-center"}>
-            <div className={"flex w-1/2 justify-center flex-wrap"}>
-                {/*This is a placeholder image*/}
-            <Image src={placeholder_image} width={500} height={500} alt="placeholder image"></Image>
-                <div className="whitespace-pre-line">{props.text}</div>
-
-                <Link className={""} href="/results">
-                    <button
-                        className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
-                        Back
-                    </button>
-                </Link>
             </div>
         </div>
-        </div>
     )
-      
 }
 
 function StarIcons(){
@@ -109,10 +82,10 @@ function StarIcons(){
                 }
             }
             }>
-                <path fill-rule="evenodd"
+                <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                      clip-rule="evenodd"
-                        />
+                      clipRule="evenodd"
+                />
             </svg>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star2color} className="w-8 h-8 inline" onClick={()=>
             {
@@ -128,9 +101,9 @@ function StarIcons(){
                     setRating(2)
                 }
             }}>
-                <path fill-rule="evenodd"
+                <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                      clip-rule="evenodd"/>
+                      clipRule="evenodd"/>
             </svg>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star3color} className="w-8 h-8 inline" onClick={()=>
             {
@@ -146,9 +119,9 @@ function StarIcons(){
                     setRating(3)
                 }
             }}>
-                <path fill-rule="evenodd"
+                <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                      clip-rule="evenodd"/>
+                      clipRule="evenodd"/>
             </svg>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star4color} className="w-8 h-8 inline" onClick={()=>
             {
@@ -164,9 +137,9 @@ function StarIcons(){
                     setRating(4)
                 }
             }}>
-                <path fill-rule="evenodd"
+                <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                      clip-rule="evenodd"/>
+                      clipRule="evenodd"/>
             </svg>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star5color} className="w-8 h-8 inline" onClick={()=>
             {
@@ -179,20 +152,27 @@ function StarIcons(){
                     setRating(5)
                 }
             }}>
-                <path fill-rule="evenodd"
+                <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                      clip-rule="evenodd"/>
+                      clipRule="evenodd"/>
             </svg>
 
         </div>
     )
 }
 //When this page is loaded, it is passed the recipe text from the results screen
-export function getServerSideProps(context:RecipeContext){
+export async function getServerSideProps(context:RecipeContext){
+    const response = await getJson("google", {
+        api_key: process.env.GOOGLE_IMAGES_API_KEY,
+        q: context.query.title
+    });
+    console.log("this is the response from getServerSideProps")
+    console.log(response["recipes_results"][0].thumbnail);
     return{
         props:{
             title:context.query.title,
-            text:context.query.text
+            text:context.query.text,
+            image:response["recipes_results"][0].thumbnail
         }
     }
 

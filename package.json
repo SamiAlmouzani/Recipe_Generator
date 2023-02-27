@@ -17,6 +17,7 @@
     "react-icons": "^4.7.1",
     "react-router-dom": "^6.8.1",
     "serp": "^2.2.2",
+    "serpapi": "^1.1.1",
     "zod": "^3.20.2"
   },
   "devDependencies": {
