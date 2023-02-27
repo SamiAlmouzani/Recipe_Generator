@@ -1,9 +1,10 @@
 // Import the functions you need from the SDKs you need
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from 'firebase/auth'
+import { getAuth } from 'firebase/auth';
+import { getDatabase } from "firebase/database";
 
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -22,9 +23,10 @@ const firebaseConfig = {
     databaseURL: process.env.REACT_APP_DATABASE_URL
 };
 
-firebase.initializeApp(firebaseConfig);
+//firebase.initializeApp(firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 const analytics = getAnalytics(app);
 export default firebase;
 

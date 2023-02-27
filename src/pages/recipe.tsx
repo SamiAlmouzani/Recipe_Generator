@@ -1,16 +1,56 @@
 import Image from 'next/image'
 import { MdOutlineFavorite } from "react-icons/md";
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import placeholder_image from './placeholder_image.jpg'
 import Link from "next/link";
 import { getJson } from "serpapi";
+
+import { getDatabase, ref, set, remove } from "firebase/database";
+
 type Recipe={title:string, text:string, image:string}  //The recipe object passed from the results page (props) just has a title and the recipe text
 type RecipeContext={query:Recipe}
 let saved=false;    //Variable to keep track of whether the recipe is saved
 
 const Recipe: React.FC<Recipe>=(props)=>{
+
     const [heartColor,setHeartColor]=useState("808080")
-    return(
+
+    /*
+     When a user clicks the save button this useEffect will
+     a) Save this recipe to the database, if the save button is activated or
+     b) Delete this recipe from the databse, if the save button is deactivated
+     */
+    useEffect(() => {
+
+      try {
+        // get a reference to the database
+        const db = getDatabase();
+
+        if (saved) {
+          // note: I'm referencing recipes in the database by recipe title
+          set(ref(db, 'recipes/' + props.title), {
+
+            title: props.title,
+            text: props.text,
+            image: props.image
+          });
+
+          console.log("saved recipe");
+        }
+
+        else {
+
+          remove(ref(db, 'recipes/' + props.title));
+
+          console.log("unsaved recipe");
+        }
+      }
+      catch {
+        console.log("database error");
+      }
+    }, [saved])
+
+  return(
         <div>
             <div className={"flow-root px-40"}>
                 <div> <p className={"flex justify-center text-3xl font-bold py-2"}>{props.title}</p></div>
@@ -178,4 +218,7 @@ export async function getServerSideProps(context:RecipeContext){
     }
 
 }
+
+
+
 export default Recipe;
