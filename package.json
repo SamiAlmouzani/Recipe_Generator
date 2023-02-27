@@ -9,12 +9,15 @@
     "start": "next start"
   },
   "dependencies": {
+    "google-search-results-nodejs": "^2.1.0",
     "next": "13.1.1",
     "openai": "^3.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.7.1",
     "react-router-dom": "^6.8.1",
+    "serp": "^2.2.2",
+    "serpapi": "^1.1.1",
     "zod": "^3.20.2"
   },
   "devDependencies": {
