@@ -164,15 +164,16 @@ function StarIcons(){
 export async function getServerSideProps(context:RecipeContext){
     const response = await getJson("google", {
         api_key: process.env.GOOGLE_IMAGES_API_KEY,
+        tbm: "isch",
         q: context.query.title
     });
     console.log("this is the response from getServerSideProps")
-    console.log(response["recipes_results"][0].thumbnail);
+    console.log(response["images_results"][0].original);
     return{
         props:{
             title:context.query.title,
             text:context.query.text,
-            image:response["recipes_results"][0].thumbnail
+            image:response["images_results"][0].original
         }
     }
 
