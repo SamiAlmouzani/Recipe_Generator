@@ -17,6 +17,7 @@
 /out/
 next-env.d.ts
 
+
 # production
 /build
 
@@ -40,3 +41,5 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+src/context/firebaseSetup.tsx

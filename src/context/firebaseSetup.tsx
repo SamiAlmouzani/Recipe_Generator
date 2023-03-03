@@ -44,5 +44,3 @@ if (getApps().length == 0) {
 export {db as db}
 
 //export default firebase;
-
-
