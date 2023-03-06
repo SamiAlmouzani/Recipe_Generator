@@ -2,9 +2,9 @@
 import firebase, { getApps } from "firebase/app";
 import "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from 'firebase/auth';
-import { Database, getDatabase } from "firebase/database";
+import {Database, DatabaseReference, getDatabase} from "firebase/database";
 import { FirebaseDatabase } from "@firebase/database-types";
 
 
@@ -28,7 +28,7 @@ const firebaseConfig = {
 
 //firebase.initializeApp(firebaseConfig);
 
-let app
+let app: firebase.FirebaseApp
 let db : Database;
 let analytics
 let auth
@@ -36,11 +36,15 @@ let auth
 if (getApps().length == 0) {
     app = initializeApp(firebaseConfig);
     db = getDatabase(app);
-    analytics = getAnalytics(app);
+    analytics = isSupported().then(yes => yes ? getAnalytics(app) : null);
     auth = getAuth(app);
-
 }
 // otherwise just return the reference to the database
-export {db as db}
+export {db as db, auth as auth, app as app}
 
 //export default firebase;
+
+
+
+
+
