@@ -7,12 +7,12 @@ import { getJson } from "serpapi";
 import { getDatabase, ref, remove, set } from "firebase/database";
 import { db } from "../context/firebaseSetup"
 
-type Recipe={title:string, text:string, image:string}  //The recipe object passed from the results page (props) just has a title and the recipe text
+
+type Recipe={title:string, text:string, image:string, ingredients:string}  //The recipe object passed from the results page (props) just has a title and the recipe text
 type RecipeContext={query:Recipe}
 let saved=false;    //Variable to keep track of whether the recipe is saved
 
 const Recipe: React.FC<Recipe>=(props)=>{
-
     const [heartColor,setHeartColor]=useState("808080")
 
     /*
@@ -22,39 +22,35 @@ const Recipe: React.FC<Recipe>=(props)=>{
      */
 
     useEffect(() => {
+        try {
+            if (saved) {
+                // note: I'm referencing recipes in the database by recipe title
+                // TODO: change the address, right now I'm taking the first
+                // TODO: 5 characters of the title so I don't get an invalid address
+                set(ref(db, 'recipes/' + props.ingredients.split(" ").join("")), {
+                    title: props.title,
+                    text: props.text,
+                    image: props.image,
+                    ingredients: props.ingredients
+                });
 
-      try {
+                console.log("saved recipe");
+            }
+            else {
 
-        if (saved) {
-          // note: I'm referencing recipes in the database by recipe title
-          // TODO: change the address, right now I'm taking the first
-          // TODO: 5 characters of the title so I don't get an invalid address
-          set(ref(db, 'recipes/' + props.title.substring(0, 5)), {
+                remove(ref(db, 'recipes/' + props.title));
 
-            title: props.title,
-            text: props.text,
-            image: props.image
-          });
-
-          console.log("saved recipe");
-
-
+                console.log("unsaved recipe");
+            }
         }
-        else {
-
-          remove(ref(db, 'recipes/' + props.title));
-
-          console.log("unsaved recipe");
+        catch (e) {
+            console.log("database error");
+            // @ts-ignore
+            console.log(e.stack);
         }
-      }
-      catch (e) {
-        console.log("database error");
-        // @ts-ignore
-        console.log(e.stack);
-      }
     }, [saved])
 
-  return(
+    return(
         <div>
             <div className={"flow-root px-40"}>
                 <div> <p className={"flex justify-center text-3xl font-bold py-2"}>{props.title}</p></div>
@@ -80,7 +76,8 @@ const Recipe: React.FC<Recipe>=(props)=>{
             </div>
             <div className={"flex justify-center"}>
                 <div className={" w-1/2 justify-center flex-wrap"}>
-                   <div><Image src={props.image} width={500} height={500} alt="placeholder image"></Image></div>
+                    {/* <div><Image src={props.image} width={500} height={500} alt="placeholder image"></Image></div>*/}
+                    <div><Image src={placeholder_image} width={500} height={500} alt="placeholder image"></Image></div>
                     <div className="whitespace-pre-line">{props.text}</div>
                     <Link className={""} href="/results">
                         <button
@@ -206,18 +203,23 @@ function StarIcons(){
 }
 //When this page is loaded, it is passed the recipe text from the results screen
 export async function getServerSideProps(context:RecipeContext){
-    const response = await getJson("google", {
-        api_key: process.env.GOOGLE_IMAGES_API_KEY,
-        tbm: "isch",
-        q: context.query.title
-    });
-    console.log("this is the response from getServerSideProps")
-    console.log(response["images_results"][0].original);
+    //To use the API call to get an image, uncomment this block below, and uncomment the line that uses the
+    //image url in the props object
+
+    /* const response = await getJson("google", {
+     api_key: process.env.GOOGLE_IMAGES_API_KEY,
+     tbm: "isch",
+     q: context.query.title
+ });
+     console.log("this is the response from getServerSideProps")
+     console.log(response["images_results"][0].original);*/
     return{
         props:{
             title:context.query.title,
             text:context.query.text,
-            image:response["images_results"][0].original
+            image:context.query.image,
+            // image:response["images_results"][0].original,
+            ingredients:context.query.ingredients
         }
     }
 

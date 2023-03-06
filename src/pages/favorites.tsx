@@ -26,8 +26,6 @@ const Favorites: NextPage = () => {
   useEffect(() => {
 
     try {
-
-
       const dbRef = ref(getDatabase());
 
       get(child(dbRef, 'recipes/')).then((snapshot) => {
@@ -41,7 +39,6 @@ const Favorites: NextPage = () => {
             });
 
             setListItems(getListItems());
-
           }
           else {
            setMessage("You don't have any favorites yet!");
@@ -86,10 +83,6 @@ const Favorites: NextPage = () => {
             listItems.length = 0; } catch{} window.location.reload(); }} className=" absolute bottom-10 right-20 block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
           Clear
         </button>
-
-
-
-
     </div>
 
 

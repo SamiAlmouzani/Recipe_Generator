@@ -2,18 +2,23 @@ import { type NextPage } from "next";
 import Link from "next/link";
 import {useEffect, useState} from 'react';
 import {set} from "zod";
+import {child, get, getDatabase, ref} from "firebase/database";
+import {db, auth, app} from "../context/firebaseSetup";
+import {getAnalytics} from "firebase/analytics";
+import {getAuth} from "firebase/auth";
 
-type Recipe = { text: string; index:number; logprobs: object; finish_reason: string}|null
-type RecipeArry = {
+type RecipeFromAPI = { text: string; index:number; logprobs: object; finish_reason: string}|null
+type Recipe={title:string, text:string, image:string, ingredients:string}|null
+type RecipeArray = {
     recipeList: Recipe[]
 }
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
-const Results: React.FC<RecipeArry>= (props) => {
+const Results: React.FC<RecipeArray>= (props) => {
 
-    const [recipe1Text, setRecipe1Text] = useState("");
-    const [recipe2Text, setRecipe2Text] = useState("");
-    const [recipe3Text, setRecipe3Text] = useState("");
+    const [recipe1Title, setRecipe1Title] = useState("");
+    const [recipe2Title, setRecipe2Title] = useState("");
+    const [recipe3Title, setRecipe3Title] = useState("");
 
 
     if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
@@ -21,78 +26,101 @@ const Results: React.FC<RecipeArry>= (props) => {
     }
     useEffect(()=>{
         if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
-            setRecipe1Text(props.recipeList[0].text)
+            setRecipe1Title(props.recipeList[0].title)
         }
         if(props.recipeList[1]!==undefined&&props.recipeList[1]!==null) {
-            setRecipe2Text(props.recipeList[1].text)
+            setRecipe2Title(props.recipeList[1].title)
         }
         if(props.recipeList[2]!==undefined&&props.recipeList[2]!==null) {
-            setRecipe3Text(props.recipeList[2].text)
+            setRecipe3Title(props.recipeList[2].title)
         }
     }, [props.recipeList])
-    return (
-      <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto text-left">
-          <h1 className="text-2xl font-bold sm:text-3xl">...Here are some recipes to try:</h1>
-        </div>
 
-        <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-            {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
-            <Link href={{
-                pathname: '/recipe',
-                query: {
-                    title:getTitle(recipe1Text),
-                    text:getText(recipe1Text)
-                }
-            }} as={`recipe/$recipeText}`}>
-          <ul className="divide-y-2 divide-gray-100">
-            <li className="p-3 hover:bg-red-600 hover:text-red-200">
-              <pre className="italic">{getTitle(recipe1Text)}</pre>
-            </li>
-          </ul>
+    console.log("recipes from props\n")
+    console.log(props.recipeList)
+    // @ts-ignore
+    // @ts-ignore
+    return (
+        <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mx-auto text-left">
+                <h1 className="text-2xl font-bold sm:text-3xl">...Here are some recipes to try:</h1>
+            </div>
+
+            <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+                {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
+                <Link href={{
+                    pathname: '/recipe',
+                    query: {
+                        // @ts-ignore
+                        title:props.recipeList[0].title,
+                        // @ts-ignore
+                        text:props.recipeList[0].text,
+                        // @ts-ignore
+                        image:props.recipeList[0].image,
+                        // @ts-ignore
+                        ingredients:props.recipeList[0].ingredients
+                    }
+                }} as={`recipe/$recipeText}`}>
+                    <ul className="divide-y-2 divide-gray-100">
+                        <li className="p-3 hover:bg-red-600 hover:text-red-200">
+                            <pre className="italic">{recipe1Title}</pre>
+                        </li>
+                    </ul>
+                </Link>
+            </div>
+            <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+                {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
+                <Link href={{
+                    pathname: '/recipe',
+                    query: {
+                        // @ts-ignore
+                        title:props.recipeList[1].title,
+                        // @ts-ignore
+                        text:props.recipeList[1].text,
+                        // @ts-ignore
+                        image:props.recipeList[1].image,
+                        // @ts-ignore
+                        ingredients:props.recipeList[1].ingredients
+                    }
+                }} as={`recipe/$recipeText}`}>
+                    <ul className="divide-y-2 divide-gray-100">
+                        <li className="p-3 hover:bg-red-600 hover:text-red-200">
+                            <pre className="italic">{recipe2Title}</pre>
+                        </li>
+                    </ul>
+                </Link>
+            </div>
+            <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+                {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
+                <Link href={{
+                    pathname: '/recipe',
+                    query: {
+                        // @ts-ignore
+                        title:props.recipeList[2].title,
+                        // @ts-ignore
+                        text:props.recipeList[2].text,
+                        // @ts-ignore
+                        image:props.recipeList[2].image,
+                        // @ts-ignore
+                        ingredients:props.recipeList[2].ingredients
+                    }
+                }}>
+                    <ul className="divide-y-2 divide-gray-100">
+                        <li className="p-3 hover:bg-red-600 hover:text-red-200">
+                            <pre className="italic">{recipe3Title}</pre>
+                        </li>
+                    </ul>
+                </Link>
+            </div>
+
+            <Link href="/main">
+                <button
+                    className="block w-full mt-6 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
+                >
+                    Back
+                </button>
             </Link>
         </div>
-          <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-              {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
-              <Link href={{
-                  pathname: '/recipe',
-                  query: {
-                      title:getTitle(recipe2Text),
-                      text:getText(recipe2Text)
-                  }
-              }} as={`recipe/$recipeText}`}>
-                  <ul className="divide-y-2 divide-gray-100">
-                      <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                          <pre className="italic">{getTitle(recipe2Text)}</pre>
-                      </li>
-                  </ul>
-              </Link>
-          </div>
-          <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-              {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
-              <Link href={{
-                  pathname: '/recipe',
-                  query: {
-                      title:getTitle(recipe3Text),
-                      text:getText(recipe3Text)
-                  }
-              }}>
-                  <ul className="divide-y-2 divide-gray-100">
-                      <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                          <pre className="italic">{getTitle(recipe3Text)}</pre>
-                      </li>
-                  </ul>
-              </Link>
-          </div>
-
-        <Link href="/main">
-          <button
-            className="block w-full mt-6 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
-          >
-            Back
-          </button>
-        </Link>
-      </div>
     );
 }
 /*
@@ -105,11 +133,37 @@ query is an object that has an ingredients field, which is just the text the use
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps (context) {
     let recipeList:Recipe[]=[null]
-    try {
+    let index=0
 
+    try{
+        let dbRef=ref(getDatabase(app))
+        console.log("dbRef 3: "+dbRef)
+        await get(child(dbRef, 'recipes/')).then((snapshot) => {
+            if(snapshot.exists()) {
+                console.log("snapshot:\n" +JSON.stringify(snapshot));
+                snapshot.forEach((s)=> {
+                    // @ts-ignore
+                    // @ts-ignore
+                    const newRecipe={image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients}
+                    console.log(index)
+                    recipeList[index]=newRecipe
+                    index++;
+                })
+                console.log("about to return")
+                recipeList.forEach((r)=>{ // @ts-ignore
+                    console.log(r)})
+                return {
+                    props: {recipeList}
+                }
+            } else {
+                console.log("No data available");
+            }
+        });}
+    catch(e){
+        console.log(e)
+    }
+   /* try {
         const requestOptions = {
-
-
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -136,7 +190,11 @@ export async function getServerSideProps (context) {
             .then(response => response.json())
             .then(data => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-                recipeList=data.choices
+                recipeList=data.choices.map((r:RecipeFromAPI)=>{
+                    // @ts-ignore
+                    const recipe:Recipe ={text:r.text,title:getTitle(r.text),image:"",ingredients:""+context.query.ingredients}
+                    return recipe;
+                })
                 console.log("returning")
                 console.log(recipeList)
                 return {
@@ -152,6 +210,9 @@ export async function getServerSideProps (context) {
         return {
             props: {recipeList}
         };
+    }*/
+    return{
+        props:{recipeList}
     }
 }
 const getTitle=(text:string)=>{
