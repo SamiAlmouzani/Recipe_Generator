@@ -7,11 +7,9 @@ import { getJson } from "serpapi";
 import { getDatabase, ref, remove, set } from "firebase/database";
 import { db } from "../context/firebaseSetup"
 
+//----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
-type Recipe={title:string, text:string, image:string, ingredients:string}  //The recipe object passed from the results page (props) just has a title and the recipe text
-type RecipeContext={query:Recipe}
 let saved=false;    //Variable to keep track of whether the recipe is saved
-
 const Recipe: React.FC<Recipe>=(props)=>{
     const [heartColor,setHeartColor]=useState("808080")
 

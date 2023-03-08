@@ -7,11 +7,8 @@ import {db, auth, app} from "../context/firebaseSetup";
 import {getAnalytics} from "firebase/analytics";
 import {getAuth} from "firebase/auth";
 
-type RecipeFromAPI = { text: string; index:number; logprobs: object; finish_reason: string}|null
-type Recipe={title:string, text:string, image:string, ingredients:string}|null
-type RecipeArray = {
-    recipeList: Recipe[]
-}
+//----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
+
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
 const Results: React.FC<RecipeArray>= (props) => {
@@ -132,7 +129,7 @@ query is an object that has an ingredients field, which is just the text the use
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps (context) {
-    let recipeList:Recipe[]=[null]
+    let recipeList:Recipe[]=[]
     let index=0
 
     try{
@@ -144,7 +141,7 @@ export async function getServerSideProps (context) {
                 snapshot.forEach((s)=> {
                     // @ts-ignore
                     // @ts-ignore
-                    const newRecipe={image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients}
+                    const newRecipe={image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients, comments:[]}
                     console.log(index)
                     recipeList[index]=newRecipe
                     index++;
