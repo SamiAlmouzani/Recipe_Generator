@@ -42,4 +42,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-src/context/firebaseSetup.tsx
+../src/firebaseSetup.tsx

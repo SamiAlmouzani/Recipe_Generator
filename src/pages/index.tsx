@@ -1,8 +1,33 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import {getAuth, GoogleAuthProvider, signInWithPopup} from "@firebase/auth";
+import { app,db } from "../context/firebaseSetup"
+import {useRouter} from "next/router";
 
 const Home: NextPage = () => {
+  const provider=new GoogleAuthProvider();
+  const auth=getAuth(app);
+  const router=useRouter();
+  const handleLogin=()=>{
+    signInWithPopup(auth,provider).then((result)=>{
+      const credential=
+          GoogleAuthProvider.credentialFromResult(result);
+      const token=credential?.accessToken;
+      const user=result.user;
+      console.log(user);
+      console.log(user.displayName)
+      console.log(user.uid)
+      router.push("/main");
+    })
+        .catch((error)=>{
+          const errorCode=error.code;
+          const errorMessage=error.message;
+          const email=error.customDate.email;
+          const credential=GoogleAuthProvider.credentialFromError(error)
+        });
+  }
+
   return (
     <section className="bg-gray-50">
     <div
@@ -21,13 +46,11 @@ const Home: NextPage = () => {
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Link href="/signin">
-            <button
+            <button onClick={handleLogin}
             className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
             >
               Get Started
             </button>
-          </Link>
         </div>
       </div>
     </div>
