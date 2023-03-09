@@ -5,3 +5,4 @@ type Recipe={title:string, text:string, image:string, ingredients:string, commen
 type RecipeArray = {
     recipeList: Recipe[]
 }
+type customUser={uid:string, displayName:string, savedRecipes:string[], uploadedRecipes:string[]}

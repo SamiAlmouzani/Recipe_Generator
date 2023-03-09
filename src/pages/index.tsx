@@ -4,22 +4,57 @@ import Link from "next/link";
 import {getAuth, GoogleAuthProvider, signInWithPopup} from "@firebase/auth";
 import { app,db } from "../context/firebaseSetup"
 import {useRouter} from "next/router";
+import {useGlobalContext} from "../context";
+import {get, getDatabase, query, ref, set} from "firebase/database";
 
 const Home: NextPage = () => {
+  const { currentUser,setCurrentUser } = useGlobalContext();
+
   const provider=new GoogleAuthProvider();
   const auth=getAuth(app);
   const router=useRouter();
+
+  //The handleLogin function runs when the "Enter" button on this page is clicked
   const handleLogin=()=>{
     signInWithPopup(auth,provider).then((result)=>{
       const credential=
           GoogleAuthProvider.credentialFromResult(result);
       const token=credential?.accessToken;
       const user=result.user;
-      console.log(user);
-      console.log(user.displayName)
-      console.log(user.uid)
 
-      //Check whether a user exists in Firebase with the same uid. If so,
+      //The query function searches for a value in the users path of the database, with a key matching the uid of the user who just logged in
+      const userRef = query(ref(db, 'users/' + user.uid));
+
+      //Get a snapshot from the database using the Database Reference object returned by the query
+      get(userRef).then((snapshot)=>{
+        //If the snapshot is null, it means there is no user with this uid. They need to be added to the database
+        if(snapshot==null){
+          console.log("user does not exist")
+
+          //Initialize a new user object
+          // @ts-ignore
+          const newUser:customUser={uid:user.uid,displayName:user.displayName,savedRecipes:[],uploadedRecipes:[]}
+
+          //Save this new object in the database
+          const db=getDatabase(app)
+          set(ref(db, 'users/' + user.uid), newUser);
+
+          //Use the new object to set the currentUser in the global context
+          setCurrentUser(newUser);
+        }
+        //If snapshot is not null and the user already exists, use the returned snapshot to set the currentUser value in the global context
+        else{
+          //Create a new user object and initialize the fields with the values from Firebase
+          const returningUser:customUser={uid:snapshot.val().uid,displayName:snapshot.val().displayName,
+            savedRecipes:snapshot.val().savedRecipes,uploadedRecipes:snapshot.val().uploadedRecipes}
+
+          //Set current user
+          setCurrentUser(returningUser)
+        }
+      }).catch((e)=>{
+        console.log(e)
+      })
+      //Go to the main page
       router.push("/main");
     })
         .catch((error)=>{

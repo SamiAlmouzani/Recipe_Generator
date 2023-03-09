@@ -13,6 +13,9 @@ const RecipeGenerator: NextPage = () => {
   const { ingredientsList,setIngredientsList } = useGlobalContext();
   console.log("global context "+ingredientsList);
 
+  //Import the current user.
+  const {currentUser, setCurrentUser}=useGlobalContext();
+  console.log("current user: "+currentUser.displayName)
   return (
         <section className="bg-gray-50">
       <div

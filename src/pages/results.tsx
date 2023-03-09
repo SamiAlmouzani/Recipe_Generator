@@ -134,7 +134,6 @@ export async function getServerSideProps (context) {
 
     try{
         let dbRef=ref(getDatabase(app))
-        console.log("dbRef 3: "+dbRef)
         await get(child(dbRef, 'recipes/')).then((snapshot) => {
             if(snapshot.exists()) {
                 console.log("snapshot:\n" +JSON.stringify(snapshot));
