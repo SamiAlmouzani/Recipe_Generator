@@ -18,6 +18,8 @@ const Home: NextPage = () => {
       console.log(user);
       console.log(user.displayName)
       console.log(user.uid)
+
+      //Check whether a user exists in Firebase with the same uid. If so,
       router.push("/main");
     })
         .catch((error)=>{
