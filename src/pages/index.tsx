@@ -22,13 +22,25 @@ const Home: NextPage = () => {
       const token=credential?.accessToken;
       const user=result.user;
 
+      console.log(user.uid)
+      console.log(user.displayName)
+
       //The query function searches for a value in the users path of the database, with a key matching the uid of the user who just logged in
       const userRef = query(ref(db, 'users/' + user.uid));
 
       //Get a snapshot from the database using the Database Reference object returned by the query
       get(userRef).then((snapshot)=>{
-        //If the snapshot is null, it means there is no user with this uid. They need to be added to the database
-        if(snapshot==null){
+        //If the snapshot exists, it means the user is already in the database.
+        if(snapshot.exists()){
+          //Create a new user object and initialize the fields with the values from Firebase
+          const returningUser:customUser={uid:snapshot.val().uid,displayName:snapshot.val().displayName,
+            savedRecipes:snapshot.val().savedRecipes,uploadedRecipes:snapshot.val().uploadedRecipes}
+
+          //Set the current user in the global context
+          setCurrentUser(returningUser)
+        }
+        //If the snapshot does not exist, it means there is no user with this uid. They need to be added to the database
+        else{
           console.log("user does not exist")
 
           //Initialize a new user object
@@ -42,25 +54,13 @@ const Home: NextPage = () => {
           //Use the new object to set the currentUser in the global context
           setCurrentUser(newUser);
         }
-        //If snapshot is not null and the user already exists, use the returned snapshot to set the currentUser value in the global context
-        else{
-          //Create a new user object and initialize the fields with the values from Firebase
-          const returningUser:customUser={uid:snapshot.val().uid,displayName:snapshot.val().displayName,
-            savedRecipes:snapshot.val().savedRecipes,uploadedRecipes:snapshot.val().uploadedRecipes}
-
-          //Set current user
-          setCurrentUser(returningUser)
-        }
-      }).catch((e)=>{
-        console.log(e)
+      }).catch(()=>{
+        console.log("There was an error")
       })
       //Go to the main page
       router.push("/main");
     })
         .catch((error)=>{
-          const errorCode=error.code;
-          const errorMessage=error.message;
-          const email=error.customDate.email;
           const credential=GoogleAuthProvider.credentialFromError(error)
         });
   }
