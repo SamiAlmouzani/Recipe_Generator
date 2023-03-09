@@ -62,7 +62,10 @@ const Recipe: React.FC<Recipe>=(props)=>{
                         size={48}
                         onClick={()=>{
                             //Clicking the heart will toggle the "saved" property, and the color
-                            saved=!saved
+
+                            //I temporarily set it so saved is always set to true, so recipes are never deleted (for now)
+                            //this is so we can have some saved in the database to play around with
+                            saved=true
                             if(saved){
                                 setHeartColor("FF0000")
                             }else{
@@ -75,7 +78,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
             <div className={"flex justify-center"}>
                 <div className={" w-1/2 justify-center flex-wrap"}>
                     {/* <div><Image src={props.image} width={500} height={500} alt="placeholder image"></Image></div>*/}
-                    <div><Image src={placeholder_image} width={500} height={500} alt="placeholder image"></Image></div>
+                    <div><Image src={props.image} width={500} height={500} alt="placeholder image"></Image></div>
                     <div className="whitespace-pre-line">{props.text}</div>
                     <Link className={""} href="/results">
                         <button
@@ -216,7 +219,7 @@ export async function getServerSideProps(context:RecipeContext){
             title:context.query.title,
             text:context.query.text,
             image:context.query.image,
-            // image:response["images_results"][0].original,
+         //    image:response["images_results"][0].original,
             ingredients:context.query.ingredients
         }
     }

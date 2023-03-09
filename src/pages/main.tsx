@@ -1,15 +1,21 @@
 import { type NextPage } from "next";
 import Link from "next/link";
-import { useContext, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import { useGlobalContext } from '../context';
+import {getAuth} from "firebase/auth";
+import {FirebaseAuth} from "@firebase/auth-types";
 
 //localIngredients is the local value updated every time the contents of the text box are changed
 let localIngredientsList:string
 const RecipeGenerator: NextPage = () => {
+
   //Import the global variable ingredientsList, and it's setter function, from the global context (defined in the context folder)
   const { ingredientsList,setIngredientsList } = useGlobalContext();
   console.log("global context "+ingredientsList);
 
+  //Import the current user.
+  const {currentUser, setCurrentUser}=useGlobalContext();
+  console.log("current user: (accessed from main screen)"+currentUser.displayName)
   return (
         <section className="bg-gray-50">
       <div

@@ -1,7 +1,31 @@
 import { type NextPage } from "next";
 import Link from "next/link";
+import {getAuth, GoogleAuthProvider, signInWithPopup} from "@firebase/auth";
+import { app,db } from "../context/firebaseSetup"
+import {useRouter} from "next/router";
 
 const SignIn: NextPage = () => {
+    const provider=new GoogleAuthProvider();
+    const auth=getAuth(app);
+    const router=useRouter();
+    const handleLogin=()=>{
+        signInWithPopup(auth,provider).then((result)=>{
+            const credential=
+                GoogleAuthProvider.credentialFromResult(result);
+                const token=credential?.accessToken;
+                const user=result.user;
+                console.log(user);
+                console.log(user.displayName)
+                console.log(user.uid)
+                router.push("/main");
+        })
+            .catch((error)=>{
+                const errorCode=error.code;
+                const errorMessage=error.message;
+                const email=error.customDate.email;
+                const credential=GoogleAuthProvider.credentialFromError(error)
+            });
+    }
     return (
 
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
@@ -77,7 +101,7 @@ const SignIn: NextPage = () => {
             <div className="flex items-center justify-between">
             <p className="text-sm text-gray-500">
                 No account?
-                <Link className="underline" href="/sign_up"> Sign up </Link>
+               <Link className="underline" onClick={handleLogin} href="#"> Sign up </Link>
             </p>
 
             <Link href="/main">

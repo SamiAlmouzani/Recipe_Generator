@@ -134,7 +134,6 @@ export async function getServerSideProps (context) {
 
     try{
         let dbRef=ref(getDatabase(app))
-        console.log("dbRef 3: "+dbRef)
         await get(child(dbRef, 'recipes/')).then((snapshot) => {
             if(snapshot.exists()) {
                 console.log("snapshot:\n" +JSON.stringify(snapshot));
@@ -159,7 +158,7 @@ export async function getServerSideProps (context) {
     catch(e){
         console.log(e)
     }
-   /* try {
+    /*try {
         const requestOptions = {
             method: 'POST',
             headers: {
@@ -174,7 +173,7 @@ export async function getServerSideProps (context) {
                 'temperature': 0.7,
                 //max_tokens is the max number of words that can be returned for one recipe. This is set to 20 just because I didn't need all
                 //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
-                'max_tokens':20,
+                'max_tokens':400,
                 'top_p': 1,
                 //To generate additional recipes, change n
                 'n':3,
