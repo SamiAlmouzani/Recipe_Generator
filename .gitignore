@@ -43,3 +43,4 @@ yarn-error.log*
 *.tsbuildinfo
 
 ../src/context/firebaseSetup.tsx
+/src/context/firebaseSetup.tsx

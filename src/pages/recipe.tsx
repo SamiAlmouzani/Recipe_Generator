@@ -4,43 +4,61 @@ import {useState, useEffect} from 'react';
 import placeholder_image from './placeholder_image.jpg'
 import Link from "next/link";
 import { getJson } from "serpapi";
-import {child, getDatabase, push, query, ref, remove, set, update} from "firebase/database";
+import {child, get, getDatabase, push, query, ref, remove, set, update} from "firebase/database";
 import { db } from "../context/firebaseSetup"
+import {useGlobalContext} from "../context";
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
 let saved=false;    //Variable to keep track of whether the recipe is saved
 const Recipe: React.FC<Recipe>=(props)=>{
-
+    //Import the current user.
+    const {currentUser, setCurrentUser}=useGlobalContext();
     //props is used to initialize a currentRecipe object. Elements of currentRecipe (rating, etc) can be modified while props is read only
-    let currentRecipe:Recipe=props
+    let currentRecipe={id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments}
+
+    //When updating the id in the database, recipe didn't show the new value immediately. I'm using currentRecipe to set the new values and store them in
+    //the database, then also setting those values on recipe.
+    const [recipe, setRecipe] = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments});
     const [heartColor,setHeartColor]=useState("808080")
 
     /*
      When a user clicks the save button this useEffect will
-     a) Save this recipe to the database, if the save button is activated or
-     b) Delete this recipe from the database, if the save button is deactivated
+     a) Save this recipe to the database (if it is not already there), and update the current user's savedRecipes array
+     b) Remove this recipe from the current users's savedRecipes array
      */
 
     useEffect(() => {
         try {
             if (saved) {
-                console.log(currentRecipe)
-                // note: I'm referencing recipes in the database by recipe title
-
                 //Check whether this recipe is already saved in the database. If it is not, it needs to be added
 
-                //Create a new entry under recipes, and save the automatically generated key
-                const key = push(child(ref(db), 'recipes')).key;
+                //Get a Database Reference Object for this recipe's id
+                const recipeRef = query(ref(db, 'recipes/' + recipe.id));
+                get(recipeRef).then((snapshot)=>{
+                    //If no snapshot exists, the recipe was not found
+                    if(!snapshot.exists()){
+                        //Create a new entry under recipes, and save the automatically generated key
+                        const key = push(child(ref(db), 'recipes'),currentRecipe).key;
+                        console.log("key "+key)
+                        //Set the id field of currentRecipe to be equal to the key
+                        currentRecipe.id=""+key
+                        console.log("Recipe after updating key: "+JSON.stringify(currentRecipe))
 
-                //Set the id field of currentRecipe to be equal to the key
-                //Update the entry to the recipe object, using the key in the id field
-                update(ref(db, 'recipes/'+key), currentRecipe);
-
-                console.log("saved recipe");
+                        //Update the entry to the recipe object to store currentRecipe
+                        update(ref(db, 'recipes/'+key), currentRecipe);
+                        console.log("current recipe id "+currentRecipe.id)
+                        setRecipe({id:""+currentRecipe.id, title:recipe.title, text:recipe.text, image:recipe.image, ingredients:recipe.ingredients, averageRating:recipe.averageRating, uploadedBy:recipe.uploadedBy, comments:recipe.comments})
+                        console.log("recipe at the end "+JSON.stringify(recipe))
+                    }else{
+                        console.log("Already in database")
+                    }
+                }).catch(()=>{
+                    console.log("There was an error querying the data")})
+                //TODO -- Get the current user, and add the id of the current recipe to this users's savedRecipes array
             }
             else {
-                remove(ref(db, 'recipes/' + props.id));
+                //TODO -- Get the current user, and remove the id of the current recipe from the users's savedRecipes array
                 console.log("unsaved recipe");
             }
         }
@@ -210,22 +228,22 @@ export async function getServerSideProps(context:RecipeContext){
     //To use the API call to get an image, uncomment this block below, and uncomment the line that uses the
     //image url in the props object
 
-    console.log("Recipe context: "+JSON.stringify(context.query))
-     const response = await getJson("google", {
-     api_key: process.env.GOOGLE_IMAGES_API_KEY,
-     tbm: "isch",
-     q: context.query.title
- });
-     console.log("this is the response from getServerSideProps")
-  //   console.log(response["images_results"][0].original);
+      /*console.log("Recipe context: "+JSON.stringify(context.query))
+        const response = await getJson("google", {
+        api_key: process.env.GOOGLE_IMAGES_API_KEY,
+        tbm: "isch",
+        q: context.query.title
+    });*/
+    console.log("this is the response from getServerSideProps")
+    //   console.log(response["images_results"][0].original);
     return{
         props:{
             // @ts-ignore
             id:context.query.id,
             title:context.query.title,
             text:context.query.text,
-          //  image:context.query.image,
-            image:response["images_results"][0].original,
+            image:context.query.image,
+            //  image:response["images_results"][0].original,
             ingredients:context.query.ingredients,
             averageRating:context.query.averageRating,
             uploadedBy:context.query.uploadedBy,

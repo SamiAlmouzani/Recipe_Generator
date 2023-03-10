@@ -181,56 +181,59 @@ export async function getServerSideProps (context) {
     catch(e){
         console.log(e)
     }
-    //This try/catch block uses the API to generate the recipes
+    //This try/catch block uses the API to generate the recipes. Uncomment this to pull in recipes from the API
 
-    try {
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                'Authorization': "Bearer "+process.env.OPENAI_API_KEY
-            },
-            body: JSON.stringify({
-                'model': "text-davinci-003",
-                // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-member-access
-                'prompt': "ingredients and directions for a recipe that contains "+context.query.ingredients,
-                'temperature': 0.7,
-                //max_tokens is the max number of words that can be returned for one recipe. This is set to 20 just because I didn't need all
-                //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
-                'max_tokens':400,
-                'top_p': 1,
-                //To generate additional recipes, change n
-                'n':3,
-                'frequency_penalty': 0,
-                'presence_penalty': 0.5,
-                'stop': ["\"\"\""],
-            })
-        };
-        await fetch('https://api.openai.com/v1/completions', requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-                recipeList=data.choices.map((r:RecipeFromAPI)=>{
-                    // @ts-ignore
-                    const recipe:Recipe ={id:"0", text:r.text,title:getTitle(r.text),image:"",ingredients:""+context.query.ingredients, averageRating:0, uploadedBy:0, comments:[{username:"",text:""}]}
-                    return recipe;
+        /*try {
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+                    'Authorization': "Bearer "+process.env.OPENAI_API_KEY
+                },
+                body: JSON.stringify({
+                    'model': "text-davinci-003",
+                    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-member-access
+                    'prompt': "ingredients and directions for a recipe that contains "+context.query.ingredients,
+                    'temperature': 0.7,
+                    //max_tokens is the max number of words that can be returned for one recipe. This is set to 20 just because I didn't need all
+                    //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
+                    'max_tokens':400,
+                    'top_p': 1,
+                    //To generate additional recipes, change n
+                    'n':3,
+                    'frequency_penalty': 0,
+                    'presence_penalty': 0.5,
+                    'stop': ["\"\"\""],
                 })
-                console.log("returning")
-                console.log(recipeList)
-                return {
-                    recipeList
-                };
-            }).catch(err => {
-            console.log(err);
-        });
-        return {
-            props: {recipeList}
-        };
-    }catch {
-        return {
-            props: {recipeList}
-        };
+            };
+            await fetch('https://api.openai.com/v1/completions', requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+                    recipeList=data.choices.map((r:RecipeFromAPI)=>{
+                        // @ts-ignore
+                        const recipe:Recipe ={id:"0", text:r.text,title:getTitle(r.text),image:"",ingredients:""+context.query.ingredients, averageRating:0, uploadedBy:0, comments:[{username:"",text:""}]}
+                        return recipe;
+                    })
+                    console.log("returning")
+                    console.log(recipeList)
+                    return {
+                        recipeList
+                    };
+                }).catch(err => {
+                console.log(err);
+            });
+            return {
+                props: {recipeList}
+            };
+        }catch {
+            return {
+                props: {recipeList}
+            };
+        }*/
+    return{
+        props:{recipeList}
     }
 }
 const getTitle=(text:string)=>{
