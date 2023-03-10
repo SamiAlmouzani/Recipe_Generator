@@ -4,40 +4,43 @@ import {useState, useEffect} from 'react';
 import placeholder_image from './placeholder_image.jpg'
 import Link from "next/link";
 import { getJson } from "serpapi";
-import { getDatabase, ref, remove, set } from "firebase/database";
+import {child, getDatabase, push, query, ref, remove, set, update} from "firebase/database";
 import { db } from "../context/firebaseSetup"
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
 let saved=false;    //Variable to keep track of whether the recipe is saved
 const Recipe: React.FC<Recipe>=(props)=>{
+
+    //props is used to initialize a currentRecipe object. Elements of currentRecipe (rating, etc) can be modified while props is read only
+    let currentRecipe:Recipe=props
     const [heartColor,setHeartColor]=useState("808080")
 
     /*
      When a user clicks the save button this useEffect will
      a) Save this recipe to the database, if the save button is activated or
-     b) Delete this recipe from the databse, if the save button is deactivated
+     b) Delete this recipe from the database, if the save button is deactivated
      */
 
     useEffect(() => {
         try {
             if (saved) {
+                console.log(currentRecipe)
                 // note: I'm referencing recipes in the database by recipe title
-                // TODO: change the address, right now I'm taking the first
-                // TODO: 5 characters of the title so I don't get an invalid address
-                set(ref(db, 'recipes/' + props.ingredients.split(" ").join("")), {
-                    title: props.title,
-                    text: props.text,
-                    image: props.image,
-                    ingredients: props.ingredients
-                });
+
+                //Check whether this recipe is already saved in the database. If it is not, it needs to be added
+
+                //Create a new entry under recipes, and save the automatically generated key
+                const key = push(child(ref(db), 'recipes')).key;
+
+                //Set the id field of currentRecipe to be equal to the key
+                //Update the entry to the recipe object, using the key in the id field
+                update(ref(db, 'recipes/'+key), currentRecipe);
 
                 console.log("saved recipe");
             }
             else {
-
-                remove(ref(db, 'recipes/' + props.title));
-
+                remove(ref(db, 'recipes/' + props.id));
                 console.log("unsaved recipe");
             }
         }
@@ -65,7 +68,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
 
                             //I temporarily set it so saved is always set to true, so recipes are never deleted (for now)
                             //this is so we can have some saved in the database to play around with
-                            saved=true
+                            saved=!saved
                             if(saved){
                                 setHeartColor("FF0000")
                             }else{
@@ -207,20 +210,26 @@ export async function getServerSideProps(context:RecipeContext){
     //To use the API call to get an image, uncomment this block below, and uncomment the line that uses the
     //image url in the props object
 
-    /* const response = await getJson("google", {
+    console.log("Recipe context: "+JSON.stringify(context.query))
+     const response = await getJson("google", {
      api_key: process.env.GOOGLE_IMAGES_API_KEY,
      tbm: "isch",
      q: context.query.title
  });
      console.log("this is the response from getServerSideProps")
-     console.log(response["images_results"][0].original);*/
+  //   console.log(response["images_results"][0].original);
     return{
         props:{
+            // @ts-ignore
+            id:context.query.id,
             title:context.query.title,
             text:context.query.text,
-            image:context.query.image,
-         //    image:response["images_results"][0].original,
-            ingredients:context.query.ingredients
+          //  image:context.query.image,
+            image:response["images_results"][0].original,
+            ingredients:context.query.ingredients,
+            averageRating:context.query.averageRating,
+            uploadedBy:context.query.uploadedBy,
+            comments:context.query.comments
         }
     }
 

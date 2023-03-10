@@ -17,7 +17,6 @@ const Results: React.FC<RecipeArray>= (props) => {
     const [recipe2Title, setRecipe2Title] = useState("");
     const [recipe3Title, setRecipe3Title] = useState("");
 
-
     if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
         console.log(props.recipeList[0].text)
     }
@@ -49,13 +48,21 @@ const Results: React.FC<RecipeArray>= (props) => {
                     pathname: '/recipe',
                     query: {
                         // @ts-ignore
+                        id:props.recipeList[0].id,
+                        // @ts-ignore
                         title:props.recipeList[0].title,
                         // @ts-ignore
                         text:props.recipeList[0].text,
                         // @ts-ignore
                         image:props.recipeList[0].image,
                         // @ts-ignore
-                        ingredients:props.recipeList[0].ingredients
+                        ingredients:props.recipeList[0].ingredients,
+                        // @ts-ignore
+                        averageRating:props.recipeList[0].averageRating,
+                        // @ts-ignore
+                        uploadedBy:props.recipeList[0].uploadedBy,
+                        // @ts-ignore
+                        comments:props.recipeList[0].comments
                     }
                 }} as={`recipe/$recipeText}`}>
                     <ul className="divide-y-2 divide-gray-100">
@@ -71,13 +78,21 @@ const Results: React.FC<RecipeArray>= (props) => {
                     pathname: '/recipe',
                     query: {
                         // @ts-ignore
+                        id:props.recipeList[1].id,
+                        // @ts-ignore
                         title:props.recipeList[1].title,
                         // @ts-ignore
                         text:props.recipeList[1].text,
                         // @ts-ignore
                         image:props.recipeList[1].image,
                         // @ts-ignore
-                        ingredients:props.recipeList[1].ingredients
+                        ingredients:props.recipeList[1].ingredients,
+                        // @ts-ignore
+                        averageRating:props.recipeList[1].averageRating,
+                        // @ts-ignore
+                        uploadedBy:props.recipeList[1].uploadedBy,
+                        // @ts-ignore
+                        comments:props.recipeList[1].comments
                     }
                 }} as={`recipe/$recipeText}`}>
                     <ul className="divide-y-2 divide-gray-100">
@@ -93,13 +108,21 @@ const Results: React.FC<RecipeArray>= (props) => {
                     pathname: '/recipe',
                     query: {
                         // @ts-ignore
+                        id:props.recipeList[2].id,
+                        // @ts-ignore
                         title:props.recipeList[2].title,
                         // @ts-ignore
                         text:props.recipeList[2].text,
                         // @ts-ignore
                         image:props.recipeList[2].image,
                         // @ts-ignore
-                        ingredients:props.recipeList[2].ingredients
+                        ingredients:props.recipeList[2].ingredients,
+                        // @ts-ignore
+                        averageRating:props.recipeList[2].averageRating,
+                        // @ts-ignore
+                        uploadedBy:props.recipeList[0].uploadedBy,
+                        // @ts-ignore
+                        comments:props.recipeList[2].comments
                     }
                 }}>
                     <ul className="divide-y-2 divide-gray-100">
@@ -131,7 +154,7 @@ query is an object that has an ingredients field, which is just the text the use
 export async function getServerSideProps (context) {
     let recipeList:Recipe[]=[]
     let index=0
-
+    //This try/catch block pulls in the recipes from the database
     try{
         let dbRef=ref(getDatabase(app))
         await get(child(dbRef, 'recipes/')).then((snapshot) => {
@@ -140,7 +163,7 @@ export async function getServerSideProps (context) {
                 snapshot.forEach((s)=> {
                     // @ts-ignore
                     // @ts-ignore
-                    const newRecipe={image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients, comments:[]}
+                    const newRecipe={id:s.val().id, image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients, averageRating:s.val().averageRating, uploadedBy:s.val().uploadedBy,comments:s.val().comments}
                     console.log(index)
                     recipeList[index]=newRecipe
                     index++;
@@ -158,7 +181,9 @@ export async function getServerSideProps (context) {
     catch(e){
         console.log(e)
     }
-    /*try {
+    //This try/catch block uses the API to generate the recipes
+
+    try {
         const requestOptions = {
             method: 'POST',
             headers: {
@@ -188,7 +213,7 @@ export async function getServerSideProps (context) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
                 recipeList=data.choices.map((r:RecipeFromAPI)=>{
                     // @ts-ignore
-                    const recipe:Recipe ={text:r.text,title:getTitle(r.text),image:"",ingredients:""+context.query.ingredients}
+                    const recipe:Recipe ={id:"0", text:r.text,title:getTitle(r.text),image:"",ingredients:""+context.query.ingredients, averageRating:0, uploadedBy:0, comments:[{username:"",text:""}]}
                     return recipe;
                 })
                 console.log("returning")
@@ -206,9 +231,6 @@ export async function getServerSideProps (context) {
         return {
             props: {recipeList}
         };
-    }*/
-    return{
-        props:{recipeList}
     }
 }
 const getTitle=(text:string)=>{
