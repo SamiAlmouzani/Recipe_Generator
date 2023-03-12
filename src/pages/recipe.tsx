@@ -11,8 +11,8 @@ import {useGlobalContext} from "../context";
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
 const Recipe: React.FC<RecipeInfo>=(props)=>{
-    console.log("RecipeInfo: "+JSON.stringify(props))
-    let saved=props.savedByCurrentUser
+ //   console.log("RecipeInfo: "+JSON.stringify(props))
+    const[saved, setSaved]=useState(props.savedByCurrentUser)
     let startingHeartColor
     if(saved)
         startingHeartColor="FF0000"
@@ -106,13 +106,13 @@ const Recipe: React.FC<RecipeInfo>=(props)=>{
                         size={48}
                         onClick={()=>{
                             //Clicking the heart will toggle the "saved" property, and the color
-                            saved=!saved
+                            setSaved(!saved)
                             if(saved){
                                 setHeartColor("FF0000")
                             }else{
                                 setHeartColor("808080")
                             }
-                            toggleSaved()
+                            toggleSaved(saved)
                         }}
                     />
                 </div>
@@ -132,7 +132,7 @@ const Recipe: React.FC<RecipeInfo>=(props)=>{
             </div>
         </div>
     )
-    function toggleSaved(){
+    function toggleSaved(saved:boolean){
         try {
             if (saved) {
                 //Check whether this recipe is already saved in the database. If it is not, it needs to be added
@@ -181,6 +181,20 @@ const Recipe: React.FC<RecipeInfo>=(props)=>{
             else {
                 //TODO -- Get the current user, and remove the id of the current recipe from the users's savedRecipes array
                 console.log("unsaved recipe");
+                //Create a temporary array, initialized to the current saved recipe array
+                let tempSavedRecipes:string[]=currentUser.savedRecipes;
+                //Remove the current recipe's id from the array
+                let indexOfRecipe=tempSavedRecipes.indexOf(currentRecipe.id)
+                console.log("saved recipes "+tempSavedRecipes)
+                if(indexOfRecipe>-1)
+                    tempSavedRecipes.splice(indexOfRecipe, 1)
+                console.log("saved recipes "+tempSavedRecipes)
+
+                setCurrentUser({uid:currentUser.uid,displayName:currentUser.displayName,photoURL:currentUser.photoURL,
+                    savedRecipes:tempSavedRecipes,uploadedRecipes:currentUser.uploadedRecipes})
+                //Update the database with this new object
+                update(ref(db, '/users/'+currentUser.uid), currentUser);
+                console.log("database updated")
             }
         }
         catch (e) {
