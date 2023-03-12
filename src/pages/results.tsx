@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Link from "next/link";
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {set} from "zod";
 import {child, get, getDatabase, ref} from "firebase/database";
 import {db, auth, app} from "../context/firebaseSetup";
@@ -21,21 +21,6 @@ const Results: React.FC<RecipeArray>= (props) => {
     //Import the current user.
     const {currentUser, setCurrentUser}=useGlobalContext();
     console.log("current user: (accessed from main screen)"+currentUser.displayName)
-    if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
-        console.log(props.recipeList[0].text)
-    }
-    useEffect(()=>{
-        if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
-            setRecipe1Title(props.recipeList[0].title)
-        }
-        if(props.recipeList[1]!==undefined&&props.recipeList[1]!==null) {
-            setRecipe2Title(props.recipeList[1].title)
-        }
-        if(props.recipeList[2]!==undefined&&props.recipeList[2]!==null) {
-            setRecipe3Title(props.recipeList[2].title)
-        }
-    }, [props.recipeList])
-
     console.log("recipes from props\n")
     console.log(props.recipeList)
     // @ts-ignore
@@ -47,95 +32,33 @@ const Results: React.FC<RecipeArray>= (props) => {
             </div>
 
             <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-                {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
-                <Link href={{
-                    pathname: '/recipe',
-                    query: {
-                        // @ts-ignore
-                        id:props.recipeList[0].id,
-                        // @ts-ignore
-                        title:props.recipeList[0].title,
-                        // @ts-ignore
-                        text:props.recipeList[0].text,
-                        // @ts-ignore
-                        image:props.recipeList[0].image,
-                        // @ts-ignore
-                        ingredients:props.recipeList[0].ingredients,
-                        // @ts-ignore
-                        averageRating:props.recipeList[0].averageRating,
-                        // @ts-ignore
-                        uploadedBy:props.recipeList[0].uploadedBy,
-                        // @ts-ignore
-                        comments:props.recipeList[0].comments
-                    }
-                }} as={`recipe/$recipeText}`}>
-                    <ul className="divide-y-2 divide-gray-100">
-                        <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                            <pre className="italic">{recipe1Title}</pre>
-                        </li>
-                    </ul>
-                </Link>
-            </div>
-            <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-                {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
-                <Link href={{
-                    pathname: '/recipe',
-                    query: {
-                        // @ts-ignore
-                        id:props.recipeList[1].id,
-                        // @ts-ignore
-                        title:props.recipeList[1].title,
-                        // @ts-ignore
-                        text:props.recipeList[1].text,
-                        // @ts-ignore
-                        image:props.recipeList[1].image,
-                        // @ts-ignore
-                        ingredients:props.recipeList[1].ingredients,
-                        // @ts-ignore
-                        averageRating:props.recipeList[1].averageRating,
-                        // @ts-ignore
-                        uploadedBy:props.recipeList[1].uploadedBy,
-                        // @ts-ignore
-                        comments:props.recipeList[1].comments
-                    }
-                }} as={`recipe/$recipeText}`}>
-                    <ul className="divide-y-2 divide-gray-100">
-                        <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                            <pre className="italic">{recipe2Title}</pre>
-                        </li>
-                    </ul>
-                </Link>
-            </div>
-            <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-                {/*When the recipe is clicked, go to the recipe page and pass it the recipe text and title*/}
-                <Link href={{
-                    pathname: '/recipe',
-                    query: {
-                        // @ts-ignore
-                        id:props.recipeList[2].id,
-                        // @ts-ignore
-                        title:props.recipeList[2].title,
-                        // @ts-ignore
-                        text:props.recipeList[2].text,
-                        // @ts-ignore
-                        image:props.recipeList[2].image,
-                        // @ts-ignore
-                        ingredients:props.recipeList[2].ingredients,
-                        // @ts-ignore
-                        averageRating:props.recipeList[2].averageRating,
-                        // @ts-ignore
-                        uploadedBy:props.recipeList[0].uploadedBy,
-                        // @ts-ignore
-                        comments:props.recipeList[2].comments
-                    }
-                }}>
-                    <ul className="divide-y-2 divide-gray-100">
-                        <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                            <pre className="italic">{recipe3Title}</pre>
-                        </li>
-                    </ul>
-                </Link>
-            </div>
+                <div>
+                    {props.recipeList.map((recipe:Recipe) =>
+                        <div>
+                            <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+                                <Link href={{
+                                    pathname: '/recipe',
+                                    query: {
+                                        id:recipe.id,
+                                        title:recipe.title,
+                                        text:recipe.text,
+                                        image:recipe.image,
+                                        ingredients:recipe.ingredients,
+                                        averageRating:recipe.averageRating,
+                                        uploadedBy:recipe.uploadedBy,
+                                        //@ts-ignore
+                                        comments:recipe.comments
+                                    }
+                                }} as={`recipe/$recipeText}`}>
+                                    <ul className="divide-y-2 divide-gray-100">
+                                        <li className="p-3 hover:bg-red-600 hover:text-red-200">
+                                            <pre className="italic">{recipe.title}</pre>
+                                        </li>
+                                    </ul>
+                                </Link>
+                            </div>
+                        </div>)}
+                </div>
 
             <Link href="/main">
                 <button
@@ -144,7 +67,7 @@ const Results: React.FC<RecipeArray>= (props) => {
                     Back
                 </button>
             </Link>
-        </div>
+            </div></div>
     );
 }
 /*
