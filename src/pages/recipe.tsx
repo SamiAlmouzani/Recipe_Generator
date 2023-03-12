@@ -10,8 +10,14 @@ import {useGlobalContext} from "../context";
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
-let saved=false;    //Variable to keep track of whether the recipe is saved
-const Recipe: React.FC<Recipe>=(props)=>{
+const Recipe: React.FC<RecipeInfo>=(props)=>{
+    console.log("RecipeInfo: "+JSON.stringify(props))
+    let saved=props.savedByCurrentUser
+    let startingHeartColor
+    if(saved)
+        startingHeartColor="FF0000"
+    else
+        startingHeartColor="808080"
     //Import the current user.
     const {currentUser, setCurrentUser}=useGlobalContext();
     //props is used to initialize a currentRecipe object. Elements of currentRecipe (rating, etc) can be modified while props is read only
@@ -20,15 +26,15 @@ const Recipe: React.FC<Recipe>=(props)=>{
     //When updating the id in the database, recipe didn't show the new value immediately. I'm using currentRecipe to set the new values and store them in
     //the database, then also setting those values on recipe.
     const [recipe, setRecipe] = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments});
-    const [heartColor,setHeartColor]=useState("808080")
-
+    const [heartColor,setHeartColor]=useState(startingHeartColor)
     /*
      When a user clicks the save button this useEffect will
      a) Save this recipe to the database (if it is not already there), and update the current user's savedRecipes array
      b) Remove this recipe from the current users's savedRecipes array
      */
 
-    useEffect(() => {
+   /* useEffect(() => {
+        console.log("")
         try {
             if (saved) {
                 //Check whether this recipe is already saved in the database. If it is not, it needs to be added
@@ -56,6 +62,23 @@ const Recipe: React.FC<Recipe>=(props)=>{
                 }).catch(()=>{
                     console.log("There was an error querying the data")})
                 //TODO -- Get the current user, and add the id of the current recipe to this users's savedRecipes array
+                console.log("current user about to update "+JSON.stringify(currentUser))
+                if(currentUser.savedRecipes.indexOf(currentRecipe.id)===-1) {
+                    //Create a temporary array, initialized to the current saved recipe array
+                    let tempSavedRecipes: string[] = currentUser.savedRecipes;
+                    console.log("saved recipes before updating" + tempSavedRecipes)
+                    //Update the array with the new value
+                    tempSavedRecipes.push(currentRecipe.id)
+                    console.log("saved recipes after updating" + tempSavedRecipes)
+                    //Update the current user object with the new array
+                    setCurrentUser({
+                        uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,
+                        savedRecipes: tempSavedRecipes, uploadedRecipes: currentUser.uploadedRecipes
+                    })
+                    console.log("current user after updating saved recipes: " + JSON.stringify(currentUser))
+                    //Update the database with this new object
+                    update(ref(db, '/users/' + currentUser.uid), currentUser);
+                }
             }
             else {
                 //TODO -- Get the current user, and remove the id of the current recipe from the users's savedRecipes array
@@ -68,7 +91,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
             console.log(e.stack);
         }
     }, [saved])
-
+*/
     return(
         <div>
             <div className={"flow-root px-40"}>
@@ -83,15 +106,13 @@ const Recipe: React.FC<Recipe>=(props)=>{
                         size={48}
                         onClick={()=>{
                             //Clicking the heart will toggle the "saved" property, and the color
-
-                            //I temporarily set it so saved is always set to true, so recipes are never deleted (for now)
-                            //this is so we can have some saved in the database to play around with
                             saved=!saved
                             if(saved){
                                 setHeartColor("FF0000")
                             }else{
                                 setHeartColor("808080")
                             }
+                            toggleSaved()
                         }}
                     />
                 </div>
@@ -111,6 +132,63 @@ const Recipe: React.FC<Recipe>=(props)=>{
             </div>
         </div>
     )
+    function toggleSaved(){
+        try {
+            if (saved) {
+                //Check whether this recipe is already saved in the database. If it is not, it needs to be added
+
+                //Get a Database Reference Object for this recipe's id
+                const recipeRef = query(ref(db, 'recipes/' + recipe.id));
+                get(recipeRef).then((snapshot)=>{
+                    //If no snapshot exists, the recipe was not found
+                    if(!snapshot.exists()){
+                        //Create a new entry under recipes, and save the automatically generated key
+                        const key = push(child(ref(db), 'recipes'),currentRecipe).key;
+                        console.log("key "+key)
+                        //Set the id field of currentRecipe to be equal to the key
+                        currentRecipe.id=""+key
+                        console.log("Recipe after updating key: "+JSON.stringify(currentRecipe))
+
+                        //Update the entry to the recipe object to store currentRecipe
+                        update(ref(db, 'recipes/'+key), currentRecipe);
+                        console.log("current recipe id "+currentRecipe.id)
+                        setRecipe({id:""+currentRecipe.id, title:recipe.title, text:recipe.text, image:recipe.image, ingredients:recipe.ingredients, averageRating:recipe.averageRating, uploadedBy:recipe.uploadedBy, comments:recipe.comments})
+                        console.log("recipe at the end "+JSON.stringify(recipe))
+                    }else{
+                        console.log("Already in database")
+                    }
+                }).catch(()=>{
+                    console.log("There was an error querying the data")})
+                //TODO -- Get the current user, and add the id of the current recipe to this users's savedRecipes array
+                console.log("current user about to update "+JSON.stringify(currentUser))
+                if(currentUser.savedRecipes.indexOf(currentRecipe.id)===-1) {
+                    //Create a temporary array, initialized to the current saved recipe array
+                    let tempSavedRecipes: string[] = currentUser.savedRecipes;
+                    console.log("saved recipes before updating" + tempSavedRecipes)
+                    //Update the array with the new value
+                    tempSavedRecipes.push(currentRecipe.id)
+                    console.log("saved recipes after updating" + tempSavedRecipes)
+                    //Update the current user object with the new array
+                    setCurrentUser({
+                        uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,
+                        savedRecipes: tempSavedRecipes, uploadedRecipes: currentUser.uploadedRecipes
+                    })
+                    console.log("current user after updating saved recipes: " + JSON.stringify(currentUser))
+                    //Update the database with this new object
+                    update(ref(db, '/users/' + currentUser.uid), currentUser);
+                }
+            }
+            else {
+                //TODO -- Get the current user, and remove the id of the current recipe from the users's savedRecipes array
+                console.log("unsaved recipe");
+            }
+        }
+        catch (e) {
+            console.log("database error");
+            // @ts-ignore
+            console.log(e.stack);
+        }
+    }
 }
 
 function StarIcons(){
@@ -228,12 +306,12 @@ export async function getServerSideProps(context:RecipeContext){
     //To use the API call to get an image, uncomment this block below, and uncomment the line that uses the
     //image url in the props object
 
-      /*console.log("Recipe context: "+JSON.stringify(context.query))
-        const response = await getJson("google", {
-        api_key: process.env.GOOGLE_IMAGES_API_KEY,
-        tbm: "isch",
-        q: context.query.title
-    });*/
+    /*console.log("Recipe context: "+JSON.stringify(context.query))
+      const response = await getJson("google", {
+      api_key: process.env.GOOGLE_IMAGES_API_KEY,
+      tbm: "isch",
+      q: context.query.title
+  });*/
     console.log("this is the response from getServerSideProps")
     //   console.log(response["images_results"][0].original);
     return{
@@ -247,7 +325,8 @@ export async function getServerSideProps(context:RecipeContext){
             ingredients:context.query.ingredients,
             averageRating:context.query.averageRating,
             uploadedBy:context.query.uploadedBy,
-            comments:context.query.comments
+            comments:context.query.comments,
+            savedByCurrentUser:context.query.savedByCurrentUser
         }
     }
 

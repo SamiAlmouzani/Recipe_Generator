@@ -22,6 +22,7 @@ const Home: NextPage = () => {
       const token=credential?.accessToken;
       const user=result.user;
 
+      console.log(user)
       console.log(user.uid)
       console.log(user.displayName)
 
@@ -33,7 +34,7 @@ const Home: NextPage = () => {
         //If the snapshot exists, it means the user is already in the database.
         if(snapshot.exists()){
           //Create a new user object and initialize the fields with the values from Firebase
-          const returningUser:customUser={uid:snapshot.val().uid,displayName:snapshot.val().displayName,
+          const returningUser:customUser={uid:snapshot.val().uid,displayName:snapshot.val().displayName, photoURL:snapshot.val().photoURL,
             savedRecipes:snapshot.val().savedRecipes,uploadedRecipes:snapshot.val().uploadedRecipes}
 
           //Set the current user in the global context
@@ -45,7 +46,7 @@ const Home: NextPage = () => {
 
           //Initialize a new user object
           // @ts-ignore
-          const newUser:customUser={uid:user.uid,displayName:user.displayName,savedRecipes:[],uploadedRecipes:[]}
+          const newUser:customUser={uid:user.uid,displayName:user.displayName,photoURL:user.photoURL, savedRecipes:[""],uploadedRecipes:[""]}
 
           //Save this new object in the database
           const db=getDatabase(app)
