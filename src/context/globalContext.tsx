@@ -14,7 +14,7 @@ export const GlobalContext = React.createContext<IGlobalContextProps>({
     setIngredientsList: (i) => {
         console.log(i)
     },
-    currentUser: {uid: '', displayName: '', savedRecipes: [], uploadedRecipes: []},
+    currentUser: {uid: '', displayName: '', photoURL:'', savedRecipes: [], uploadedRecipes: []},
     setCurrentUser: (u: customUser) => {
         console.log(u)
     }
@@ -23,7 +23,7 @@ export const GlobalContext = React.createContext<IGlobalContextProps>({
 export const GlobalContextProvider = (props: { children: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => {
   const [currentIngredientsList, setCurrentIngredientsList] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [currentUser, setCurrentUser]=useState({uid:'',displayName:'',savedRecipes:[],uploadedRecipes:[]})
+  const [currentUser, setCurrentUser]=useState({uid:'',displayName:'',photoURL:'', savedRecipes:[""],uploadedRecipes:[""]})
 
     return (
     <GlobalContext.Provider
