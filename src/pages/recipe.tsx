@@ -10,88 +10,34 @@ import {useGlobalContext} from "../context";
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
-const Recipe: React.FC<RecipeInfo>=(props)=>{
- //   console.log("RecipeInfo: "+JSON.stringify(props))
-    const[saved, setSaved]=useState(props.savedByCurrentUser)
-    let startingHeartColor
-    if(saved)
-        startingHeartColor="FF0000"
-    else
-        startingHeartColor="808080"
+const Recipe: React.FC<Recipe>=(props)=>{
     //Import the current user.
     const {currentUser, setCurrentUser}=useGlobalContext();
-    //props is used to initialize a currentRecipe object. Elements of currentRecipe (rating, etc) can be modified while props is read only
+    let startingHeartColor
+    let startingSavedState
+
+    //Check whether the id of this recipe is already in the current user's saved array. If so, set the color of the heart
+    //to red and set the initial state of "saved" to true
+    if((currentUser.savedRecipes.indexOf(props.id)>-1)&&props.id!=="0"){
+        startingHeartColor = "FF0000"
+        startingSavedState=true
+    }else{
+        startingHeartColor="808080"
+        startingSavedState=false
+    }
+    //props is used to initialize a currentRecipe object.
     let currentRecipe={id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments}
 
     //When updating the id in the database, recipe didn't show the new value immediately. I'm using currentRecipe to set the new values and store them in
     //the database, then also setting those values on recipe.
     const [recipe, setRecipe] = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments});
     const [heartColor,setHeartColor]=useState(startingHeartColor)
+    const[saved, setSaved]=useState(startingSavedState)
     /*
-     When a user clicks the save button this useEffect will
-     a) Save this recipe to the database (if it is not already there), and update the current user's savedRecipes array
-     b) Remove this recipe from the current users's savedRecipes array
+        I moved the contents of the useEffect function that was here, to a regular function further down the page. The useEffect seemed to be
+        running multiple times, not necessarily when the heart button was clicked, and it had some weird results once I started setting
+        the value of saved when the page is first loaded.
      */
-
-   /* useEffect(() => {
-        console.log("")
-        try {
-            if (saved) {
-                //Check whether this recipe is already saved in the database. If it is not, it needs to be added
-
-                //Get a Database Reference Object for this recipe's id
-                const recipeRef = query(ref(db, 'recipes/' + recipe.id));
-                get(recipeRef).then((snapshot)=>{
-                    //If no snapshot exists, the recipe was not found
-                    if(!snapshot.exists()){
-                        //Create a new entry under recipes, and save the automatically generated key
-                        const key = push(child(ref(db), 'recipes'),currentRecipe).key;
-                        console.log("key "+key)
-                        //Set the id field of currentRecipe to be equal to the key
-                        currentRecipe.id=""+key
-                        console.log("Recipe after updating key: "+JSON.stringify(currentRecipe))
-
-                        //Update the entry to the recipe object to store currentRecipe
-                        update(ref(db, 'recipes/'+key), currentRecipe);
-                        console.log("current recipe id "+currentRecipe.id)
-                        setRecipe({id:""+currentRecipe.id, title:recipe.title, text:recipe.text, image:recipe.image, ingredients:recipe.ingredients, averageRating:recipe.averageRating, uploadedBy:recipe.uploadedBy, comments:recipe.comments})
-                        console.log("recipe at the end "+JSON.stringify(recipe))
-                    }else{
-                        console.log("Already in database")
-                    }
-                }).catch(()=>{
-                    console.log("There was an error querying the data")})
-                //TODO -- Get the current user, and add the id of the current recipe to this users's savedRecipes array
-                console.log("current user about to update "+JSON.stringify(currentUser))
-                if(currentUser.savedRecipes.indexOf(currentRecipe.id)===-1) {
-                    //Create a temporary array, initialized to the current saved recipe array
-                    let tempSavedRecipes: string[] = currentUser.savedRecipes;
-                    console.log("saved recipes before updating" + tempSavedRecipes)
-                    //Update the array with the new value
-                    tempSavedRecipes.push(currentRecipe.id)
-                    console.log("saved recipes after updating" + tempSavedRecipes)
-                    //Update the current user object with the new array
-                    setCurrentUser({
-                        uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,
-                        savedRecipes: tempSavedRecipes, uploadedRecipes: currentUser.uploadedRecipes
-                    })
-                    console.log("current user after updating saved recipes: " + JSON.stringify(currentUser))
-                    //Update the database with this new object
-                    update(ref(db, '/users/' + currentUser.uid), currentUser);
-                }
-            }
-            else {
-                //TODO -- Get the current user, and remove the id of the current recipe from the users's savedRecipes array
-                console.log("unsaved recipe");
-            }
-        }
-        catch (e) {
-            console.log("database error");
-            // @ts-ignore
-            console.log(e.stack);
-        }
-    }, [saved])
-*/
     return(
         <div>
             <div className={"flow-root px-40"}>
@@ -112,7 +58,10 @@ const Recipe: React.FC<RecipeInfo>=(props)=>{
                             }else{
                                 setHeartColor("808080")
                             }
-                            toggleSaved(saved)
+                            let newID=toggleSaved(saved)
+                            if(newID!==recipe.id)
+                                setRecipe({id:newID, title:recipe.title, text:recipe.text, image:recipe.image, ingredients:recipe.ingredients, averageRating:recipe.averageRating, uploadedBy:recipe.uploadedBy, comments:recipe.comments})
+                            console.log("new recipe: "+recipe)
                         }}
                     />
                 </div>
@@ -132,6 +81,9 @@ const Recipe: React.FC<RecipeInfo>=(props)=>{
             </div>
         </div>
     )
+    /*When a user clicks the save button this function will
+    a) Save this recipe to the database (if it is not already there), and update the current user's savedRecipes array
+    b) Remove this recipe from the current users's savedRecipes array*/
     function toggleSaved(saved:boolean){
         try {
             if (saved) {
@@ -151,32 +103,51 @@ const Recipe: React.FC<RecipeInfo>=(props)=>{
 
                         //Update the entry to the recipe object to store currentRecipe
                         update(ref(db, 'recipes/'+key), currentRecipe);
-                        console.log("current recipe id "+currentRecipe.id)
-                        setRecipe({id:""+currentRecipe.id, title:recipe.title, text:recipe.text, image:recipe.image, ingredients:recipe.ingredients, averageRating:recipe.averageRating, uploadedBy:recipe.uploadedBy, comments:recipe.comments})
+                        setRecipe({id:""+key, title:recipe.title, text:recipe.text, image:recipe.image, ingredients:recipe.ingredients, averageRating:recipe.averageRating, uploadedBy:recipe.uploadedBy, comments:recipe.comments})
                         console.log("recipe at the end "+JSON.stringify(recipe))
+
+                        if(currentUser.savedRecipes.indexOf(currentRecipe.id)===-1) {
+                            //Create a temporary array, initialized to the current saved recipe array
+                            let tempSavedRecipes: string[] = currentUser.savedRecipes;
+                            console.log("saved recipes before updating" + tempSavedRecipes)
+                            //Update the array with the new value
+                            tempSavedRecipes.push(currentRecipe.id)
+                            console.log("saved recipes after updating" + tempSavedRecipes)
+                            //Update the current user object with the new array
+                            setCurrentUser({
+                                uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,
+                                savedRecipes: tempSavedRecipes, uploadedRecipes: currentUser.uploadedRecipes
+                            })
+                            console.log("current user after updating saved recipes: " + JSON.stringify(currentUser))
+                            //Update the database with this new object
+                            update(ref(db, '/users/' + currentUser.uid), currentUser);
+
+                            console.log("returning from user code "+currentRecipe.id)
+                            return currentRecipe.id
+                        }
                     }else{
                         console.log("Already in database")
+                        if(currentUser.savedRecipes.indexOf(recipe.id)===-1) {
+                            //Create a temporary array, initialized to the current saved recipe array
+                            let tempSavedRecipes: string[] = currentUser.savedRecipes;
+                            console.log("saved recipes before updating" + tempSavedRecipes)
+                            //Update the array with the new value
+                            tempSavedRecipes.push(recipe.id)
+                            console.log("saved recipes after updating" + tempSavedRecipes)
+                            //Update the current user object with the new array
+                            setCurrentUser({
+                                uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,
+                                savedRecipes: tempSavedRecipes, uploadedRecipes: currentUser.uploadedRecipes
+                            })
+                            console.log("current user after updating saved recipes: " + JSON.stringify(currentUser))
+                            //Update the database with this new object
+                            update(ref(db, '/users/' + currentUser.uid), currentUser);
+                        }
                     }
+                    return recipe.id
                 }).catch(()=>{
                     console.log("There was an error querying the data")})
                 //TODO -- Get the current user, and add the id of the current recipe to this users's savedRecipes array
-                console.log("current user about to update "+JSON.stringify(currentUser))
-                if(currentUser.savedRecipes.indexOf(currentRecipe.id)===-1) {
-                    //Create a temporary array, initialized to the current saved recipe array
-                    let tempSavedRecipes: string[] = currentUser.savedRecipes;
-                    console.log("saved recipes before updating" + tempSavedRecipes)
-                    //Update the array with the new value
-                    tempSavedRecipes.push(currentRecipe.id)
-                    console.log("saved recipes after updating" + tempSavedRecipes)
-                    //Update the current user object with the new array
-                    setCurrentUser({
-                        uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,
-                        savedRecipes: tempSavedRecipes, uploadedRecipes: currentUser.uploadedRecipes
-                    })
-                    console.log("current user after updating saved recipes: " + JSON.stringify(currentUser))
-                    //Update the database with this new object
-                    update(ref(db, '/users/' + currentUser.uid), currentUser);
-                }
             }
             else {
                 //TODO -- Get the current user, and remove the id of the current recipe from the users's savedRecipes array
@@ -184,7 +155,7 @@ const Recipe: React.FC<RecipeInfo>=(props)=>{
                 //Create a temporary array, initialized to the current saved recipe array
                 let tempSavedRecipes:string[]=currentUser.savedRecipes;
                 //Remove the current recipe's id from the array
-                let indexOfRecipe=tempSavedRecipes.indexOf(currentRecipe.id)
+                let indexOfRecipe=tempSavedRecipes.indexOf(recipe.id)
                 console.log("saved recipes "+tempSavedRecipes)
                 if(indexOfRecipe>-1)
                     tempSavedRecipes.splice(indexOfRecipe, 1)
@@ -195,6 +166,7 @@ const Recipe: React.FC<RecipeInfo>=(props)=>{
                 //Update the database with this new object
                 update(ref(db, '/users/'+currentUser.uid), currentUser);
                 console.log("database updated")
+                return recipe.id
             }
         }
         catch (e) {
@@ -202,6 +174,7 @@ const Recipe: React.FC<RecipeInfo>=(props)=>{
             // @ts-ignore
             console.log(e.stack);
         }
+        return recipe.id
     }
 }
 
@@ -339,9 +312,7 @@ export async function getServerSideProps(context:RecipeContext){
             ingredients:context.query.ingredients,
             averageRating:context.query.averageRating,
             uploadedBy:context.query.uploadedBy,
-            comments:context.query.comments,
-            savedByCurrentUser:context.query.savedByCurrentUser
-        }
+            comments:context.query.comments}
     }
 
 }

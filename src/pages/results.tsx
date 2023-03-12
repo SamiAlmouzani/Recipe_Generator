@@ -66,9 +66,7 @@ const Results: React.FC<RecipeArray>= (props) => {
                         // @ts-ignore
                         uploadedBy:props.recipeList[0].uploadedBy,
                         // @ts-ignore
-                        comments:props.recipeList[0].comments,
-                        // @ts-ignore
-                        savedByCurrentUser:(currentUser.savedRecipes.indexOf(props.recipeList[0].id)>-1)
+                        comments:props.recipeList[0].comments
                     }
                 }} as={`recipe/$recipeText}`}>
                     <ul className="divide-y-2 divide-gray-100">
@@ -98,9 +96,7 @@ const Results: React.FC<RecipeArray>= (props) => {
                         // @ts-ignore
                         uploadedBy:props.recipeList[1].uploadedBy,
                         // @ts-ignore
-                        comments:props.recipeList[1].comments,
-                        // @ts-ignore
-                        savedByCurrentUser:(currentUser.savedRecipes.indexOf(props.recipeList[1].id)>-1)
+                        comments:props.recipeList[1].comments
                     }
                 }} as={`recipe/$recipeText}`}>
                     <ul className="divide-y-2 divide-gray-100">
@@ -130,9 +126,7 @@ const Results: React.FC<RecipeArray>= (props) => {
                         // @ts-ignore
                         uploadedBy:props.recipeList[0].uploadedBy,
                         // @ts-ignore
-                        comments:props.recipeList[2].comments,
-                        // @ts-ignore
-                        savedByCurrentUser:(currentUser.savedRecipes.indexOf(props.recipeList[2].id)>-1)
+                        comments:props.recipeList[2].comments
                     }
                 }}>
                     <ul className="divide-y-2 divide-gray-100">
@@ -192,8 +186,8 @@ export async function getServerSideProps (context) {
         console.log(e)
     }
     //This try/catch block uses the API to generate the recipes. Uncomment this to pull in recipes from the API
-
-        /*try {
+/*
+        try {
             const requestOptions = {
                 method: 'POST',
                 headers: {
