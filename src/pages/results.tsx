@@ -6,6 +6,7 @@ import {child, get, getDatabase, ref} from "firebase/database";
 import {db, auth, app} from "../context/firebaseSetup";
 import {getAnalytics} from "firebase/analytics";
 import {getAuth} from "firebase/auth";
+import {useGlobalContext} from "../context";
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
@@ -17,6 +18,9 @@ const Results: React.FC<RecipeArray>= (props) => {
     const [recipe2Title, setRecipe2Title] = useState("");
     const [recipe3Title, setRecipe3Title] = useState("");
 
+    //Import the current user.
+    const {currentUser, setCurrentUser}=useGlobalContext();
+    console.log("current user: (accessed from main screen)"+currentUser.displayName)
     if(props.recipeList[0]!==undefined&&props.recipeList[0]!==null) {
         console.log(props.recipeList[0].text)
     }
@@ -182,8 +186,8 @@ export async function getServerSideProps (context) {
         console.log(e)
     }
     //This try/catch block uses the API to generate the recipes. Uncomment this to pull in recipes from the API
-
-        /*try {
+/*
+        try {
             const requestOptions = {
                 method: 'POST',
                 headers: {
@@ -237,7 +241,7 @@ export async function getServerSideProps (context) {
     }
 }
 const getTitle=(text:string)=>{
-    //All the recipes returned by the openai API begin with two newlines, then the title, another newline,
+    //Most of the recipes returned by the openai API begin with two newlines, then the title, another newline,
     //followed by the ingredients. We probably could add in some input validation here or use a regex if we need to.
 
     //Get everything before "Ingredients" (the title and newlines)
