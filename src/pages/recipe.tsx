@@ -74,10 +74,22 @@ const Recipe: React.FC<Recipe>=(props)=>{
                     <div className="whitespace-pre-line">{props.text}</div>
                     <Link className={""} href="/results">
                         <button
-                            className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
+                            className="my-8 float-left block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
                             Back
                         </button>
                     </Link>
+                    {/*pass the user and the recipe id to comments page */}
+                        <Link href={{
+                        pathname: '/comments',
+                        query: {
+                            id:recipe.id
+                        }
+                        }}>
+                            <button
+                              className="my-8 float-right block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto justify-content:right">
+                                Comments
+                            </button>
+                        </Link>
                 </div>
             </div>
         </div>
