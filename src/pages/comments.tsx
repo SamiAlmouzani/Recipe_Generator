@@ -17,9 +17,6 @@ const Comments: React.FC<CommentsProps>= (props) => {
   const [commentText, setCommentText] = useState("");
   const [userComment, setUserComment] = useState({ username: "", text: "" });
 
-  console.log("current user: (accessed from main screen)" + currentUser.displayName)
-  console.log("recipes from props\n")
-  console.log(props.commentList)
   // @ts-ignore
   // @ts-ignore
 
@@ -72,7 +69,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
                 placeholder=""></textarea>
             </div>
             <div>
-              <button onClick={saveComment} className="px-3 py-2 text-sm text-white bg-red-600 rounded">
+              <button className="px-3 py-2 text-sm text-white bg-red-600 rounded">
                 Comment
               </button>
               <button
@@ -95,8 +92,9 @@ const Comments: React.FC<CommentsProps>= (props) => {
     </div>
   );
 
-  function saveComment() {
-    console.log(userComment);
+  async function saveComment() {
+
+    console.log("comment text", commentText);
 
     try {
       if (commentText.length != 0) {
@@ -108,61 +106,52 @@ const Comments: React.FC<CommentsProps>= (props) => {
         let comment = userComment
         // @ts-ignore
         comments.push(comment)
-        const recipeRef = query(ref(db, 'recipes/' + props.id + '/comments'))
-        get(recipeRef).then((snapshot) => {
+
+
+        const recipeRef = query(ref(db, "recipes/"))
+
+        await get(recipeRef).then((snapshot) => {
 
           if (snapshot.exists()) {
 
             update(ref(db, 'recipes/' + props.id + '/comments'), comments);
           }
-        })
+        });
       }
     } catch (e) {
       // @ts-ignore
       console.log(e.stack);
     }
+
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/require-await
-  export async function getServerSideProps(context) {
+export async function getServerSideProps(context) {
 
-    let comments: Comment[] = []
-    let commentIds: string[] = []
-    let index = 0
-    let recipeID = {string: context.query.id}
-    //This try/catch block pulls in the recipes from the database
-    try {
-      let recipeRef = ref(getDatabase(app), 'recipes/' + context.query.id)
+  let comments: Comment[] = []
+  let commentIds: string[] = []
+  let index = 0
+  let recipeID = {string: context.query.id}
+  let tempComments:Comment[]=[]
 
-      console.log("recipe ref " + JSON.stringify(recipeRef))
+  //This try/catch block pulls in the recipes from the database
+  try {
+   // let recipeRef = query(ref(getDatabase(app), 'recipes/'))
 
-      await get(recipeRef).then((snapshot) => {
-
-        if (snapshot.exists()) {
-
-          snapshot.val().comments.forEach((c: Comment) => {
-
-            const commentRef = query(ref(getDatabase(app), 'recipes/' + context.query.id + 'comments/' + c));
-            get(commentRef).then((s) => {
-              comments.push(s.val());
-            })
-
-            return {
-              props: { comments, recipeID: JSON.parse(JSON.stringify(recipeID)) }
-            }
-          });
-        }
-      });
-    } catch (e) {
-      console.log(e)
-    }
     return {
-      props: { comments, recipeID: JSON.parse(JSON.stringify(recipeID)) }
-    }
+      props: { commentList:comments, id: JSON.parse(JSON.stringify(recipeID))}}
+  } catch (e) {
+    console.log(e)
   }
+  return {
+    props: { commentList:comments, id: JSON.parse(JSON.stringify(recipeID)) }
+  }
+}
+
+
 
 
 
