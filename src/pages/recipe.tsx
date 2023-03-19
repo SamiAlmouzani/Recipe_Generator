@@ -100,8 +100,12 @@ const Recipe: React.FC<Recipe>=(props)=>{
                 if(currentUser.savedRecipes.indexOf(recipe.id)===-1) {
                     //Create a temporary array, initialized to the current saved recipe array
                     let tempSavedRecipes: string[] = currentUser.savedRecipes;
-                    //Update the array with the new value
-                    tempSavedRecipes.push(recipe.id)
+
+                    if(tempSavedRecipes[0]===""){
+                        tempSavedRecipes[0]=recipe.id
+                    }else{
+                        tempSavedRecipes.push(recipe.id)
+                    }
                     //Update the current user object with the new array
                     setCurrentUser({
                         uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,

@@ -78,33 +78,6 @@ export async function getServerSideProps (context) {
     let titleList:string[]=[]
     let titleListNoDuplicates:string[]=[]
     let recipeList:Recipe[]=[]
-    let index=0
-    try{
-        let dbRef=ref(getDatabase(app))
-        await get(child(dbRef, 'recipes/')).then((snapshot) => {
-            if(snapshot.exists()) {
-                console.log("snapshot:\n" +JSON.stringify(snapshot));
-                snapshot.forEach((s)=> {
-                    // @ts-ignore
-                    // @ts-ignore
-                    const newRecipe={id:s.val().id, image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients, averageRating:s.val().averageRating, uploadedBy:s.val().uploadedBy,comments:s.val().comments}
-                    console.log(index)
-                    recipeList[index]=newRecipe
-                    index++;
-                })
-                console.log("about to return")
-                recipeList.forEach((r)=>{ // @ts-ignore
-                    console.log(r)})
-                return {
-                    props: {recipeList}
-                }
-            } else {
-                console.log("No data available");
-            }
-        });}
-    catch(e){
-        console.log(e)
-    }
     //This try/catch block uses the API to generate only a recipe title. Comment out this block to pull recipes from the database instead for testing
     try {
                 const requestOptions = {
@@ -138,7 +111,7 @@ export async function getServerSideProps (context) {
                         titleList=data.choices.map((r:RecipeFromAPI)=>{
                             //Sometimes the API will return text before the title. Remove anything above the last occurrence of a newline
                             // @ts-ignore
-                            return r.text.substring(r.text.lastIndexOf('\n'),r.text.length)
+                            return r.text.substring(r.text.lastIndexOf('\n')+1,r.text.length)
                         })
                         //Remove duplicates from titleList
                         titleList.forEach((r)=>{

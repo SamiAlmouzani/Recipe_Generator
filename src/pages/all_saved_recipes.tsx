@@ -10,7 +10,7 @@ import {useGlobalContext} from "../context";
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
-//props is an array of Recipe objects.
+//props is an array of Recipe objects pulled from the database.
 const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
 
     //Import the current user.
@@ -23,7 +23,7 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
     return (
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto text-left">
-                <h1 className="text-2xl font-bold sm:text-3xl">...Here are some recipes to try:</h1>
+                <h1 className="text-2xl font-bold sm:text-3xl">Previously generated recipes:</h1>
             </div>
 
             <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
@@ -66,9 +66,8 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
     );
 }
 /*
-getServerSideProps runs when the link on the main page is clicked. It makes the API call using the list of ingredients, passed
-through the context object. On the main page, context is being passed in the Link component. Context has two fields - href and query.
-query is an object that has an ingredients field, which is just the text the user entered on the main page.
+getServerSideProps runs when the link on the main page is clicked. It loads all the saved recipes from the database, and
+returns them to the AllSavedRecipes page
  */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -84,13 +83,11 @@ export async function getServerSideProps (context) {
                 console.log("snapshot:\n" +JSON.stringify(snapshot));
                 snapshot.forEach((s)=> {
                     // @ts-ignore
-                    // @ts-ignore
                     const newRecipe={id:s.val().id, image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients, averageRating:s.val().averageRating, uploadedBy:s.val().uploadedBy,comments:s.val().comments}
                     console.log(index)
                     recipeList[index]=newRecipe
                     index++;
                 })
-                console.log("about to return")
                 recipeList.forEach((r)=>{ // @ts-ignore
                     console.log(r)})
                 return {
@@ -103,74 +100,8 @@ export async function getServerSideProps (context) {
     catch(e){
         console.log(e)
     }
-    //This try/catch block uses the API to generate the recipes. Uncomment this to pull in recipes from the API
-    /*
-                try {
-                    const requestOptions = {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                            'Authorization': "Bearer "+process.env.OPENAI_API_KEY
-                        },
-                        body: JSON.stringify({
-                            'model': "text-davinci-003",
-                            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-member-access
-                            'prompt': "ingredients and directions for a recipe that contains "+context.query.ingredients,
-                            'temperature': 0.7,
-                            //max_tokens is the max number of words that can be returned for one recipe. This is set to 20 just because I didn't need all
-                            //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
-                            'max_tokens':400,
-                            'top_p': 1,
-                            //To generate additional recipes, change n
-                            'n':6,
-                            'frequency_penalty': 0,
-                            'presence_penalty': 0.5,
-                            'stop': ["\"\"\""],
-                        })
-                    };
-                    await fetch('https://api.openai.com/v1/completions', requestOptions)
-                        .then(response => response.json())
-                        .then(data => {
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-                            recipeList=data.choices.map((r:RecipeFromAPI)=>{
-                                // @ts-ignore
-                                const recipe:Recipe ={id:"0", text:r.text,title:getTitle(r.text),image:"",ingredients:""+context.query.ingredients, averageRating:0, uploadedBy:0, comments:[{username:"",text:""}]}
-                                return recipe;
-                            })
-                            console.log("returning")
-                            console.log(recipeList)
-                            return {
-                                recipeList
-                            };
-                        }).catch(err => {
-                        console.log(err);
-                    });
-                    return {
-                        props: {recipeList}
-                    };
-                }catch {
-                    return {
-                        props: {recipeList}
-                    };
-                }
-        return{
-            props:{recipeList}
-        }*/
+    return {
+        props: {recipeList}
+    }
 }
-const getTitle=(text:string)=>{
-    //Most of the recipes returned by the openai API begin with two newlines, then the title, another newline,
-    //followed by the ingredients. We probably could add in some input validation here or use a regex if we need to.
-
-    //Get everything before "Ingredients" (the title and newlines)
-    let title=text.substring(0,text.indexOf("Ingredients"))
-    //Trim the newlines by removing the first two characters, and the last character
-    title=title.substring(2,title.length-1)
-    return title;
-}
-const getText=(text:string)=>{
-    //Return everything after (and including) "Ingredients"
-    return text.substring(text.indexOf("Ingredients"))
-}
-
 export default AllSavedRecipes;

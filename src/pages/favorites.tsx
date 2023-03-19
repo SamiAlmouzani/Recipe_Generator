@@ -15,7 +15,6 @@ import {useGlobalContext} from "../context";
 const Favorites: React.FC<RecipeArray>= (props) => {
     //Import the current user.
     const {currentUser, setCurrentUser}=useGlobalContext();
-    const[savedRecipes, setSavedRecipes]=useState([{}]);
     console.log("current user: (accessed from main screen)"+currentUser.displayName)
     console.log("recipes from props\n")
     console.log(props.recipeList)
@@ -88,7 +87,6 @@ query is an object that has an ingredients field, which is just the text the use
 export async function getServerSideProps (context) {
     let recipeList:Recipe[]=[]
     let recipeIds:string[]=[]
-    let index=0
     //This try/catch block pulls in the recipes from the database
     try{
         let userRef=ref(getDatabase(app),'users/'+context.query.uid)
@@ -98,35 +96,17 @@ export async function getServerSideProps (context) {
                // console.log(snapshot.val().savedRecipes)
                 recipeIds=snapshot.val().savedRecipes
                 console.log(recipeIds)
-                //For each saved recipe, get that recipe in the database
-                snapshot.val().savedRecipes.forEach((r:string)=>{
-                    console.log(r)
-                    const recipeRef =query(ref(getDatabase(app), 'recipes/' + r));
-                    get(recipeRef).then((s)=>{
-                        recipeList.push(s.val());
-                        console.log(recipeList.length+" "+recipeList+" "+snapshot.val().savedRecipes.length)
-                        if(recipeList.length===snapshot.val().savedRecipes.length-1){
-                            console.log("about to return")
-                            recipeList.forEach((r)=>{ // @ts-ignore
-                                console.log(r.title)})
-                            return {
-                                props: {recipeList}
-                            }
-                        }
-                    })
-                })
             }
         });
         for(let i=0;i<recipeIds.length;i++){
             const recipeRef =query(ref(getDatabase(app), 'recipes/' + recipeIds[i]));
             await get(recipeRef).then((snapshot)=>{
                 recipeList.push(snapshot.val());
-                console.log(recipeList.length+" "+recipeList+" "+snapshot.val().savedRecipes.length)
-                if(recipeList.length===snapshot.val().savedRecipes.length-1){
+                console.log(recipeList.length+" "+recipeList)
+                if(recipeList.length===recipeIds.length){
                     console.log("about to return")
                     recipeList.forEach((r)=>{ // @ts-ignore
                         console.log(r.title)})
-                    console
                     return {
                         props: {recipeList}
                     }
@@ -141,19 +121,4 @@ export async function getServerSideProps (context) {
         props:{recipeList}
     }
 }
-const getTitle=(text:string)=>{
-    //Most of the recipes returned by the openai API begin with two newlines, then the title, another newline,
-    //followed by the ingredients. We probably could add in some input validation here or use a regex if we need to.
-
-    //Get everything before "Ingredients" (the title and newlines)
-    let title=text.substring(0,text.indexOf("Ingredients"))
-    //Trim the newlines by removing the first two characters, and the last character
-    title=title.substring(2,title.length-1)
-    return title;
-}
-const getText=(text:string)=>{
-    //Return everything after (and including) "Ingredients"
-    return text.substring(text.indexOf("Ingredients"))
-}
-
 export default Favorites;
