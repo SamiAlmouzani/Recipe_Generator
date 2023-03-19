@@ -17,61 +17,76 @@ const RecipeGenerator: NextPage = () => {
   const {currentUser, setCurrentUser}=useGlobalContext();
   console.log("current user: (accessed from main screen)"+currentUser.displayName)
   return (
-        <section className="bg-gray-50">
-      <div
-        className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center"
+    <section className="bg-gray-50">
+  <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center relative">
+    <div className="absolute left-10 top-10">
+      <Link
+        href={{
+          pathname: '/all_saved_recipes',
+          query: {
+            uid: currentUser.uid,
+          },
+        }}
       >
-          <div className="absolute left-10 top-10">
+        <button className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
+          See All Recipes
+        </button>
+      </Link>
+    </div>
+    <div className="mx-auto max-w-xl text-center">
+      <h1 className="text-3xl font-extrabold sm:text-5xl">
+        <strong className="font-extrabold text-red-700 sm:block">
+          Enter Ingredients
+        </strong>
+      </h1>
 
-          <Link href={{
-              pathname: '/all_saved_recipes',
-              query: {
-                  uid:currentUser.uid
-              }
-          }}>
-              <button
-                  className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
-                  See All Recipes
-              </button>
-          </Link>
-          </div>
-        <div className="mx-auto max-w-xl text-center">
-          <h1 className="text-3xl font-extrabold sm:text-5xl">
-            <strong className="font-extrabold text-red-700 sm:block">
-              Enter Ingredients
-            </strong>
-          </h1>
-
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <IngredientsInput />
-            <Link href={{
-                pathname: '/results',
-                query: {
-                    ingredients:ingredientsList
-                }
-            }}>
-              <button
-              className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
-                Enter
-              </button>
-            </Link>
-          </div>
-          <div className="absolute right-10 top-10">
-            <Link href={{
-              pathname: '/favorites',
-                query: {
-                    uid:currentUser.uid
-                }
-            }}>
-              <button
-                className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
-                Favorites
-              </button>
-            </Link>
-          </div>
-        </div>
+      <div className="mt-8 flex flex-wrap justify-center gap-4">
+        <IngredientsInput />
+        <Link
+          href={{
+            pathname: '/results',
+            query: {
+              ingredients: ingredientsList,
+            },
+          }}
+        >
+          <button className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
+            Enter
+          </button>
+        </Link>
       </div>
-    </section>
+      <div className="absolute right-10 top-10">
+        <Link
+          href={{
+            pathname: '/favorites',
+            query: {
+              uid: currentUser.uid,
+            },
+          }}
+        >
+          <button className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
+            Favorites
+          </button>
+        </Link>
+      </div>
+      <div className="absolute bottom-10 left-10">
+      <Link
+          href={{
+            pathname: '/upload_recipe',
+            query: {
+              uid: currentUser.uid,
+            },
+          }}
+        >
+          <button className="block w-full rounded bg-green-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-green-700 focus:outline-none focus:ring active:bg-green-500 sm:w-auto">
+            Upload Recipe
+          </button>
+        </Link>
+      </div>
+    </div>
+  </div>
+</section>
+
     );
 }
 //Ingredients input field
