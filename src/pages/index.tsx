@@ -19,7 +19,6 @@ const Home: NextPage = () => {
     signInWithPopup(auth,provider).then((result)=>{
       const credential=
           GoogleAuthProvider.credentialFromResult(result);
-      const token=credential?.accessToken;
       const user=result.user;
 
       console.log(user)
@@ -74,7 +73,7 @@ const Home: NextPage = () => {
       <div className="mx-auto max-w-xl text-center">
         <h1 className="text-3xl font-extrabold sm:text-5xl">
           <strong className="font-extrabold text-red-700 sm:block">
-            Recipe Generator.
+            SuperChef.
           </strong>
         </h1>
 

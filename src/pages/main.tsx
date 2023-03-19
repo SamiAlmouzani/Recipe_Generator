@@ -42,7 +42,6 @@ const RecipeGenerator: NextPage = () => {
               </button>
             </Link>
           </div>
-
           <div className="absolute right-10 top-10">
             <Link href={{
               pathname: '/favorites',
@@ -55,11 +54,7 @@ const RecipeGenerator: NextPage = () => {
                 Favorites
               </button>
             </Link>
-
           </div>
-
-
-
         </div>
       </div>
     </section>

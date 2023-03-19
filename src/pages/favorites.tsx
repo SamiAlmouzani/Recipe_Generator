@@ -109,7 +109,6 @@ export async function getServerSideProps (context) {
                             console.log("about to return")
                             recipeList.forEach((r)=>{ // @ts-ignore
                                 console.log(r.title)})
-                            console
                             return {
                                 props: {recipeList}
                             }

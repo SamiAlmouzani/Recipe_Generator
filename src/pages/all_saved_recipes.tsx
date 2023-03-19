@@ -6,13 +6,12 @@ import {db, auth, app} from "../context/firebaseSetup";
 import {getAnalytics} from "firebase/analytics";
 import {getAuth} from "firebase/auth";
 import {useGlobalContext} from "../context";
-type RecipeFromAPI = { text: string; index:number; logprobs: object; finish_reason: string}|null
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
-const Results: React.FC<RecipeArray>= (props) => {
+const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
 
     //Import the current user.
     const {currentUser, setCurrentUser}=useGlobalContext();
@@ -75,10 +74,9 @@ query is an object that has an ingredients field, which is just the text the use
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps (context) {
-    let titleList:string[]=[]
-    let titleListNoDuplicates:string[]=[]
     let recipeList:Recipe[]=[]
     let index=0
+    //This try/catch block pulls in the recipes from the database
     try{
         let dbRef=ref(getDatabase(app))
         await get(child(dbRef, 'recipes/')).then((snapshot) => {
@@ -105,78 +103,74 @@ export async function getServerSideProps (context) {
     catch(e){
         console.log(e)
     }
-    //This try/catch block uses the API to generate only a recipe title. Comment out this block to pull recipes from the database instead for testing
-    try {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                        'Authorization': "Bearer "+process.env.OPENAI_API_KEY
-                    },
-                    body: JSON.stringify({
-                        'model': "text-davinci-003",
-                        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-member-access
-                        'prompt': "name of a recipe that contains "+context.query.ingredients,
-                        'temperature': 0.7,
-                        //max_tokens is the max number of words that can be returned for one recipe. This is set to 20 just because I didn't need all
-                        //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
-                        'max_tokens':20,
-                        'top_p': 1,
-                        //To generate additional recipes, change n
-                        'n':7,
-                        'frequency_penalty': 0,
-                        'presence_penalty': 0.5,
-                        'stop': ["\"\"\""],
-                    })
-                };
-                await fetch('https://api.openai.com/v1/completions', requestOptions)
-                    .then(response => response.json())
-                    .then(data => {
-                        //Store all of the generated recipe titles in the titleList array
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-                        titleList=data.choices.map((r:RecipeFromAPI)=>{
-                            //Sometimes the API will return text before the title. Remove anything above the last occurrence of a newline
-                            // @ts-ignore
-                            return r.text.substring(r.text.lastIndexOf('\n'),r.text.length)
+    //This try/catch block uses the API to generate the recipes. Uncomment this to pull in recipes from the API
+    /*
+                try {
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+                            'Authorization': "Bearer "+process.env.OPENAI_API_KEY
+                        },
+                        body: JSON.stringify({
+                            'model': "text-davinci-003",
+                            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-member-access
+                            'prompt': "ingredients and directions for a recipe that contains "+context.query.ingredients,
+                            'temperature': 0.7,
+                            //max_tokens is the max number of words that can be returned for one recipe. This is set to 20 just because I didn't need all
+                            //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
+                            'max_tokens':400,
+                            'top_p': 1,
+                            //To generate additional recipes, change n
+                            'n':6,
+                            'frequency_penalty': 0,
+                            'presence_penalty': 0.5,
+                            'stop': ["\"\"\""],
                         })
-                        //Remove duplicates from titleList
-                        titleList.forEach((r)=>{
-                            //Check whether this recipe was already added to titleListNoDuplicates
-                            if(!(titleListNoDuplicates.indexOf(r)>-1)) {
-                                titleListNoDuplicates.push(r)
-                            }
-                        })
-                        console.log("Titles after removing duplicates")
-                        console.log(titleListNoDuplicates)
-                        //Map each of these titles into a recipe array (all fields of each recipe will be empty, except for the title
-                        recipeList=titleListNoDuplicates.map((title)=>{
-                            let recipe:Recipe={
-                                id:"",
-                                title:title,
-                                text:"",
-                                image:"",
-                                ingredients:context.query.ingredients,
-                                averageRating:0,
-                                uploadedBy:"0",
-                                //@ts-ignore
-                                comments:""
-                            }
-                            return recipe
-                        })
-                    }).catch(err => {
-                    console.log(err);
-                });
-                return {
-                    props: {recipeList}
-                };
-            }catch {
-                return {
-                    props: {recipeList}
-                };
-            }
-    return{
-        props:{recipeList}
-    }
+                    };
+                    await fetch('https://api.openai.com/v1/completions', requestOptions)
+                        .then(response => response.json())
+                        .then(data => {
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+                            recipeList=data.choices.map((r:RecipeFromAPI)=>{
+                                // @ts-ignore
+                                const recipe:Recipe ={id:"0", text:r.text,title:getTitle(r.text),image:"",ingredients:""+context.query.ingredients, averageRating:0, uploadedBy:0, comments:[{username:"",text:""}]}
+                                return recipe;
+                            })
+                            console.log("returning")
+                            console.log(recipeList)
+                            return {
+                                recipeList
+                            };
+                        }).catch(err => {
+                        console.log(err);
+                    });
+                    return {
+                        props: {recipeList}
+                    };
+                }catch {
+                    return {
+                        props: {recipeList}
+                    };
+                }
+        return{
+            props:{recipeList}
+        }*/
 }
-export default Results;
+const getTitle=(text:string)=>{
+    //Most of the recipes returned by the openai API begin with two newlines, then the title, another newline,
+    //followed by the ingredients. We probably could add in some input validation here or use a regex if we need to.
+
+    //Get everything before "Ingredients" (the title and newlines)
+    let title=text.substring(0,text.indexOf("Ingredients"))
+    //Trim the newlines by removing the first two characters, and the last character
+    title=title.substring(2,title.length-1)
+    return title;
+}
+const getText=(text:string)=>{
+    //Return everything after (and including) "Ingredients"
+    return text.substring(text.indexOf("Ingredients"))
+}
+
+export default AllSavedRecipes;

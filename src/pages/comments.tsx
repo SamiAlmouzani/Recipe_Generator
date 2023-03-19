@@ -29,67 +29,67 @@ const Comments: React.FC<CommentsProps>= (props) => {
   })
 
   return (
-    <div>
-      <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto text-left">
-          <h1 className="text-2xl font-bold sm:text-3xl">Comments</h1>
-        </div>
-        <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-          <div>
-            {commentArray.map((comment) =>
-              <div>
-                <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-                  <ul className="divide-y-2 divide-gray-100">
-                    <li className="p-3 hover:bg-red-600 hover:text-red-200">
+      <div>
+        <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto text-left">
+            <h1 className="text-2xl font-bold sm:text-3xl">Comments</h1>
+          </div>
+          <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+            <div>
+              {commentArray.map((comment) =>
+                  <div>
+                    <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+                      <ul className="divide-y-2 divide-gray-100">
+                        <li className="p-3 hover:bg-red-600 hover:text-red-200">
                                             <pre className="italic">{                                        //@ts-ignore
                                               comment.username}</pre>
-                      <pre className="italic">{                                        //@ts-ignore
-                        comment.text}</pre>
-                    </li>
-                  </ul>
+                          <pre className="italic">{                                        //@ts-ignore
+                            comment.text}</pre>
+                        </li>
+                      </ul>
 
-                </div>
-              </div>)}
+                    </div>
+                  </div>)}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex px-8 py-8">
-        <div className="max-w-lg rounded-lg shadow-md shadow-red-600/50">
-          <form action="" className="w-full p-4 my-8">
-            <div className="mb-2">
-              <label htmlFor="comment" className="text-lg text-gray-600">Add a comment</label>
-              <textarea
-                className="w-full h-20 p-2 border rounded focus:outline-none focus:ring-gray-300 focus:ring-1"
-                name="comment"
-                onChange={(event) => {
+        <div className="flex px-8 py-8">
+          <div className="max-w-lg rounded-lg shadow-md shadow-red-600/50">
+            <form action="" className="w-full p-4 my-8">
+              <div className="mb-2">
+                <label htmlFor="comment" className="text-lg text-gray-600">Add a comment</label>
+                <textarea
+                    className="w-full h-20 p-2 border rounded focus:outline-none focus:ring-gray-300 focus:ring-1"
+                    name="comment"
+                    onChange={(event) => {
 
-                  setCommentText(event.target.value);
-                }
-                }
-                placeholder=""></textarea>
-            </div>
-            <div>
-              <button className="px-3 py-2 text-sm text-white bg-red-600 rounded">
-                Comment
-              </button>
-              <button
-                className="px-3 py-2 text-sm text-white-600 border border-red-500 rounded">
-                Cancel
-              </button>
-            </div>
-          </form>
+                      setCommentText(event.target.value);
+                    }
+                    }
+                    placeholder=""></textarea>
+              </div>
+              <div>
+                <button className="px-3 py-2 text-sm text-white bg-red-600 rounded">
+                  Comment
+                </button>
+                <button
+                    className="px-3 py-2 text-sm text-white-600 border border-red-500 rounded">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
+        <Link href="/main">
+          <button
+              className="mx-8 my-8 block w-full mt-6 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
+          >
+            Back
+          </button>
+        </Link>
+
+
       </div>
-      <Link href="/main">
-        <button
-          className="mx-8 my-8 block w-full mt-6 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
-        >
-          Back
-        </button>
-      </Link>
-
-
-    </div>
   );
 
   async function saveComment() {
@@ -139,7 +139,7 @@ export async function getServerSideProps(context) {
 
   //This try/catch block pulls in the recipes from the database
   try {
-   // let recipeRef = query(ref(getDatabase(app), 'recipes/'))
+    // let recipeRef = query(ref(getDatabase(app), 'recipes/'))
 
     return {
       props: { commentList:comments, id: JSON.parse(JSON.stringify(recipeID))}}
@@ -150,10 +150,4 @@ export async function getServerSideProps(context) {
     props: { commentList:comments, id: JSON.parse(JSON.stringify(recipeID)) }
   }
 }
-
-
-
-
-
-
 export default Comments;
