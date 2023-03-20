@@ -1,14 +1,68 @@
 import React, { useState, ChangeEvent } from "react";
+import {useGlobalContext} from "../context";
+import {child, getDatabase, push, ref, update} from "firebase/database";
+import {app, db} from "../context/firebaseSetup";
+import axios from "axios";
+import path from "path";
 
 const UploadRecipe = () => {
     const [title, setTitle] = useState("");
     const [ingredients, setIngredients] = useState("");
     const [directions, setDirections] = useState("");
     const [picture, setPicture] = useState<File | null>(null);
+    const {currentUser, setCurrentUser}=useGlobalContext();
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
-        // code to submit the form data
+        console.log(picture)
+        let imageURL=""
+        //save the image in public/user_images (uses the images.ts file in the api folder)
+        try {
+            if (picture){
+                const formData = new FormData();
+                formData.append("testImage", picture);
+                const { data } = await axios.post("/api/images", formData);
+                imageURL=path.join("/user_images",data["url"])
+                console.log(imageURL)
+            }
+        } catch (error: any) {
+            console.log(error.response?.data);
+        }
+
+        //Create a new recipe using the new image path
+        // @ts-ignore
+        let recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, comments:""}
+        //Store this recipe in the database
+        try{
+            //Create a new entry under recipes, and save the automatically generated key
+            const key=push(child(ref(getDatabase(app)), 'recipes'),recipe).key;
+            //Set the id field of recipe to be equal to the key
+            recipe.id=""+key
+            console.log("id "+recipe.id)
+            //Update the entry to the recipe object to store the recipe
+            update(ref(getDatabase(app), 'recipes/'+key), recipe);
+            console.log("updated database, id is "+recipe.id)
+
+            //Update the current user's uploaded recipes array
+            //Create a temporary array, initialized to the current uploaded recipe array
+            let tempUploadedRecipes: string[] = currentUser.uploadedRecipes;
+
+            if(tempUploadedRecipes[0]===""){
+                tempUploadedRecipes[0]=recipe.id
+            }else{
+                tempUploadedRecipes.push(recipe.id)
+            }
+            //Update the current user object with the new array
+            setCurrentUser({
+                uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,
+                savedRecipes: currentUser.savedRecipes, uploadedRecipes: tempUploadedRecipes
+            })
+            //Update the database with this new object
+            update(ref(db, '/users/' + currentUser.uid), currentUser);
+        }
+        catch(e){
+            console.log(e)
+        }
     };
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {

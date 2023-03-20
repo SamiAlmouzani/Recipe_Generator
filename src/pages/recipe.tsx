@@ -59,7 +59,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
                             }else{
                                 setHeartColor("808080")
                             }
-                           toggleSaved(saved)
+                            toggleSaved(saved)
                         }}
                     />
                 </div>
@@ -266,7 +266,7 @@ export async function getServerSideProps(context:RecipeContext){
                 comments:context.query.comments}
         }
     }
-    //If the text is empty, it means this is a new recipe, and so far only the title has been generated.
+        //If the text is empty, it means this is a new recipe, and so far only the title has been generated.
     //Generate the text with the openAI API, and generate the image with SerpAPI. The recipe will then need to be saved in the database.
     else {
         let text:string=""
