@@ -15,6 +15,10 @@ const RecipeGenerator: NextPage = () => {
 
   //Import the current user.
   const {currentUser, setCurrentUser}=useGlobalContext();
+
+  // Check if its loading
+  const [isLoading, setIsLoading] = useState(false);
+
   console.log("current user: (accessed from main screen)"+currentUser.displayName)
   return (
     <section className="bg-gray-50">
@@ -39,7 +43,12 @@ const RecipeGenerator: NextPage = () => {
           Enter Ingredients
         </strong>
       </h1>
-
+      
+      {isLoading ? (
+        <div className="flex justify-center items-center mt-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        </div>
+      ) : (
       <div className="mt-8 flex flex-wrap justify-center gap-4">
         <IngredientsInput />
         <Link
@@ -50,11 +59,18 @@ const RecipeGenerator: NextPage = () => {
             },
           }}
         >
-          <button className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
+          <button 
+            className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
+            onClick={() => {
+              setIsLoading(true);
+            }}
+          >
             Enter
           </button>
         </Link>
       </div>
+      )
+    }
       <div className="absolute right-10 top-10">
         <Link
           href={{
