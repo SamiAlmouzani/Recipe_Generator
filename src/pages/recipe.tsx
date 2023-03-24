@@ -195,7 +195,9 @@ function StarIcons(r: {recipe:Recipe}){
     const [star4color,setStar4Color]=useState("grey")
     const [star5color,setStar5Color]=useState("grey")
     const [rating, setRating]=useState(0)
-    const [averageRating, setAverageRating]=useState(r.recipe.averageRating.toFixed(2))
+    let a=r.recipe.averageRating as number
+    //@ts-ignore
+    const [averageRating, setAverageRating]=useState(parseFloat((r.recipe.averageRating)).toFixed(2))
 
     return(
         <div>
@@ -384,7 +386,7 @@ export async function getServerSideProps(context:RecipeContext){
             text:text,
             image:response["images_results"][0].original,
             ingredients:context.query.ingredients,
-            averageRating:context.query.averageRating,
+            averageRating:0,
             uploadedBy:context.query.uploadedBy,
             comments:context.query.comments,
             ratingMap:context.query.ratingMap,
