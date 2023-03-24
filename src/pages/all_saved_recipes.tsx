@@ -20,6 +20,7 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
     console.log(props.recipeList)
     // @ts-ignore
     // @ts-ignore
+    // @ts-ignore
     return (
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto text-left">
@@ -42,7 +43,11 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
                                         averageRating:recipe.averageRating,
                                         uploadedBy:recipe.uploadedBy,
                                         //@ts-ignore
-                                        comments:recipe.comments
+                                        comments:recipe.comments,
+                                        ratingMap:recipe.ratingMap,
+                                        //@ts-ignore
+                                        ratingSum:recipe.ratingSum,
+                                        totalRatings:recipe.totalRatings
                                     }
                                 }} as={`recipe/$recipeText}`}>
                                     <ul className="divide-y-2 divide-gray-100">
@@ -83,8 +88,7 @@ export async function getServerSideProps (context) {
                 console.log("snapshot:\n" +JSON.stringify(snapshot));
                 snapshot.forEach((s)=> {
                     // @ts-ignore
-                    const newRecipe={id:s.val().id, image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients, averageRating:s.val().averageRating, uploadedBy:s.val().uploadedBy,comments:s.val().comments}
-                    console.log(index)
+                    const newRecipe={id:s.val().id, image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients, averageRating:s.val().averageRating as number, uploadedBy:s.val().uploadedBy,comments:s.val().comments,ratingMap:s.val().ratingMap,ratingSum:s.val().ratingSum,totalRatings:s.val().totalRatings}
                     recipeList[index]=newRecipe
                     index++;
                 })

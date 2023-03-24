@@ -21,6 +21,7 @@ const Results: React.FC<RecipeArray>= (props) => {
     console.log(props.recipeList)
     // @ts-ignore
     // @ts-ignore
+    // @ts-ignore
     return (
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto text-left">
@@ -43,7 +44,9 @@ const Results: React.FC<RecipeArray>= (props) => {
                                         averageRating:recipe.averageRating,
                                         uploadedBy:recipe.uploadedBy,
                                         //@ts-ignore
-                                        comments:recipe.comments
+                                        comments:recipe.comments,
+                                        //@ts-ignore
+                                        ratingMap:recipe.ratingMap
                                     }
                                 }} as={`recipe/$recipeText}`}>
                                     <ul className="divide-y-2 divide-gray-100">
@@ -78,6 +81,7 @@ export async function getServerSideProps (context) {
     let titleList:string[]=[]
     let titleListNoDuplicates:string[]=[]
     let recipeList:Recipe[]=[]
+    let tempRatingMap:Map<string,number>=new Map<string, number>()
     //This try/catch block uses the API to generate only a recipe title. Comment out this block to pull recipes from the database instead for testing
     try {
                 const requestOptions = {
@@ -133,7 +137,10 @@ export async function getServerSideProps (context) {
                                 averageRating:0,
                                 uploadedBy:"0",
                                 //@ts-ignore
-                                comments:""
+                                comments:"",
+                                ratingMap: JSON.stringify(Array.from(tempRatingMap.entries())),
+                                ratingSum:0,
+                                numberofRatings:0
                             }
                             return recipe
                         })

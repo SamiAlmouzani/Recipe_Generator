@@ -30,8 +30,9 @@ const UploadRecipe = () => {
         }
 
         //Create a new recipe using the new image path
+        let tempRatingMap:Map<string,number>=new Map<string, number>()
         // @ts-ignore
-        let recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, comments:""}
+        let recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, comments:"",ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0}
         //Store this recipe in the database
         try{
             //Create a new entry under recipes, and save the automatically generated key

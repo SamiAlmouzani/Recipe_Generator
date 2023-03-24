@@ -77,9 +77,7 @@ const Favorites: React.FC<RecipeArray>= (props) => {
     );
 }
 /*
-getServerSideProps runs when the link on the main page is clicked. It makes the API call using the list of ingredients, passed
-through the context object. On the main page, context is being passed in the Link component. Context has two fields - href and query.
-query is an object that has an ingredients field, which is just the text the user entered on the main page.
+getServerSideProps runs when the link on the main page is clicked. It loads the current user's saved recipes from the database
  */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -93,7 +91,6 @@ export async function getServerSideProps (context) {
         console.log("user ref "+JSON.stringify(userRef))
         await get(userRef).then((snapshot) => {
             if (snapshot.exists()) {
-               // console.log(snapshot.val().savedRecipes)
                 recipeIds=snapshot.val().savedRecipes
                 console.log(recipeIds)
             }

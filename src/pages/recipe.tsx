@@ -27,24 +27,24 @@ const Recipe: React.FC<Recipe>=(props)=>{
     }
     console.log("props: "+JSON.stringify(props))
     //props is used to initialize a currentRecipe object.
-    let currentRecipe={id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments}
+   // let currentRecipe={id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments,ratingMap:props.ratingMap,ratingSum:props.ratingSum,totalRatings:props.totalRatings}
 
     //When updating the id in the database, recipe didn't show the new value immediately. I'm using currentRecipe to set the new values and store them in
     //the database, then also setting those values on recipe.
-    const [recipe, setRecipe] = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments});
+    //@ts-ignore
+    const [recipe, setRecipe] = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments,ratingMap:props.ratingMap,ratingSum:parseFloat(props.ratingSum),totalRatings:props.totalRatings});
     const [heartColor,setHeartColor]=useState(startingHeartColor)
     const[saved, setSaved]=useState(startingSavedState)
-    /*
-        I moved the contents of the useEffect function that was here, to a regular function further down the page. The useEffect seemed to be
-        running multiple times, not necessarily when the heart button was clicked, and it had some weird results once I started setting
-        the value of saved when the page is first loaded.
-     */
+
+    //@ts-ignore
+    console.log("Rating sum in main page :"+typeof parseFloat(recipe.ratingSum))
+
     return(
         <div>
             <div className={"flow-root px-40"}>
                 <div> <p className={"flex justify-center text-3xl font-bold py-2"}>{props.title}</p></div>
                 <div id="id" className={"float-left"}>
-                    <StarIcons/>
+                    <StarIcons  recipe={recipe}/>
                 </div>
                 <div className={"float-right"}>
                     {/*Heart button*/}
@@ -137,15 +137,61 @@ const Recipe: React.FC<Recipe>=(props)=>{
         return recipe.id
     }
 }
+//This function is called by the StarIcons component. It takes the rating that was set, and updates the
+//ratingMap hashmap with the current user's rating. It calculates the new average rating, and stores the new
+//hashmap, average rating, total rating, and rating sum in the database. It then returns the average rating
+//back to the StarIcons component, which then uses it to set the rating variable on the page.
+function setNewRating(rating:number,recipe:Recipe,uid:string){
+    console.log(recipe)
+    //Get the current rating hashmap
+    let tempRatingMap:Map<string,number>=new Map(JSON.parse(recipe.ratingMap))
+    let ratingSum:number=recipe.ratingSum
+    console.log("ratingSum: "+typeof ratingSum)
+    let totalRatings:number=recipe.totalRatings
+    let averageRating:number=0
+    //Check whether this user is rating this recipe for the first time, or whether they are replacing an old rating
+    if(tempRatingMap.has(uid)){
+        //Get the user's previous rating
+        // @ts-ignore
+        let previousRating:number=tempRatingMap.get(uid)
+        console.log("previous rating: "+ previousRating)
+        console.log("rating: "+rating)
+        ratingSum=ratingSum+(rating-previousRating)
+        console.log("ratingSum: "+ratingSum)
+    }else{
+        console.log("totalRatings: "+totalRatings)
+        totalRatings++
+        ratingSum=(ratingSum+rating as number) as number
+        console.log("totalRatings: "+totalRatings)
+        console.log("ratingSum: "+ratingSum)
+    }
+    //update the hashmap
+    tempRatingMap.set(uid,rating)
+    //calculate the new average
+    console.log("totalRatings: "+totalRatings)
+    averageRating=ratingSum/totalRatings
+    console.log(recipe)
+    //Update the recipe object with these values
+    recipe.ratingMap=JSON.stringify(Array.from(tempRatingMap.entries())),
+    recipe.totalRatings=totalRatings
+    recipe.ratingSum=ratingSum
+    recipe.averageRating=averageRating
+    //Update the database with this new object
+    update(ref(db, '/recipes/' + recipe.id), recipe);
+    //Return the new average
+    return averageRating
+}
 
-function StarIcons(){
-    const [rating, setRating]=useState(0)
+function StarIcons(r: {recipe:Recipe}){
+    const {currentUser, setCurrentUser}=useGlobalContext();
 
     const [star1color,setStar1Color]=useState("grey")
     const [star2color,setStar2Color]=useState("grey")
     const [star3color,setStar3Color]=useState("grey")
     const [star4color,setStar4Color]=useState("grey")
     const [star5color,setStar5Color]=useState("grey")
+    const [rating, setRating]=useState(0)
+
     return(
         <div>
             {/*The fill color for each star icon is grey by default. When the star is clicked, the rating is set to the corresponding number, and
@@ -156,10 +202,12 @@ function StarIcons(){
                 if(rating===0){
                     setStar1Color("yellow")
                     setRating(1)
+                    setNewRating(1,r.recipe,currentUser.uid)
                 }
                 else if(rating===1){
                     setStar1Color("grey")
                     setRating(0)
+                    setNewRating(0,r.recipe,currentUser.uid)
                 }
                 else{
                     setStar2Color("grey")
@@ -167,6 +215,7 @@ function StarIcons(){
                     setStar4Color("grey")
                     setStar5Color("grey")
                     setRating(1)
+                    setNewRating(1,r.recipe,currentUser.uid)
                 }
             }
             }>
@@ -180,14 +229,14 @@ function StarIcons(){
                 if(rating<2){
                     setStar1Color("yellow")
                     setStar2Color("yellow")
-                    setRating(2)
                 }
                 else if(rating>2){
                     setStar3Color("grey")
                     setStar4Color("grey")
                     setStar5Color("grey")
-                    setRating(2)
                 }
+                setNewRating(2,r.recipe,currentUser.uid)
+                setRating(2)
             }}>
                 <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
@@ -199,13 +248,13 @@ function StarIcons(){
                     setStar1Color("yellow")
                     setStar2Color("yellow")
                     setStar3Color("yellow")
-                    setRating(3)
                 }
                 else if(rating>3){
                     setStar4Color("grey")
                     setStar5Color("grey")
-                    setRating(3)
                 }
+                setRating(3)
+                setNewRating(3,r.recipe,currentUser.uid)
             }}>
                 <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
@@ -218,12 +267,13 @@ function StarIcons(){
                     setStar2Color("yellow")
                     setStar3Color("yellow")
                     setStar4Color("yellow")
-                    setRating(4)
                 }
                 else if(rating>4){
                     setStar5Color("grey")
-                    setRating(4)
                 }
+                setRating(4)
+                setNewRating(4,r.recipe,currentUser.uid)
+
             }}>
                 <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
@@ -237,8 +287,9 @@ function StarIcons(){
                     setStar3Color("yellow")
                     setStar4Color("yellow")
                     setStar5Color("yellow")
-                    setRating(5)
                 }
+                setRating(5)
+                setNewRating(5,r.recipe,currentUser.uid)
             }}>
                 <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
@@ -248,7 +299,9 @@ function StarIcons(){
         </div>
     )
 }
-//When this page is loaded, it is passed the recipe object from the preceding screen
+//When this page is loaded, it is passed the recipe object from the preceding screen. This function checks whether this recipe
+//already exists in the database, or whether it is a new one (meaning the text and photo need to be added). It passes the recipe
+//back up to the main page through the props object.
 export async function getServerSideProps(context:RecipeContext){
     //If there is text, it means that this was an existing recipe that is already in the database. Return the recipe.
     if(context.query.text.length>1){
@@ -263,10 +316,13 @@ export async function getServerSideProps(context:RecipeContext){
                 ingredients:context.query.ingredients,
                 averageRating:context.query.averageRating,
                 uploadedBy:context.query.uploadedBy,
-                comments:context.query.comments}
+                comments:context.query.comments,
+                ratingMap:context.query.ratingMap,
+                ratingSum:context.query.ratingSum,
+                totalRatings:context.query.totalRatings}
         }
     }
-        //If the text is empty, it means this is a new recipe, and so far only the title has been generated.
+    //If the text is empty, it means this is a new recipe, and so far only the title has been generated.
     //Generate the text with the openAI API, and generate the image with SerpAPI. The recipe will then need to be saved in the database.
     else {
         let text:string=""
@@ -324,7 +380,11 @@ export async function getServerSideProps(context:RecipeContext){
             ingredients:context.query.ingredients,
             averageRating:context.query.averageRating,
             uploadedBy:context.query.uploadedBy,
-            comments:context.query.comments}
+            comments:context.query.comments,
+            ratingMap:context.query.ratingMap,
+            ratingSum:0,
+            totalRatings:0}
+
         console.log(recipe)
         //Store this recipe in the database
         try{
@@ -342,7 +402,7 @@ export async function getServerSideProps(context:RecipeContext){
         }
         //Return the recipe
         return{
-            props:{id:recipe.id,title:recipe.title,text:recipe.text,image:recipe.image,ingredients:recipe.ingredients,averageRating:recipe.averageRating,uploadedBy:recipe.uploadedBy,comments:recipe.comments}
+            props:{id:recipe.id,title:recipe.title,text:recipe.text,image:recipe.image,ingredients:recipe.ingredients,averageRating:recipe.averageRating,uploadedBy:recipe.uploadedBy,comments:recipe.comments,ratingMap:recipe.ratingMap,ratingSum:recipe.ratingSum, totalRatings:recipe.totalRatings}
         }
     }
 }
