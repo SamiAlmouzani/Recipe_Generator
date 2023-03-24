@@ -195,23 +195,25 @@ function StarIcons(r: {recipe:Recipe}){
     const [star4color,setStar4Color]=useState("grey")
     const [star5color,setStar5Color]=useState("grey")
     const [rating, setRating]=useState(0)
+    const [averageRating, setAverageRating]=useState(r.recipe.averageRating.toFixed(2))
 
     return(
         <div>
             {/*The fill color for each star icon is grey by default. When the star is clicked, the rating is set to the corresponding number, and
             the color of the other stars is changed to match the new rating (if the rating was 5 and star 3 is clicked, stars 4 and 5 are changed to grey.
-            Or if the rating is 1 and star 4 is clicked, set stars 2, 3, and 4 to yellow)*/}
+            Or if the rating is 1 and star 4 is clicked, set stars 2, 3, and 4 to #F7C600
+       */}
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star1color} className="w-8 h-8 inline" onClick={()=>
             {
                 if(rating===0){
-                    setStar1Color("yellow")
+                    setStar1Color("#F7C600")
                     setRating(1)
-                    setNewRating(1,r.recipe,currentUser.uid)
+                    setAverageRating(setNewRating(1,r.recipe,currentUser.uid).toFixed(2))
                 }
                 else if(rating===1){
                     setStar1Color("grey")
                     setRating(0)
-                    setNewRating(0,r.recipe,currentUser.uid)
+                    setAverageRating(setNewRating(0,r.recipe,currentUser.uid).toFixed(2))
                 }
                 else{
                     setStar2Color("grey")
@@ -219,7 +221,7 @@ function StarIcons(r: {recipe:Recipe}){
                     setStar4Color("grey")
                     setStar5Color("grey")
                     setRating(1)
-                    setNewRating(1,r.recipe,currentUser.uid)
+                    setAverageRating(setNewRating(1,r.recipe,currentUser.uid).toFixed(2))
                 }
             }
             }>
@@ -231,15 +233,15 @@ function StarIcons(r: {recipe:Recipe}){
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star2color} className="w-8 h-8 inline" onClick={()=>
             {
                 if(rating<2){
-                    setStar1Color("yellow")
-                    setStar2Color("yellow")
+                    setStar1Color("#F7C600")
+                    setStar2Color("#F7C600")
                 }
                 else if(rating>2){
                     setStar3Color("grey")
                     setStar4Color("grey")
                     setStar5Color("grey")
                 }
-                setNewRating(2,r.recipe,currentUser.uid)
+                setAverageRating(setNewRating(2,r.recipe,currentUser.uid).toFixed(2))
                 setRating(2)
             }}>
                 <path fillRule="evenodd"
@@ -249,16 +251,16 @@ function StarIcons(r: {recipe:Recipe}){
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star3color} className="w-8 h-8 inline" onClick={()=>
             {
                 if(rating<3){
-                    setStar1Color("yellow")
-                    setStar2Color("yellow")
-                    setStar3Color("yellow")
+                    setStar1Color("#F7C600")
+                    setStar2Color("#F7C600")
+                    setStar3Color("#F7C600")
                 }
                 else if(rating>3){
                     setStar4Color("grey")
                     setStar5Color("grey")
                 }
                 setRating(3)
-                setNewRating(3,r.recipe,currentUser.uid)
+                setAverageRating(setNewRating(3,r.recipe,currentUser.uid).toFixed(2))
             }}>
                 <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
@@ -267,16 +269,16 @@ function StarIcons(r: {recipe:Recipe}){
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star4color} className="w-8 h-8 inline" onClick={()=>
             {
                 if(rating<4){
-                    setStar1Color("yellow")
-                    setStar2Color("yellow")
-                    setStar3Color("yellow")
-                    setStar4Color("yellow")
+                    setStar1Color("#F7C600")
+                    setStar2Color("#F7C600")
+                    setStar3Color("#F7C600")
+                    setStar4Color("#F7C600")
                 }
                 else if(rating>4){
                     setStar5Color("grey")
                 }
                 setRating(4)
-                setNewRating(4,r.recipe,currentUser.uid)
+                setAverageRating(setNewRating(4,r.recipe,currentUser.uid).toFixed(2))
 
             }}>
                 <path fillRule="evenodd"
@@ -286,20 +288,20 @@ function StarIcons(r: {recipe:Recipe}){
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star5color} className="w-8 h-8 inline" onClick={()=>
             {
                 if(rating<5){
-                    setStar1Color("yellow")
-                    setStar2Color("yellow")
-                    setStar3Color("yellow")
-                    setStar4Color("yellow")
-                    setStar5Color("yellow")
+                    setStar1Color("#F7C600")
+                    setStar2Color("#F7C600")
+                    setStar3Color("#F7C600")
+                    setStar4Color("#F7C600")
+                    setStar5Color("#F7C600")
                 }
                 setRating(5)
-                setNewRating(5,r.recipe,currentUser.uid)
+                setAverageRating(setNewRating(5,r.recipe,currentUser.uid).toFixed(2))
             }}>
                 <path fillRule="evenodd"
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
                       clipRule="evenodd"/>
             </svg>
-
+          <div> <label className="font-bold text-[#F7C600]">Average rating</label><h1 className="font-bold text-3xl text-[#F7C600]">{averageRating}</h1></div>
         </div>
     )
 }
