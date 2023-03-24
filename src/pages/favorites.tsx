@@ -51,8 +51,12 @@ const Favorites: React.FC<RecipeArray>= (props) => {
                                         ingredients:recipe.ingredients,
                                         averageRating:recipe.averageRating,
                                         uploadedBy:recipe.uploadedBy,
-                                        // @ts-ignore
-                                        comments:recipe.comments
+                                        //@ts-ignore
+                                        comments:recipe.comments,
+                                        ratingMap:recipe.ratingMap,
+                                        //@ts-ignore
+                                        ratingSum:recipe.ratingSum,
+                                        totalRatings:recipe.totalRatings
                                     }
                                 }} as={`recipe/$recipeText}`}>
                                     <ul className="divide-y-2 divide-gray-100">

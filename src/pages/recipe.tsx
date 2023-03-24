@@ -10,6 +10,10 @@ import {useGlobalContext} from "../context";
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
+//The getServerSideProps function at the bottom of this page runs when the page is first loaded. It will either load the recipe from the database
+//(if it's an existing recipe), or get the text and image through an API call (if it's a new recipe). When it's finished, it passes the recipe as a
+//props object to this page (below).
+
 const Recipe: React.FC<Recipe>=(props)=>{
     //Import the current user.
     const {currentUser, setCurrentUser}=useGlobalContext();

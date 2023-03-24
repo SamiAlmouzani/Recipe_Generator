@@ -46,7 +46,9 @@ const Results: React.FC<RecipeArray>= (props) => {
                                         //@ts-ignore
                                         comments:recipe.comments,
                                         //@ts-ignore
-                                        ratingMap:recipe.ratingMap
+                                        ratingMap:recipe.ratingMap,
+                                        ratingSum:recipe.ratingSum,
+                                        totalRatings:recipe.totalRatings
                                     }
                                 }} as={`recipe/$recipeText}`}>
                                     <ul className="divide-y-2 divide-gray-100">
