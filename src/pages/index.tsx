@@ -6,6 +6,10 @@ import { app,db } from "../context/firebaseSetup"
 import {useRouter} from "next/router";
 import {useGlobalContext} from "../context";
 import {get, getDatabase, query, ref, set} from "firebase/database";
+import {Slide} from "react-slideshow-image";
+import React from "react";
+import 'react-slideshow-image/dist/styles.css'
+import { object } from "zod";
 
 const Home: NextPage = () => {
   const { currentUser,setCurrentUser } = useGlobalContext();
@@ -63,8 +67,42 @@ const Home: NextPage = () => {
         .catch((error)=>{
           const credential=GoogleAuthProvider.credentialFromError(error)
         });
+
+  }
+  //formatting the slideshow images
+  const spanStyle = {
+    background: '#efefef',
+    color: '#000000'
   }
 
+  const divStyle = {
+    padding: '0px',
+    objectfit: 'cover',
+   // display: 'flex',
+    //alignItems: '',
+    justifyContent: 'align',
+    backgroundSize: 'cover',
+    height: '700px',
+    width: 'natural'
+
+  }
+  //these are the current images, will update later!
+  const slideImages = [
+    {
+      url: 'https://www.foodiesfeed.com/wp-content/uploads/2022/07/pizza-with-pineapple-and-thin-crust.jpg',
+      caption: 'Slide 1'
+    },
+    {
+      url: 'https://www.foodiesfeed.com/wp-content/uploads/2022/11/fish-casserole-with-lemon-and-herbs-1024x683.jpg',
+      caption: 'Slide 2'
+    },
+    {
+      url: 'https://www.foodiesfeed.com/wp-content/uploads/2021/01/pumpkin-soup.jpg',
+      caption: 'Slide 3'
+    },
+
+
+  ];
   return (
     <section className="bg-gray-50">
     <div
@@ -88,10 +126,26 @@ const Home: NextPage = () => {
             >
               Get Started
             </button>
+
         </div>
+
+        <div className="mt-4 sm:text-xl sm:leading-relaxed">Scroll down to see the possibilities!</div>
+
       </div>
     </div>
+      <div className="slide-container">
+        <Slide>
+          {slideImages.map((slideImage, index)=> (
+              <div key={index}>
+                <div style={{ ...divStyle, 'backgroundImage': `url(${slideImage.url})` }}>
+                </div>
+              </div>
+          ))}
+        </Slide>
+      </div>
+
   </section>
+
 );
 };
 
