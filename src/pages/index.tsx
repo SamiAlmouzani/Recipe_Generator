@@ -10,6 +10,7 @@ import {Slide} from "react-slideshow-image";
 import React from "react";
 import 'react-slideshow-image/dist/styles.css'
 import { object } from "zod";
+import {text} from "dom-helpers";
 
 const Home: NextPage = () => {
   const { currentUser,setCurrentUser } = useGlobalContext();
@@ -89,16 +90,16 @@ const Home: NextPage = () => {
   //these are the current images, will update later!
   const slideImages = [
     {
-      url: 'https://www.foodiesfeed.com/wp-content/uploads/2022/07/pizza-with-pineapple-and-thin-crust.jpg',
-      caption: 'Slide 1'
+      url: 'https://www.foodiesfeed.com/wp-content/uploads/2019/01/smoothie-768x512.jpg',
+      altText: 'fruit_bowls'
     },
     {
-      url: 'https://www.foodiesfeed.com/wp-content/uploads/2022/11/fish-casserole-with-lemon-and-herbs-1024x683.jpg',
-      caption: 'Slide 2'
+      url: 'https://www.foodiesfeed.com/wp-content/uploads/2021/02/dining-in-an-iranian-restaurant-768x512.jpg',
+      altText: 'espresso-with-carrot-cake'
     },
     {
-      url: 'https://www.foodiesfeed.com/wp-content/uploads/2021/01/pumpkin-soup.jpg',
-      caption: 'Slide 3'
+      url: 'https://www.foodiesfeed.com/wp-content/uploads/2015/03/basic-italian-pizza-margherita-768x512.jpg',
+      altText: 'basic-italian-pizza-margherita'
     },
 
 
@@ -128,11 +129,12 @@ const Home: NextPage = () => {
             </button>
 
         </div>
-
-        <div className="mt-4 sm:text-xl sm:leading-relaxed">Scroll down to see the possibilities!</div>
-
+        <div className="mx-auto max-w-lg text-center block whitespace-pre-line">
+          <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line">Scroll down to see what you're missing!</p>
+        </div>
       </div>
     </div>
+
       <div className="slide-container">
         <Slide>
           {slideImages.map((slideImage, index)=> (
