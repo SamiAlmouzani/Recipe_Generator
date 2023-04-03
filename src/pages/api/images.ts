@@ -28,7 +28,9 @@ const readFile = (
     const form = formidable(options);
     return new Promise((resolve, reject) => {
         form.parse(req, (err, fields, files) => {
-            if (err) reject(err);
+            if (err){
+                reject(err);
+            }
             resolve({ fields, files });
         });
     });

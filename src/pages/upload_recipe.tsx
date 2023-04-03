@@ -18,9 +18,13 @@ const UploadRecipe = () => {
         let imageURL=""
         //save the image in public/user_images (uses the images.ts file in the api folder)
         try {
+            if(!picture){
+                alert("Please attach a photo of your recipe as a jpg, jpeg, or png file");
+                return;
+            }
             if (picture){
                 const formData = new FormData();
-                formData.append("testImage", picture);
+                formData.append(picture.name, picture);
                 const { data } = await axios.post("/api/images", formData);
                 imageURL=path.join("/user_images",data["url"])
                 console.log(imageURL)
@@ -68,7 +72,19 @@ const UploadRecipe = () => {
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        setPicture(file || null);
+        if(file===undefined){
+            alert("This is not a valid image file");
+            return;
+        }
+        //Check the file extension. Reject it if it is not .jpg, .jpeg, or .png
+        const extension=file.name.substring(file.name.indexOf('.')+1,file.name.length)
+        if((extension!=='jpg'&&extension!=='jpeg')&&extension!=='png') {
+            alert("This is not a valid image file\nAccepted extensions are jpg, jpeg, and png");
+            return;
+        }
+        else{
+            setPicture(file);
+        }
     };
 
     return (
@@ -135,12 +151,7 @@ const UploadRecipe = () => {
                                     Picture
                                 </label>
                                 <div className="mt-1 flex items-center">
-                                    <label
-                                        htmlFor="file-upload"
-                                        className="px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-800 focus:outline-none focus:border-red-900 focus:shadow-outline-red disabled:opacity-25 transition ease-in-out duration-150"
-                                    >
-                                        <input type="file" id="picture" onChange={handlePictureChange} />
-                                    </label>
+                                    <input type="file" id="picture" onChange={handlePictureChange} />
                                 </div>
                                 <button
                                     className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
