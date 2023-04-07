@@ -43,58 +43,48 @@ const Recipe: React.FC<Recipe>=(props)=>{
     //@ts-ignore
     console.log("Rating sum in main page :"+typeof parseFloat(recipe.ratingSum))
 
-    return(
-        <div>
-            <div className={"flow-root px-40"}>
-                <div> <p className={"flex justify-center text-3xl font-bold py-2"}>{props.title}</p></div>
-                <div id="id" className={"float-left"}>
-                    <StarIcons  recipe={recipe}/>
-                </div>
-                <div className={"float-right"}>
-                    {/*Heart button*/}
-                    <MdOutlineFavorite
-                        color={heartColor}
-                        size={48}
-                        onClick={()=>{
-                            //Clicking the heart will toggle the "saved" property, and the color
-                            setSaved(!saved)
-                            if(saved){
-                                setHeartColor("FF0000")
-                            }else{
-                                setHeartColor("808080")
-                            }
-                            toggleSaved(saved)
-                        }}
-                    />
-                </div>
+    return (
+        <div className="px-8 py-12">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-center text-3xl font-bold mb-8">{props.title}</h1>
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <StarIcons recipe={recipe} />
+              </div>
+              <div>
+                <MdOutlineFavorite
+                  color={heartColor}
+                  size={48}
+                  onClick={() => {
+                    setSaved(!saved);
+                    setHeartColor(saved ? "FF0000" : "808080");
+                    toggleSaved(saved);
+                  }}
+                />
+              </div>
             </div>
-            <div className={"flex justify-center"}>
-                <div className={" w-1/2 justify-center flex-wrap"}>
-                    {/* <div><Image src={props.image} width={500} height={500} alt="placeholder image"></Image></div>*/}
-                    <div><Image src={props.image} width={500} height={500} alt="placeholder image"></Image></div>
-                    <div className="whitespace-pre-line">{props.text}</div>
-                    <Link className={""} href="/results">
-                        <button
-                            className="my-8 float-left block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
-                            Back
-                        </button>
-                    </Link>
-                    {/*pass the user and the recipe id to comments page */}
-                    <Link href={{
-                        pathname: '/comments',
-                        query: {
-                            id:recipe.id
-                        }
-                    }}>
-                        <button
-                            className="my-8 float-right block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto justify-content:right">
-                            Comments
-                        </button>
-                    </Link>
+            <div className="flex justify-center">
+              <div className="w-full md:w-1/2">
+                <Image src={props.image} width={500} height={500} alt="placeholder image" className="mb-4" />
+                <div className="whitespace-pre-line mb-6">{props.text}</div>
+                <div className="flex justify-between">
+                  <Link href="/results">
+                    <button className="block w-full md:w-auto rounded bg-red-600 px-8 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500">
+                      Back
+                    </button>
+                  </Link>
+                  <Link href={{ pathname: '/comments', query: { id: recipe.id } }}>
+                    <button className="block w-full md:w-auto rounded bg-red-600 px-8 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500">
+                      Comments
+                    </button>
+                  </Link>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-    )
+      );
+      
     /*When a user clicks the save button this function will
     a) Save this recipe to the database (if it is not already there), and update the current user's savedRecipes array
     b) Remove this recipe from the current users's savedRecipes array*/
