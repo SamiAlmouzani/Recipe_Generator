@@ -9,7 +9,7 @@ import {useGlobalContext} from "../context";
 
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
-
+/*
 type CommentsProps = {commentList: Comment[], id: string}
 const Comments: React.FC<CommentsProps>= (props) => {
   //Import the current user.
@@ -150,4 +150,4 @@ export async function getServerSideProps(context) {
     props: { commentList:comments, id: JSON.parse(JSON.stringify(recipeID)) }
   }
 }
-export default Comments;
+export default Comments;*/

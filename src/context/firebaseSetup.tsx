@@ -16,14 +16,23 @@ import { FirebaseDatabase } from "@firebase/database-types";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 const firebaseConfig = {
-    apiKey:process.env.REACT_APP_FIREBASE_API_KEY,
+   /* apiKey:process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
     projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
     storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.REACT_APP_FIREBASE_APP_ID,
     measurementId:process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
-    databaseURL: process.env.REACT_APP_DATABASE_URL
+    databaseURL: process.env.REACT_APP_DATABASE_URL*/
+
+    apiKey:"AIzaSyDJQ911w4jyDOPfYQzIQXmm9Nm3RTsHLq0",
+    authDomain:"superchef-df411.firebaseapp.com",
+    projectId:"superchef-df411",
+    storageBucket:"superchef-df411.appspot.com",
+    messagingSenderId:"920620604946",
+    appId:"superchef-df411",
+    measurementId:"G-7W09BPCPY6",
+    databaseURL:"https://superchef-df411-default-rtdb.firebaseio.com/",
 };
 
 //firebase.initializeApp(firebaseConfig);

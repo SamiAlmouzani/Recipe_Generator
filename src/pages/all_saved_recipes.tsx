@@ -1,10 +1,7 @@
 import Link from "next/link";
-import React, {useEffect, useState} from 'react';
-import {set} from "zod";
+import React from 'react';
 import {child, get, getDatabase, ref} from "firebase/database";
-import {db, auth, app} from "../context/firebaseSetup";
-import {getAnalytics} from "firebase/analytics";
-import {getAuth} from "firebase/auth";
+import {app} from "../context/firebaseSetup";
 import {useGlobalContext} from "../context";
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
@@ -18,9 +15,6 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
     console.log("current user: (accessed from main screen)"+currentUser.displayName)
     console.log("recipes from props\n")
     console.log(props.recipeList)
-    // @ts-ignore
-    // @ts-ignore
-    // @ts-ignore
     return (
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto text-left">
@@ -34,21 +28,7 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
                             <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                                 <Link href={{
                                     pathname: '/recipe',
-                                    query: {
-                                        id:recipe.id,
-                                        title:recipe.title,
-                                        text:recipe.text,
-                                        image:recipe.image,
-                                        ingredients:recipe.ingredients,
-                                        averageRating:recipe.averageRating,
-                                        uploadedBy:recipe.uploadedBy,
-                                        //@ts-ignore
-                                        comments:recipe.comments,
-                                        ratingMap:recipe.ratingMap,
-                                        //@ts-ignore
-                                        ratingSum:recipe.ratingSum,
-                                        totalRatings:recipe.totalRatings
-                                    }
+                                    query: {recipeString:JSON.stringify(recipe)}
                                 }} as={`recipe/$recipeText}`}>
                                     <ul className="divide-y-2 divide-gray-100">
                                         <li className="p-3 hover:bg-red-600 hover:text-red-200">
@@ -77,23 +57,35 @@ returns them to the AllSavedRecipes page
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/require-await
-export async function getServerSideProps (context) {
-    let recipeList:Recipe[]=[]
+export async function getServerSideProps () {
+    const recipeList:Recipe[]=[]
     let index=0
     //This try/catch block pulls in the recipes from the database
     try{
-        let dbRef=ref(getDatabase(app))
+        const dbRef=ref(getDatabase(app))
         await get(child(dbRef, 'recipes/')).then((snapshot) => {
             if(snapshot.exists()) {
                 console.log("snapshot:\n" +JSON.stringify(snapshot));
                 snapshot.forEach((s)=> {
-                    // @ts-ignore
-                    const newRecipe={id:s.val().id, image:s.val().image,title:s.val().title,text:s.val().text, ingredients: s.val().ingredients, averageRating:s.val().averageRating as number, uploadedBy:s.val().uploadedBy,comments:s.val().comments,ratingMap:s.val().ratingMap,ratingSum:s.val().ratingSum,totalRatings:s.val().totalRatings}
-                    recipeList[index]=newRecipe
+                    let commentsArray:UserComment[]=[]
+                    const r:Recipe=s.val() as Recipe
+                    if(r.UserComments!==undefined&&r.UserComments!==null)
+                        commentsArray=r.UserComments
+                    recipeList[index]={
+                        id: r.id,
+                        image: r.image,
+                        title: r.title,
+                        text: r.text,
+                        ingredients: r.ingredients,
+                        averageRating: r.averageRating,
+                        uploadedBy: r.uploadedBy,
+                        UserComments: commentsArray,
+                        ratingMap: r.ratingMap,
+                        ratingSum: r.ratingSum,
+                        totalRatings: r.totalRatings
+                    }
                     index++;
                 })
-                recipeList.forEach((r)=>{ // @ts-ignore
-                    console.log(r)})
                 return {
                     props: {recipeList}
                 }

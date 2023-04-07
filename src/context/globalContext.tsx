@@ -31,7 +31,6 @@ export const GlobalContextProvider = (props: { children: string | number | boole
         ingredientsList: currentIngredientsList,
         setIngredientsList: setCurrentIngredientsList,
           currentUser:currentUser,
-          // @ts-ignore
           setCurrentUser:setCurrentUser
       }}>
       {props.children}

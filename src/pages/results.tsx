@@ -21,9 +21,6 @@ const Results: React.FC<RecipeArray> = (props) => {
     console.log("current user: (accessed from main screen)" + currentUser.displayName)
     console.log("recipes from props\n")
     console.log(props.recipeList)
-    // @ts-ignore
-    // @ts-ignore
-    // @ts-ignore
     return (
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto text-left">
@@ -41,21 +38,7 @@ const Results: React.FC<RecipeArray> = (props) => {
                                 <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                                     <Link href={{
                                         pathname: '/recipe',
-                                        query: {
-                                            id: recipe.id,
-                                            title: recipe.title,
-                                            text: recipe.text,
-                                            image: recipe.image,
-                                            ingredients: recipe.ingredients,
-                                            averageRating: recipe.averageRating,
-                                            uploadedBy: recipe.uploadedBy,
-                                            //@ts-ignore
-                                            comments: recipe.comments,
-                                            //@ts-ignore
-                                            ratingMap: recipe.ratingMap,
-                                            ratingSum: recipe.ratingSum,
-                                            totalRatings: recipe.totalRatings
-                                        }
+                                        query: JSON.stringify(recipe)
                                     }} as={`recipe/$recipeText}`} onClick={() => setIsLoading(true)}>
                                         <ul className="divide-y-2 divide-gray-100">
                                             <li className="p-3 hover:bg-red-600 hover:text-red-200">
@@ -124,8 +107,8 @@ export async function getServerSideProps(context) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
                 titleList = data.choices.map((r: RecipeFromAPI) => {
                     //Sometimes the API will return text before the title. Remove anything above the last occurrence of a newline
-                    // @ts-ignore
-                    return r.text.substring(r.text.lastIndexOf('\n') + 1, r.text.length)
+                    if(r!==null&&r!==undefined)
+                        return r.text.substring(r.text.lastIndexOf('\n') + 1, r.text.length)
                 })
                 //Remove duplicates from titleList
                 titleList.forEach((r) => {
@@ -138,19 +121,20 @@ export async function getServerSideProps(context) {
                 console.log(titleListNoDuplicates)
                 //Map each of these titles into a recipe array (all fields of each recipe will be empty, except for the title
                 recipeList = titleListNoDuplicates.map((title) => {
+                    let placeholderComment:UserComment={username:"",text:""}
+                    let tempComments:UserComment[]=[placeholderComment]
                     let recipe: Recipe = {
                         id: "",
                         title: title,
                         text: "",
                         image: "",
-                        ingredients: context.query.ingredients,
+                        ingredients: context.query.ingredients as string,
                         averageRating: 0,
                         uploadedBy: "0",
-                        //@ts-ignore
-                        comments: "",
+                        UserComments:[]as UserComment[],
                         ratingMap: JSON.stringify(Array.from(tempRatingMap.entries())),
                         ratingSum: 0,
-                        numberofRatings: 0
+                        totalRatings: 0
                     }
                     return recipe
                 })

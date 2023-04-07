@@ -35,13 +35,11 @@ const Recipe: React.FC<Recipe>=(props)=>{
 
     //When updating the id in the database, recipe didn't show the new value immediately. I'm using currentRecipe to set the new values and store them in
     //the database, then also setting those values on recipe.
-    //@ts-ignore
-    const [recipe, setRecipe] = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments,ratingMap:props.ratingMap,ratingSum:parseFloat(props.ratingSum),totalRatings:props.totalRatings});
+    const [recipe, setRecipe] = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, UserComments:props.UserComments,ratingMap:props.ratingMap,ratingSum:parseFloat(String(props.ratingSum)),totalRatings:props.totalRatings});
     const [heartColor,setHeartColor]=useState(startingHeartColor)
     const[saved, setSaved]=useState(startingSavedState)
 
-    //@ts-ignore
-    console.log("Rating sum in main page :"+typeof parseFloat(recipe.ratingSum))
+    console.log("Rating sum in main page :"+typeof parseFloat(String(recipe.ratingSum)))
 
     return (
         <div className="px-8 py-12">
@@ -124,8 +122,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
                 return recipe.id
             }
         }
-        catch (e) {
-            // @ts-ignore
+        catch (e:any) {
             console.log(e.stack);
         }
         return recipe.id
@@ -146,8 +143,7 @@ function setNewRating(rating:number,recipe:Recipe,uid:string){
     //Check whether this user is rating this recipe for the first time, or whether they are replacing an old rating
     if(tempRatingMap.has(uid)){
         //Get the user's previous rating
-        // @ts-ignore
-        let previousRating:number=tempRatingMap.get(uid)
+        let previousRating:number=tempRatingMap.get(uid) as number
         console.log("previous rating: "+ previousRating)
         console.log("rating: "+rating)
         ratingSum=ratingSum+(rating-previousRating)
@@ -186,8 +182,7 @@ function StarIcons(r: {recipe:Recipe}){
     const [star5color,setStar5Color]=useState("grey")
     const [rating, setRating]=useState(0)
     let a=r.recipe.averageRating as number
-    //@ts-ignore
-    const [averageRating, setAverageRating]=useState(parseFloat((r.recipe.averageRating)).toFixed(2))
+    const [averageRating, setAverageRating]=useState(parseFloat(String((r.recipe.averageRating))).toFixed(2))
 
     return(
         <div>
@@ -301,23 +296,25 @@ function StarIcons(r: {recipe:Recipe}){
 //already exists in the database, or whether it is a new one (meaning the text and photo need to be added). It passes the recipe
 //back up to the main page through the props object.
 export async function getServerSideProps(context:RecipeContext){
+    console.log("context: "+typeof context.query.recipeString)
+    let recipe:Recipe=JSON.parse(context.query.recipeString)
+    console.log(recipe)
     //If there is text, it means that this was an existing recipe that is already in the database. Return the recipe.
-    if(context.query.text.length>1){
+    if(recipe.text.length>1){
         console.log("recipe already exists")
         return{
             props:{
-                // @ts-ignore
-                id:context.query.id,
-                title:context.query.title,
-                text:context.query.text,
-                image:context.query.image,
-                ingredients:context.query.ingredients,
-                averageRating:context.query.averageRating,
-                uploadedBy:context.query.uploadedBy,
-                comments:context.query.comments,
-                ratingMap:context.query.ratingMap,
-                ratingSum:context.query.ratingSum,
-                totalRatings:context.query.totalRatings}
+                id:recipe.id,
+                title:recipe.title,
+                text:recipe.text,
+                image:recipe.image,
+                ingredients:recipe.ingredients,
+                averageRating:recipe.averageRating,
+                uploadedBy:recipe.uploadedBy,
+                UserComments:recipe.UserComments,
+                ratingMap:recipe.ratingMap,
+                ratingSum:recipe.ratingSum,
+                totalRatings:recipe.totalRatings}
         }
     }
     //If the text is empty, it means this is a new recipe, and so far only the title has been generated.
@@ -336,7 +333,7 @@ export async function getServerSideProps(context:RecipeContext){
                 body: JSON.stringify({
                     'model': "text-davinci-003",
                     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-member-access
-                    'prompt': "ingredients and directions for a recipe called " + context.query.title,
+                    'prompt': "ingredients and directions for a recipe called " + recipe.title,
                     'temperature': 0.7,
                     //max_tokens is the max number of words that can be returned for one recipe. This is set to 20 just because I didn't need all
                     //the directions for testing, but for demoing we'll need to set it higher (it cuts off the directions)
@@ -366,41 +363,41 @@ export async function getServerSideProps(context:RecipeContext){
         const response = await getJson("google", {
             api_key: process.env.GOOGLE_IMAGES_API_KEY,
             tbm: "isch",
-            q: context.query.title
+            q: recipe.title
         });
         console.log("image and text were generated")
         //Create a recipe object using the newly generated text and image
-        let recipe:Recipe={
-            id:context.query.id,
-            title:context.query.title,
+        let newRecipe:Recipe={
+            id:recipe.id,
+            title:recipe.title,
             text:text,
             image:response["images_results"][0].original,
-            ingredients:context.query.ingredients,
+            ingredients:recipe.ingredients,
             averageRating:0,
-            uploadedBy:context.query.uploadedBy,
-            comments:context.query.comments,
-            ratingMap:context.query.ratingMap,
+            uploadedBy:recipe.uploadedBy,
+            UserComments:recipe.UserComments,
+            ratingMap:recipe.ratingMap,
             ratingSum:0,
             totalRatings:0}
 
-        console.log(recipe)
+        console.log(newRecipe)
         //Store this recipe in the database
         try{
             //Create a new entry under recipes, and save the automatically generated key
-            const key =push(child(ref(getDatabase(app)), 'recipes'),recipe).key;
+            const key =push(child(ref(getDatabase(app)), 'recipes'),newRecipe).key;
             //Set the id field of recipe to be equal to the key
             recipe.id=""+key
-            console.log("id "+recipe.id)
+            console.log("id "+newRecipe.id)
             //Update the entry to the recipe object to store the recipe
-            update(ref(getDatabase(app), 'recipes/'+key), recipe);
-            console.log("updated database, id is "+recipe.id)
+            update(ref(getDatabase(app), 'recipes/'+key), newRecipe);
+            console.log("updated database, id is "+newRecipe.id)
         }
         catch(e){
             console.log(e)
         }
         //Return the recipe
         return{
-            props:{id:recipe.id,title:recipe.title,text:recipe.text,image:recipe.image,ingredients:recipe.ingredients,averageRating:recipe.averageRating,uploadedBy:recipe.uploadedBy,comments:recipe.comments,ratingMap:recipe.ratingMap,ratingSum:recipe.ratingSum, totalRatings:recipe.totalRatings}
+            props:{id:newRecipe.id,title:newRecipe.title,text:newRecipe.text,image:newRecipe.image,ingredients:newRecipe.ingredients,averageRating:newRecipe.averageRating,uploadedBy:newRecipe.uploadedBy,UserComments:newRecipe.UserComments,ratingMap:newRecipe.ratingMap,ratingSum:newRecipe.ratingSum, totalRatings:newRecipe.totalRatings}
         }
     }
 }

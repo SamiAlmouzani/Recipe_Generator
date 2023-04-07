@@ -18,9 +18,6 @@ const Favorites: React.FC<RecipeArray>= (props) => {
     console.log("current user: (accessed from main screen)"+currentUser.displayName)
     console.log("recipes from props\n")
     console.log(props.recipeList)
-    // @ts-ignore
-    // @ts-ignore
-    console.log(props.recipeList[0])
 
     let recipeArray:Recipe[]=[]
     for(let i=0;i<props.recipeList.length;i++) {
@@ -43,25 +40,11 @@ const Favorites: React.FC<RecipeArray>= (props) => {
                             <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                                 <Link href={{
                                     pathname: '/recipe',
-                                    query: {
-                                        id:recipe.id,
-                                        title:recipe.title,
-                                        text:recipe.text,
-                                        image:recipe.image,
-                                        ingredients:recipe.ingredients,
-                                        averageRating:recipe.averageRating,
-                                        uploadedBy:recipe.uploadedBy,
-                                        //@ts-ignore
-                                        comments:recipe.comments,
-                                        ratingMap:recipe.ratingMap,
-                                        //@ts-ignore
-                                        ratingSum:recipe.ratingSum,
-                                        totalRatings:recipe.totalRatings
-                                    }
+                                    query: {recipeString:JSON.stringify(recipe)}
                                 }} as={`recipe/$recipeText}`}>
                                     <ul className="divide-y-2 divide-gray-100">
                                         <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                                            <pre className="italic">{                                        //@ts-ignore
+                                            <pre className="italic">{
                                                 recipe.title}</pre>
                                         </li>
                                     </ul>
@@ -106,7 +89,7 @@ export async function getServerSideProps (context) {
                 console.log(recipeList.length+" "+recipeList)
                 if(recipeList.length===recipeIds.length){
                     console.log("about to return")
-                    recipeList.forEach((r)=>{ // @ts-ignore
+                    recipeList.forEach((r)=>{
                         console.log(r.title)})
                     return {
                         props: {recipeList}
