@@ -22,7 +22,7 @@ const UploadRecipe = () => {
                 alert("Please attach a photo of your recipe as a jpg, jpeg, or png file");
                 return;
             }
-            if (picture){
+          /*  if (picture){
                 const formData = new FormData();
                 formData.append(picture.name, picture);
                 //eslint-disable-next-line
@@ -30,7 +30,7 @@ const UploadRecipe = () => {
                 //eslint-disable-next-line
                 imageURL=path.join("/user_images",data["url"])
                 console.log(imageURL)
-            }
+            }*/
         } catch (error: any) {
             console.log(error);
         }
@@ -95,7 +95,7 @@ const UploadRecipe = () => {
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-xl mx-auto">
                    {/*eslint-disable-next-line*/}
-                    <form onSubmit={handleSubmit} className="space-y-8">
+                    <form onSubmit={handleSubmit} className="space-y-8" data-netlify="true">
                         <div>
                             <h2 className="text-2xl font-bold leading-7 text-gray-800">
                                 Upload a Recipe
