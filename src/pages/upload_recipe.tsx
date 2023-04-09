@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, {useState, ChangeEvent, useEffect} from "react";
 import {useGlobalContext} from "../context";
 import {child, getDatabase, push, ref, update} from "firebase/database";
 import {app, db} from "../context/firebaseSetup";
@@ -11,18 +11,45 @@ const UploadRecipe = () => {
     const [directions, setDirections] = useState("");
     const [picture, setPicture] = useState<File | null>(null);
     const {currentUser, setCurrentUser}=useGlobalContext();
+    const [isSubmitted, setIsSubmitted] = useState(false)
+    const [formData, setFormData] = useState({
+        title: "",
+        ingredients: "",
+        directions: "",
+        picture:picture
+    })
 
-     function handleSubmit(e: React.FormEvent<HTMLFormElement>){
+
+    const encode = (data:any) => {
+        return Object.keys(data)
+            .map(key => encodeURIComponent(key) + "=" +
+                encodeURIComponent(data[key]))
+            .join("&");}
+
+    useEffect(() => {
+        if(isSubmitted){
+            fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: encode({ "form-name": "upload-recipe-form", ...formData })
+            })
+                .then(() => alert("Success!"))
+                .then(() => setIsSubmitted(false))
+                .then(() => setFormData({title: "", ingredients: "",  directions: "",picture:null}))
+                .catch(error => alert(error))}
+    }, [formData, isSubmitted])
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
         console.log(picture)
-        const imageURL=""
+        let imageURL=""
         //save the image in public/user_images (uses the images.ts file in the api folder)
         try {
             if(!picture){
                 alert("Please attach a photo of your recipe as a jpg, jpeg, or png file");
                 return;
             }
-          /*  if (picture){
+            if (picture){
                 const formData = new FormData();
                 formData.append(picture.name, picture);
                 //eslint-disable-next-line
@@ -30,7 +57,7 @@ const UploadRecipe = () => {
                 //eslint-disable-next-line
                 imageURL=path.join("/user_images",data["url"])
                 console.log(imageURL)
-            }*/
+            }
         } catch (error: any) {
             console.log(error);
         }
@@ -71,6 +98,10 @@ const UploadRecipe = () => {
         catch(e){
             console.log(e)
         }
+        setFormData({title: title, ingredients: ingredients, directions: directions, picture: picture
+        })
+        setIsSubmitted(true)
+        e.preventDefault();
     }
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +126,7 @@ const UploadRecipe = () => {
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-xl mx-auto">
                    {/*eslint-disable-next-line*/}
-                    <form className="space-y-8" data-netlify="true">
+                    <form className="space-y-8" data-netlify="true" onSubmit={handleSubmit}>
                         <div>
                             <h2 className="text-2xl font-bold leading-7 text-gray-800">
                                 Upload a Recipe
