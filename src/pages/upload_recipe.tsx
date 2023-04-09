@@ -146,6 +146,7 @@ const UploadRecipe = () => {
                                     <input
                                         id="title"
                                         type="text"
+                                        name="title"
                                         required
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
@@ -160,6 +161,7 @@ const UploadRecipe = () => {
                                 <div className="mt-1">
                                     <textarea
                                         id="ingredients"
+                                        name="ingredients"
                                         required
                                         value={ingredients}
                                         onChange={(e) => setIngredients(e.target.value)}
@@ -175,6 +177,7 @@ const UploadRecipe = () => {
                                 <div className="mt-1">
                                     <textarea
                                         id="directions"
+                                        name="directions"
                                         required
                                         value={directions}
                                         onChange={(e) => setDirections(e.target.value)}
@@ -188,7 +191,7 @@ const UploadRecipe = () => {
                                     Picture
                                 </label>
                                 <div className="mt-1 flex items-center">
-                                    <input type="file" id="picture" onChange={handlePictureChange} />
+                                    <input type="file" name="picture" id="picture" onChange={handlePictureChange} />
                                 </div>
                                 <button
                                     className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
