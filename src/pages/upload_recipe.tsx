@@ -100,11 +100,19 @@ const UploadRecipe = () => {
         catch(e){
             console.log(e)
         }
+        e.preventDefault();
         setFormData({title: title, ingredients: ingredients, directions: directions, picture: picture
         })
-        setIsSubmitted(true)
-        e.preventDefault();
+        fetch("/", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(formData.toString()).toString(),
+        }).catch((error) => alert(error));
     }
+        /*setFormData({title: title, ingredients: ingredients, directions: directions, picture: picture
+        })
+        setIsSubmitted(true)
+        e.preventDefault();*/
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -129,6 +137,7 @@ const UploadRecipe = () => {
                 <div className="max-w-xl mx-auto">
                    {/*eslint-disable-next-line*/}
                     <form className="space-y-8" data-netlify="true" onSubmit={handleSubmit}>
+                        <input type="hidden" name="form-name" value="upload_recipe_form" />
                         <div>
                             <h2 className="text-2xl font-bold leading-7 text-gray-800">
                                 Upload a Recipe
