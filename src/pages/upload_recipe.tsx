@@ -12,10 +12,10 @@ const UploadRecipe = () => {
     const [picture, setPicture] = useState<File | null>(null);
     const {currentUser, setCurrentUser}=useGlobalContext();
 
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
+     function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
         console.log(picture)
-        let imageURL=""
+        const imageURL=""
         //save the image in public/user_images (uses the images.ts file in the api folder)
         try {
             if(!picture){
