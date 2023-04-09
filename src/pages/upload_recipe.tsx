@@ -20,10 +20,12 @@ const UploadRecipe = () => {
     })
 
 
+    //eslint-disable-next-line
     const encode = (data:any) => {
+        //eslint-disable-next-line
         return Object.keys(data)
-            .map(key => encodeURIComponent(key) + "=" +
-                encodeURIComponent(data[key]))
+            //eslint-disable-next-line
+            .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
             .join("&");}
 
     useEffect(() => {
