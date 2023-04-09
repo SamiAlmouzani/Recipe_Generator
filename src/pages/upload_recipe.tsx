@@ -28,7 +28,7 @@ const UploadRecipe = () => {
             .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
             .join("&");}
 
-    useEffect(() => {
+/*    useEffect(() => {
         if(isSubmitted){
             fetch("/", {
                 method: "POST",
@@ -39,7 +39,7 @@ const UploadRecipe = () => {
                 .then(() => setIsSubmitted(false))
                 .then(() => setFormData({title: "", ingredients: "",  directions: "",picture:null}))
                 .catch(error => alert(error))}
-    }, [formData, isSubmitted])
+    }, [formData, isSubmitted])*/
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
@@ -106,11 +106,11 @@ const UploadRecipe = () => {
         fetch("/", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams(formData.toString()).toString(),
+            body: picture,
         }).catch((error) => alert(error));
     }
         /*setFormData({title: title, ingredients: ingredients, directions: directions, picture: picture
-        })
+        }
         setIsSubmitted(true)
         e.preventDefault();*/
 
@@ -152,6 +152,7 @@ const UploadRecipe = () => {
                                     Title
                                 </label>
                                 <div className="mt-1">
+                                    <input type="hidden" name="form-name" value="upload_recipe_form" />
                                     <input
                                         id="title"
                                         type="text"
@@ -168,6 +169,7 @@ const UploadRecipe = () => {
                                     Ingredients
                                 </label>
                                 <div className="mt-1">
+                                    <input type="hidden" name="form-name" value="upload_recipe_form" />
                                     <textarea
                                         id="ingredients"
                                         name="ingredients"
@@ -184,6 +186,7 @@ const UploadRecipe = () => {
                                     Directions
                                 </label>
                                 <div className="mt-1">
+                                    <input type="hidden" name="form-name" value="upload_recipe_form" />
                                     <textarea
                                         id="directions"
                                         name="directions"
@@ -200,6 +203,7 @@ const UploadRecipe = () => {
                                     Picture
                                 </label>
                                 <div className="mt-1 flex items-center">
+                                    <input type="hidden" name="form-name" value="upload_recipe_form" />
                                     <input type="file" name="picture" id="picture" onChange={handlePictureChange} />
                                 </div>
                                 <button
