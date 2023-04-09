@@ -28,7 +28,7 @@ const UploadRecipe = () => {
             .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
             .join("&");}
 
-/*    useEffect(() => {
+    useEffect(() => {
         if(isSubmitted){
             fetch("/", {
                 method: "POST",
@@ -39,7 +39,7 @@ const UploadRecipe = () => {
                 .then(() => setIsSubmitted(false))
                 .then(() => setFormData({title: "", ingredients: "",  directions: "",picture:null}))
                 .catch(error => alert(error))}
-    }, [formData, isSubmitted])*/
+    }, [formData, isSubmitted])
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
@@ -100,19 +100,12 @@ const UploadRecipe = () => {
         catch(e){
             console.log(e)
         }
-        e.preventDefault();
         setFormData({title: title, ingredients: ingredients, directions: directions, picture: picture
         })
-        fetch("/", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: picture,
-        }).catch((error) => alert(error));
-    }
-        /*setFormData({title: title, ingredients: ingredients, directions: directions, picture: picture
-        }
+        console.log(formData)
         setIsSubmitted(true)
-        e.preventDefault();*/
+        e.preventDefault();
+    }
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
