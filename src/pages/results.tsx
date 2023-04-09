@@ -122,7 +122,6 @@ export async function getServerSideProps(context) {
                 console.log(titleListNoDuplicates)
                 //Map each of these titles into a recipe array (all fields of each recipe will be empty, except for the title
                 recipeList = titleListNoDuplicates.map((title) => {
-                    const placeholderComment:UserComment={username:"",text:""}
                     const recipe: Recipe = {
                         id: "",
                         title: title,

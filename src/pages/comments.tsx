@@ -4,25 +4,21 @@ import React, {useEffect, useState} from 'react';
 import { child, get, getDatabase, push, query, ref, update } from "firebase/database";
 import {db, auth, app} from "../context/firebaseSetup";
 import {useGlobalContext} from "../context";
+import Recipe from "./recipe";
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
-/*
-type CommentsProps = {commentList: Comment[], id: string}
+
+type CommentsProps = {commentList: UserComment[], id: string}
 const Comments: React.FC<CommentsProps>= (props) => {
   //Import the current user.
   const { currentUser, setCurrentUser } = useGlobalContext();
   const [commentText, setCommentText] = useState("");
   const [userComment, setUserComment] = useState({ username: "", text: "" });
 
-  // @ts-ignore
-  // @ts-ignore
-
-
-  let commentArray: Comment[] = []
-
+  const commentArray: UserComment[] = []
   props.commentList.forEach((c) => {
     if (c !== undefined && c !== null)
       commentArray.push(c);
@@ -36,14 +32,14 @@ const Comments: React.FC<CommentsProps>= (props) => {
           </div>
           <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
             <div>
-              {commentArray.map((comment) =>
-                  <div>
-                    <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+              {commentArray.map((comment:UserComment) =>
+                  <div key={comment.uid}>
+                  <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                       <ul className="divide-y-2 divide-gray-100">
                         <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                                            <pre className="italic">{                                        //@ts-ignore
+                                            <pre className="italic">{
                                               comment.username}</pre>
-                          <pre className="italic">{                                        //@ts-ignore
+                          <pre className="italic">{
                             comment.text}</pre>
                         </li>
                       </ul>
@@ -91,7 +87,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
 
       </div>
   );
-
+/*
   async function saveComment() {
 
     console.log("comment text", commentText);
@@ -123,31 +119,34 @@ const Comments: React.FC<CommentsProps>= (props) => {
       console.log(e.stack);
     }
 
-  }
+  }*/
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/require-await
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context:RecipeContext) {
+    const recipe:Recipe=JSON.parse(context.query.recipeString) as Recipe
 
-  let comments: Comment[] = []
-  let commentIds: string[] = []
-  let index = 0
-  let recipeID = {string: context.query.id}
-  let tempComments:Comment[]=[]
+    const comments: Comment[] = []
+  const commentIds: string[] = []
+  const index = 0
+  const recipeID = {string:recipe.id}
+  const tempComments:Comment[]=[]
 
   //This try/catch block pulls in the recipes from the database
   try {
     // let recipeRef = query(ref(getDatabase(app), 'recipes/'))
 
     return {
-      props: { commentList:comments, id: JSON.parse(JSON.stringify(recipeID))}}
+        //eslint-disable-next-line
+        props: { commentList:comments, id: JSON.parse(JSON.stringify(recipeID))}}
   } catch (e) {
     console.log(e)
   }
   return {
-    props: { commentList:comments, id: JSON.parse(JSON.stringify(recipeID)) }
+      //eslint-disable-next-line
+      props: { commentList:comments, id: JSON.parse(JSON.stringify(recipeID)) }
   }
 }
-export default Comments;*/
+export default Comments;
