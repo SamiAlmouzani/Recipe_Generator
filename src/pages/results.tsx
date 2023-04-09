@@ -34,11 +34,11 @@ const Results: React.FC<RecipeArray> = (props) => {
                 <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                     <div>
                         {props.recipeList.map((recipe: Recipe) =>
-                            <div>
-                                <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+                            <div key={recipe.id}>
+                            <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                                     <Link href={{
                                         pathname: '/recipe',
-                                        query: JSON.stringify(recipe)
+                                        query: {recipeString:JSON.stringify(recipe)}
                                     }} as={`recipe/$recipeText}`} onClick={() => setIsLoading(true)}>
                                         <ul className="divide-y-2 divide-gray-100">
                                             <li className="p-3 hover:bg-red-600 hover:text-red-200">
@@ -72,9 +72,9 @@ query is an object that has an ingredients field, which is just the text the use
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context) {
     let titleList: string[] = []
-    let titleListNoDuplicates: string[] = []
+    const titleListNoDuplicates: string[] = []
     let recipeList: Recipe[] = []
-    let tempRatingMap: Map<string, number> = new Map<string, number>()
+    const tempRatingMap: Map<string, number> = new Map<string, number>()
     //This try/catch block uses the API to generate only a recipe title. Comment out this block to pull recipes from the database instead for testing
     try {
         const requestOptions = {
@@ -82,7 +82,7 @@ export async function getServerSideProps(context) {
             headers: {
                 'Content-Type': 'application/json',
                 // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                'Authorization': "Bearer " + process.env.OPENAI_API_KEY
+                'Authorization': "Bearer " + process.env.NEW_OPEN_API_KEY
             },
             body: JSON.stringify({
                 'model': "text-davinci-003",
@@ -103,8 +103,9 @@ export async function getServerSideProps(context) {
         await fetch('https://api.openai.com/v1/completions', requestOptions)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 //Store all of the generated recipe titles in the titleList array
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+                //eslint-disable-next-line
                 titleList = data.choices.map((r: RecipeFromAPI) => {
                     //Sometimes the API will return text before the title. Remove anything above the last occurrence of a newline
                     if(r!==null&&r!==undefined)
@@ -121,13 +122,13 @@ export async function getServerSideProps(context) {
                 console.log(titleListNoDuplicates)
                 //Map each of these titles into a recipe array (all fields of each recipe will be empty, except for the title
                 recipeList = titleListNoDuplicates.map((title) => {
-                    let placeholderComment:UserComment={username:"",text:""}
-                    let tempComments:UserComment[]=[placeholderComment]
-                    let recipe: Recipe = {
+                    const placeholderComment:UserComment={username:"",text:""}
+                    const recipe: Recipe = {
                         id: "",
                         title: title,
                         text: "",
                         image: "",
+                        //eslint-disable-next-line
                         ingredients: context.query.ingredients as string,
                         averageRating: 0,
                         uploadedBy: "0",

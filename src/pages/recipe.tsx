@@ -91,7 +91,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
             if (saved) {
                 if(currentUser.savedRecipes.indexOf(recipe.id)===-1) {
                     //Create a temporary array, initialized to the current saved recipe array
-                    let tempSavedRecipes: string[] = currentUser.savedRecipes;
+                    const tempSavedRecipes: string[] = currentUser.savedRecipes;
 
                     if(tempSavedRecipes[0]===""){
                         tempSavedRecipes[0]=recipe.id
@@ -104,26 +104,26 @@ const Recipe: React.FC<Recipe>=(props)=>{
                         savedRecipes: tempSavedRecipes, uploadedRecipes: currentUser.uploadedRecipes
                     })
                     //Update the database with this new object
-                    update(ref(db, '/users/' + currentUser.uid), currentUser);
+                    update(ref(db, '/users/' + currentUser.uid), currentUser).catch(e=>(console.log(e)));
                 }
             }
             else {
                 //Create a temporary array, initialized to the current saved recipe array
-                let tempSavedRecipes:string[]=currentUser.savedRecipes;
+                const tempSavedRecipes:string[]=currentUser.savedRecipes;
                 //Remove the current recipe's id from the array
-                let indexOfRecipe=tempSavedRecipes.indexOf(recipe.id)
+                const indexOfRecipe=tempSavedRecipes.indexOf(recipe.id)
                 if(indexOfRecipe>-1)
                     tempSavedRecipes.splice(indexOfRecipe, 1)
 
                 setCurrentUser({uid:currentUser.uid,displayName:currentUser.displayName,photoURL:currentUser.photoURL,
                     savedRecipes:tempSavedRecipes,uploadedRecipes:currentUser.uploadedRecipes})
                 //Update the database with this new object
-                update(ref(db, '/users/'+currentUser.uid), currentUser);
+                update(ref(db, '/users/'+currentUser.uid), currentUser).catch(e=>(console.log(e)));
                 return recipe.id
             }
         }
         catch (e:any) {
-            console.log(e.stack);
+            console.log(e);
         }
         return recipe.id
     }
@@ -135,30 +135,23 @@ const Recipe: React.FC<Recipe>=(props)=>{
 function setNewRating(rating:number,recipe:Recipe,uid:string){
     console.log(recipe)
     //Get the current rating hashmap
-    let tempRatingMap:Map<string,number>=new Map(JSON.parse(recipe.ratingMap))
+    const tempRatingMap:Map<string,number>=new Map(JSON.parse(recipe.ratingMap) as Map<string,number>)
     let ratingSum:number=recipe.ratingSum
     console.log("ratingSum: "+typeof ratingSum)
     let totalRatings:number=recipe.totalRatings
-    let averageRating:number=0
+    let averageRating=0
     //Check whether this user is rating this recipe for the first time, or whether they are replacing an old rating
     if(tempRatingMap.has(uid)){
         //Get the user's previous rating
-        let previousRating:number=tempRatingMap.get(uid) as number
-        console.log("previous rating: "+ previousRating)
-        console.log("rating: "+rating)
+        const previousRating:number=tempRatingMap.get(uid) as number
         ratingSum=ratingSum+(rating-previousRating)
-        console.log("ratingSum: "+ratingSum)
     }else{
-        console.log("totalRatings: "+totalRatings)
         totalRatings++
-        ratingSum=(ratingSum+rating as number) as number
-        console.log("totalRatings: "+totalRatings)
-        console.log("ratingSum: "+ratingSum)
+        ratingSum=(ratingSum+rating)
     }
     //update the hashmap
     tempRatingMap.set(uid,rating)
     //calculate the new average
-    console.log("totalRatings: "+totalRatings)
     averageRating=ratingSum/totalRatings
     console.log(recipe)
     //Update the recipe object with these values
@@ -167,7 +160,7 @@ function setNewRating(rating:number,recipe:Recipe,uid:string){
     recipe.ratingSum=ratingSum
     recipe.averageRating=averageRating
     //Update the database with this new object
-    update(ref(db, '/recipes/' + recipe.id), recipe);
+    update(ref(db, '/recipes/' + recipe.id), recipe).catch(e=>(console.log(e)));
     //Return the new average
     return averageRating
 }
@@ -181,7 +174,6 @@ function StarIcons(r: {recipe:Recipe}){
     const [star4color,setStar4Color]=useState("grey")
     const [star5color,setStar5Color]=useState("grey")
     const [rating, setRating]=useState(0)
-    let a=r.recipe.averageRating as number
     const [averageRating, setAverageRating]=useState(parseFloat(String((r.recipe.averageRating))).toFixed(2))
 
     return(
@@ -297,7 +289,7 @@ function StarIcons(r: {recipe:Recipe}){
 //back up to the main page through the props object.
 export async function getServerSideProps(context:RecipeContext){
     console.log("context: "+typeof context.query.recipeString)
-    let recipe:Recipe=JSON.parse(context.query.recipeString)
+    const recipe:Recipe=JSON.parse(context.query.recipeString) as Recipe
     console.log(recipe)
     //If there is text, it means that this was an existing recipe that is already in the database. Return the recipe.
     if(recipe.text.length>1){
@@ -320,7 +312,7 @@ export async function getServerSideProps(context:RecipeContext){
     //If the text is empty, it means this is a new recipe, and so far only the title has been generated.
     //Generate the text with the openAI API, and generate the image with SerpAPI. The recipe will then need to be saved in the database.
     else {
-        let text:string=""
+        let text=""
         //This try/catch block makes the API call to generate the text
         try {
             const requestOptions = {
@@ -349,8 +341,9 @@ export async function getServerSideProps(context:RecipeContext){
             await fetch('https://api.openai.com/v1/completions', requestOptions)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data.choices)
-                    text=data.choices[0].text
+                    console.log(data)
+                    //eslint-disable-next-line
+                    text=data.choices[0].text as string
 
                 }).catch(err => {
                     console.log(err);
@@ -367,11 +360,12 @@ export async function getServerSideProps(context:RecipeContext){
         });
         console.log("image and text were generated")
         //Create a recipe object using the newly generated text and image
-        let newRecipe:Recipe={
+        const newRecipe:Recipe={
             id:recipe.id,
             title:recipe.title,
             text:text,
-            image:response["images_results"][0].original,
+            //eslint-disable-next-line
+            image:response["images_results"][0].original as string,
             ingredients:recipe.ingredients,
             averageRating:0,
             uploadedBy:recipe.uploadedBy,
@@ -386,10 +380,13 @@ export async function getServerSideProps(context:RecipeContext){
             //Create a new entry under recipes, and save the automatically generated key
             const key =push(child(ref(getDatabase(app)), 'recipes'),newRecipe).key;
             //Set the id field of recipe to be equal to the key
-            recipe.id=""+key
+            recipe.id=""
+            recipe.id+=key as string
             console.log("id "+newRecipe.id)
             //Update the entry to the recipe object to store the recipe
-            update(ref(getDatabase(app), 'recipes/'+key), newRecipe);
+            let queryPath="recipes/"
+            queryPath+=key as string
+            update(ref(getDatabase(app), queryPath), newRecipe).catch(e=>(console.log(e)));
             console.log("updated database, id is "+newRecipe.id)
         }
         catch(e){

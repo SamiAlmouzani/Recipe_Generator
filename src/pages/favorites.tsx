@@ -19,7 +19,7 @@ const Favorites: React.FC<RecipeArray>= (props) => {
     console.log("recipes from props\n")
     console.log(props.recipeList)
 
-    let recipeArray:Recipe[]=[]
+    const recipeArray:Recipe[]=[]
     for(let i=0;i<props.recipeList.length;i++) {
         //    recipeCounter[i]=i;
     }
@@ -36,8 +36,8 @@ const Favorites: React.FC<RecipeArray>= (props) => {
             <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                 <div>
                     {recipeArray.map((recipe) =>
-                        <div>
-                            <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
+                        <div key={recipe.id}>
+                        <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                                 <Link href={{
                                     pathname: '/recipe',
                                     query: {recipeString:JSON.stringify(recipe)}
@@ -69,24 +69,30 @@ getServerSideProps runs when the link on the main page is clicked. It loads the 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/require-await
-export async function getServerSideProps (context) {
-    let recipeList:Recipe[]=[]
+export async function getServerSideProps (context:UserContext) {
+    const recipeList:Recipe[]=[]
     let recipeIds:string[]=[]
     //This try/catch block pulls in the recipes from the database
     try{
-        let userRef=ref(getDatabase(app),'users/'+context.query.uid)
+        const userRef=ref(getDatabase(app),'users/'+context.query.uid)
         console.log("user ref "+JSON.stringify(userRef))
         await get(userRef).then((snapshot) => {
             if (snapshot.exists()) {
-                recipeIds=snapshot.val().savedRecipes
+                const u:customUser=snapshot.val() as customUser
+                if(u.savedRecipes!==undefined)
+                    recipeIds=u.savedRecipes
+                else
+                    recipeIds=[""]
                 console.log(recipeIds)
             }
         });
         for(let i=0;i<recipeIds.length;i++){
-            const recipeRef =query(ref(getDatabase(app), 'recipes/' + recipeIds[i]));
+            let queryString='recipes/'
+            queryString+=recipeIds[i] as string
+            const recipeRef =query(ref(getDatabase(app), queryString));
             await get(recipeRef).then((snapshot)=>{
-                recipeList.push(snapshot.val());
-                console.log(recipeList.length+" "+recipeList)
+                const r:Recipe=snapshot.val() as Recipe
+                recipeList.push(r);
                 if(recipeList.length===recipeIds.length){
                     console.log("about to return")
                     recipeList.forEach((r)=>{

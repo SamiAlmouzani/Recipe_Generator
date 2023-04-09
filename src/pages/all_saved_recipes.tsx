@@ -24,7 +24,7 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
             <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                 <div>
                     {props.recipeList.map((recipe:Recipe) =>
-                        <div>
+                        <div key={recipe.id}>
                             <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                                 <Link href={{
                                     pathname: '/recipe',

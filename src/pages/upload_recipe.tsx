@@ -25,31 +25,35 @@ const UploadRecipe = () => {
             if (picture){
                 const formData = new FormData();
                 formData.append(picture.name, picture);
+                //eslint-disable-next-line
                 const { data } = await axios.post("/api/images", formData);
+                //eslint-disable-next-line
                 imageURL=path.join("/user_images",data["url"])
                 console.log(imageURL)
             }
         } catch (error: any) {
-            console.log(error.response?.data);
+            console.log(error);
         }
 
         //Create a new recipe using the new image path
-        let tempRatingMap:Map<string,number>=new Map<string, number>()
-        let recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, UserComments:[]as UserComment[],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0}
+        const tempRatingMap:Map<string,number>=new Map<string, number>()
+        const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, UserComments:[]as UserComment[],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0}
         //Store this recipe in the database
         try{
             //Create a new entry under recipes, and save the automatically generated key
             const key=push(child(ref(getDatabase(app)), 'recipes'),recipe).key;
             //Set the id field of recipe to be equal to the key
-            recipe.id=""+key
+            recipe.id=""
+            recipe.id+=key as string
             console.log("id "+recipe.id)
             //Update the entry to the recipe object to store the recipe
-            update(ref(getDatabase(app), 'recipes/'+key), recipe);
-            console.log("updated database, id is "+recipe.id)
+            let queryPath="recipes/"
+            queryPath+=key as string
+            update(ref(getDatabase(app), queryPath), recipe).catch(e=>(console.log(e)));
 
             //Update the current user's uploaded recipes array
             //Create a temporary array, initialized to the current uploaded recipe array
-            let tempUploadedRecipes: string[] = currentUser.uploadedRecipes;
+            const tempUploadedRecipes: string[] = currentUser.uploadedRecipes;
 
             if(tempUploadedRecipes[0]===""){
                 tempUploadedRecipes[0]=recipe.id
@@ -62,12 +66,12 @@ const UploadRecipe = () => {
                 savedRecipes: currentUser.savedRecipes, uploadedRecipes: tempUploadedRecipes
             })
             //Update the database with this new object
-            update(ref(db, '/users/' + currentUser.uid), currentUser);
+            update(ref(db, '/users/' + currentUser.uid), currentUser).catch(e=>(console.log(e)));
         }
         catch(e){
             console.log(e)
         }
-    };
+    }
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -90,6 +94,7 @@ const UploadRecipe = () => {
         <div className="bg-gray-100 py-8">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-xl mx-auto">
+                   {/*eslint-disable-next-line*/}
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div>
                             <h2 className="text-2xl font-bold leading-7 text-gray-800">

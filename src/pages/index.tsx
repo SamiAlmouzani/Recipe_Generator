@@ -38,8 +38,9 @@ const Home: NextPage = () => {
         //If the snapshot exists, it means the user is already in the database.
         if(snapshot.exists()){
           //Create a new user object and initialize the fields with the values from Firebase
-          const returningUser:customUser={uid:snapshot.val().uid,displayName:snapshot.val().displayName, photoURL:snapshot.val().photoURL,
-            savedRecipes:snapshot.val().savedRecipes,uploadedRecipes:snapshot.val().uploadedRecipes}
+          const tempUser:customUser=snapshot.val() as customUser
+          const returningUser:customUser={uid:tempUser.uid,displayName:tempUser.displayName, photoURL:tempUser.photoURL,
+            savedRecipes:tempUser.savedRecipes,uploadedRecipes:tempUser.uploadedRecipes}
 
           //Set the current user in the global context
           setCurrentUser(returningUser)
@@ -49,12 +50,11 @@ const Home: NextPage = () => {
           console.log("user does not exist")
 
           //Initialize a new user object
-          // @ts-ignore
-          const newUser:customUser={uid:user.uid,displayName:user.displayName,photoURL:user.photoURL, savedRecipes:[""],uploadedRecipes:[""]}
+          const newUser:customUser={uid:user.uid,displayName:user.displayName as string,photoURL:user.photoURL as string, savedRecipes:[""],uploadedRecipes:[""]}
 
           //Save this new object in the database
           const db=getDatabase(app)
-          set(ref(db, 'users/' + user.uid), newUser);
+          set(ref(db, 'users/' + user.uid), newUser).catch(e => console.log(e));
 
           //Use the new object to set the currentUser in the global context
           setCurrentUser(newUser);
@@ -63,10 +63,10 @@ const Home: NextPage = () => {
         console.log("There was an error")
       })
       //Go to the main page
-      router.push("/main");
+      router.push("/main").catch(e=>console.log(e));
     })
         .catch((error)=>{
-          const credential=GoogleAuthProvider.credentialFromError(error)
+       //   const credential=GoogleAuthProvider.credentialFromError(error)
         });
 
   }
@@ -130,7 +130,7 @@ const Home: NextPage = () => {
 
         </div>
         <div className="mx-auto max-w-lg text-center block whitespace-pre-line">
-          <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line">Scroll down to see what you're missing!</p>
+          <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line">Scroll down to see what you&#39;re missing!</p>
         </div>
       </div>
     </div>

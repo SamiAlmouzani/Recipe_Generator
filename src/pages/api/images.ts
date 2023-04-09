@@ -20,7 +20,9 @@ const readFile = (
     if (saveLocally) {
         options.uploadDir = path.join(process.cwd(), "/public/user_images");
         options.filename = (name, ext, path, form) => {
-            url=Date.now().toString() + "_" + path.originalFilename;
+            if(path.originalFilename!==null){
+                url=Date.now().toString() + "_" + path.originalFilename;
+            }
             return url;
         };
     }
