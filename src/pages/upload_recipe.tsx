@@ -95,7 +95,7 @@ const UploadRecipe = () => {
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-xl mx-auto">
                    {/*eslint-disable-next-line*/}
-                    <form onSubmit={handleSubmit} className="space-y-8" data-netlify="true">
+                    <form className="space-y-8" data-netlify="true">
                         <div>
                             <h2 className="text-2xl font-bold leading-7 text-gray-800">
                                 Upload a Recipe
