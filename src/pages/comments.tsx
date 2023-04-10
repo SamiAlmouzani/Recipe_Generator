@@ -11,7 +11,7 @@ import recipe from "./recipe";
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
 
-type CommentsProps = {commentList: Comment[], id: string}
+type CommentsProps = {commentList: UserComment[], id: string}
 const Comments: React.FC<CommentsProps>= (props) => {
   //Import the current user.
   const { currentUser, setCurrentUser } = useGlobalContext();
@@ -22,7 +22,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
   // @ts-ignore
   console.log("comment props "+JSON.stringify(props))
 
-  let commentArray: Comment[] = []
+  let commentArray: UserComment[] = []
 
   props.commentList.forEach((c) => {
     if (c !== undefined && c !== null)
@@ -39,6 +39,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
           <div>
             {commentArray.map((comment) =>
               <div>
+
                 <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                   <ul className="divide-y-2 divide-gray-100">
                     <li className="p-3 hover:bg-red-600 hover:text-red-200">
@@ -46,10 +47,12 @@ const Comments: React.FC<CommentsProps>= (props) => {
                                               comment.username}</pre>
                       <pre className="italic">{                                        //@ts-ignore
                         comment.text}</pre>
+
                     </li>
                   </ul>
 
                 </div>
+                <button onClick={() => {deleteComment(comment)}}> Delete </button>
               </div>)}
           </div>
         </div>
@@ -75,21 +78,49 @@ const Comments: React.FC<CommentsProps>= (props) => {
     </div>
   );
 
-  async function saveComment() {
+
+  async function deleteComment(comment: UserComment) {
+
+      if (comment.username === currentUser.displayName) {
+
+          try {
+            let comments:UserComment[]=[]
+            props.commentList.forEach((f)=>{
+              if (f != comment) {
+                comments.push(f)
+              }
+            })
+            const updates = {};
+            // @ts-ignore
+            updates["recipes/" + props.id + "/" + "comments/"] = comments;
+
+            update(ref(db), updates)
+          }
+          catch (e) {
+            // @ts-ignore
+            console.log(e.stack);
+          }
+      }
+
+  }
+
+
+  function saveComment() {
     console.log("calling saveComment")
-    console.log("comment text from saveComment", commentText);
 
+
+    let commentBody = commentText
     try {
-      let comments:Comment[]=[]
-      if (commentText.length != 0) {
-
+      let comments:UserComment[]=[]
+      if (commentBody.length != 0) {
+        console.log("comment text from saveComment", commentText);
         // save comment to list of comments in recipe
-        setUserComment({ username: currentUser.displayName, text: commentText });
+        setUserComment({ username: currentUser.displayName, text: commentBody });
         console.log("user comment "+JSON.stringify(userComment))
         props.commentList.forEach((f)=>{
           comments.push(f)
         })
-        let comment=userComment
+        let comment = {username: currentUser.displayName, text: commentText};
         // @ts-ignore
         comments.push(comment)
         console.log("comments props 2"+JSON.stringify(comments))
@@ -104,6 +135,8 @@ const Comments: React.FC<CommentsProps>= (props) => {
 
         update(ref(db), updates)
 
+
+
         /* await get(recipeRef).then((snapshot) => {
            if (snapshot.exists()) {
              update(ref(db, 'recipes/' + JSON.stringify(props.id) + '/comments'), {comments:comments});
@@ -114,7 +147,6 @@ const Comments: React.FC<CommentsProps>= (props) => {
       // @ts-ignore
       console.log(e.stack);
     }
-
   }
 }
 
@@ -123,7 +155,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context) {
 
-  let commentList: Comment[] = []
+  let commentList: UserComment[] = []
   let recipeID = context.query.id
 
   //This try/catch block pulls in the recipes from the database
@@ -138,7 +170,7 @@ export async function getServerSideProps(context) {
 
           console.log("comments:" + JSON.stringify(comments))
 
-          comments.forEach((c: Comment | null | undefined) => {
+          comments.forEach((c: UserComment | null | undefined) => {
             if (c !== undefined && c !== null)
               commentList.push(c);
           })

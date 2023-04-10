@@ -11,7 +11,7 @@ import recipe from "./recipe";
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
 
-type CommentsProps = {commentList: Comment[], id: string}
+type CommentsProps = {commentList: UserComment[], id: string}
 const leave_comment: React.FC<CommentsProps>= (props) => {
   //Import the current user.
   const { currentUser, setCurrentUser } = useGlobalContext();
@@ -21,7 +21,7 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
   // @ts-ignore
   // @ts-ignore
   console.log("comment props "+JSON.stringify(props))
-
+  console.log("user display name: " + currentUser.displayName)
 
   return (
     <div>
@@ -73,7 +73,7 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
 
     let commentBody = commentText
     try {
-      let comments:Comment[]=[]
+      let comments:UserComment[]=[]
       if (commentBody.length != 0) {
         console.log("comment text from saveComment", commentText);
         // save comment to list of comments in recipe
@@ -82,7 +82,6 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
         props.commentList.forEach((f)=>{
           comments.push(f)
         })
-       // let comment=userComment
         let comment = {username: currentUser.displayName, text: commentText};
         // @ts-ignore
         comments.push(comment)
@@ -118,7 +117,7 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context) {
 
-  let commentList: Comment[] = []
+  let commentList: UserComment[] = []
   let recipeID = context.query.id
 
   //This try/catch block pulls in the recipes from the database
@@ -133,7 +132,7 @@ export async function getServerSideProps(context) {
 
         console.log("comments:" + JSON.stringify(comments))
 
-        comments.forEach((c: Comment | null | undefined) => {
+        comments.forEach((c: UserComment | null | undefined) => {
           if (c !== undefined && c !== null)
             commentList.push(c);
         })
