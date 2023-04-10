@@ -123,23 +123,35 @@ const Comments: React.FC<CommentsProps>= (props) => {
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context) {
 
-  let comments: Comment[] = []
-  let commentIds: string[] = []
-  let index = 0
+  let commentList: Comment[] = []
   let recipeID = context.query.id
-  let tempComments:Comment[]=[]
 
   //This try/catch block pulls in the recipes from the database
   try {
-    let recipeRef = query(ref(getDatabase(app), 'recipes/'+recipeID))
+      let recipeRef = ref(getDatabase(app), "recipes/" + recipeID)
+
+      await get(recipeRef).then((snapshot) => {
+
+        if (snapshot.exists()) {
+
+          let comments = snapshot.val().comments
+
+          console.log("comments:" + JSON.stringify(comments))
+
+          comments.forEach((c: Comment | null | undefined) => {
+            if (c !== undefined && c !== null)
+              commentList.push(c);
+          })
+        }
+      });
 
     return {
-      props: { commentList:comments, id: recipeID}}
+      props: { commentList:commentList, id: recipeID}}
   } catch (e) {
     console.log(e)
   }
   return {
-    props: { commentList:comments, id: recipeID }
+    props: { commentList:commentList, id: recipeID }
   }
 }
 
