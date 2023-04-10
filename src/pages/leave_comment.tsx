@@ -67,21 +67,23 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
     </div>
   );
 
-  async function saveComment() {
+  function saveComment() {
     console.log("calling saveComment")
-    console.log("comment text from saveComment", commentText);
 
+
+    let commentBody = commentText
     try {
       let comments:Comment[]=[]
-      if (commentText.length != 0) {
-
+      if (commentBody.length != 0) {
+        console.log("comment text from saveComment", commentText);
         // save comment to list of comments in recipe
-        setUserComment({ username: currentUser.displayName, text: commentText });
+        setUserComment({ username: currentUser.displayName, text: commentBody });
         console.log("user comment "+JSON.stringify(userComment))
         props.commentList.forEach((f)=>{
           comments.push(f)
         })
-        let comment=userComment
+       // let comment=userComment
+        let comment = {username: currentUser.displayName, text: commentText};
         // @ts-ignore
         comments.push(comment)
         console.log("comments props 2"+JSON.stringify(comments))
@@ -96,6 +98,8 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
 
         update(ref(db), updates)
 
+
+
         /* await get(recipeRef).then((snapshot) => {
            if (snapshot.exists()) {
              update(ref(db, 'recipes/' + JSON.stringify(props.id) + '/comments'), {comments:comments});
@@ -106,7 +110,6 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
       // @ts-ignore
       console.log(e.stack);
     }
-
   }
 }
 
