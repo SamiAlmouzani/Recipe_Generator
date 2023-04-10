@@ -1,8 +1,12 @@
 import { type NextPage } from "next";
 import Link from "next/link";
+import React, {useContext} from "react";
+import 'reactjs-popup/dist/index.css';
+import "firebase/compat/auth";
 
 
-const Sign_up: NextPage = () => {
+
+function Sign_up() {
 
     return (
             <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
@@ -34,14 +38,13 @@ const Sign_up: NextPage = () => {
                                     />
                                 </div>
                             </div>
+
                         </div>
                     </form>
                     <button
                         className="ml-3 inline-block rounded-lg bg-red-500 px-5 py-3 text-sm font-medium text-white"
                     >  Create an Account
                     </button>
-
-
                 </div>
             </div>
 

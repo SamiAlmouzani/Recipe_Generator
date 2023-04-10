@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { MdOutlineFavorite } from "react-icons/md";
-import {useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import placeholder_image from './placeholder_image.jpg'
 import Link from "next/link";
 import { getJson } from "serpapi";
@@ -42,6 +42,12 @@ const Recipe: React.FC<Recipe>=(props)=>{
     console.log("Rating sum in main page :"+typeof parseFloat(String(recipe.ratingSum)))
 
     return (
+        <section>
+            <nav className="font-extrabold text-red-700 sm:block text-3xl">
+                <strong>
+                    SuperChef.
+                </strong>
+            </nav>
         <div className="px-8 py-12">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-center text-3xl font-bold mb-8">{props.title}</h1>
@@ -81,6 +87,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
             </div>
           </div>
         </div>
+        </section>
       );
       
     /*When a user clicks the save button this function will
@@ -281,6 +288,25 @@ function StarIcons(r: {recipe:Recipe}){
                       clipRule="evenodd"/>
             </svg>
           <div> <label className="font-bold text-[#F7C600]">Average rating</label><h1 className="font-bold text-3xl text-[#F7C600]">{averageRating}</h1></div>
+            <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
+                <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
+                    <a className="hover:text-gray-900" href="#">Home</a>
+                    <a className="hover:text-gray-900" href='\index.tsx'>About</a>
+                </nav>
+
+                <div className="flex justify-center space-x-5">
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                        <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                        <img src="https://img.icons8.com/fluent/30/000000/instagram-new.png"/>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                        <img src="https://img.icons8.com/fluent/30/000000/twitter.png"/>
+                    </a>
+                </div>
+                <p className="text-center text-gray-700 font-medium">&copy; 2023 Company Ltd. All rights reserved.</p>
+            </footer>
         </div>
     )
 }

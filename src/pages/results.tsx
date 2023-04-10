@@ -22,6 +22,12 @@ const Results: React.FC<RecipeArray> = (props) => {
     console.log("recipes from props\n")
     console.log(props.recipeList)
     return (
+        <section>
+            <nav className="font-extrabold text-red-700 sm:block text-3xl">
+                <strong>
+                    SuperChef.
+                </strong>
+            </nav>
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto text-left">
                 <h1 className="text-2xl font-bold sm:text-3xl">...Here are some recipes to try:</h1>
@@ -60,6 +66,26 @@ const Results: React.FC<RecipeArray> = (props) => {
                 </div>
             )}
         </div>
+            <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
+            <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
+                <a className="hover:text-gray-900" href="#">Home</a>
+                <a className="hover:text-gray-900" href='\index.tsx'>About</a>
+            </nav>
+
+            <div className="flex justify-center space-x-5">
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/fluent/30/000000/instagram-new.png"/>
+                </a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/fluent/30/000000/twitter.png"/>
+                </a>
+            </div>
+            <p className="text-center text-gray-700 font-medium">&copy; 2023 Company Ltd. All rights reserved.</p>
+        </footer>
+        </section>
     );
 }
 /*
