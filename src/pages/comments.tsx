@@ -81,6 +81,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
 
   async function deleteComment(comment: UserComment) {
 
+       console.log("username on comment, current user", comment.username, currentUser.displayName)
       if (comment.username === currentUser.displayName) {
 
           try {
@@ -101,7 +102,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
             console.log(e.stack);
           }
       }
-
+      window.location.reload()
   }
 
 

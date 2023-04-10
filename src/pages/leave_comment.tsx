@@ -47,16 +47,13 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
             >
               Comment
             </button>
-            <button
-              className="px-3 py-2 text-sm text-white-600 border border-red-500 rounded">
-              Cancel
-            </button>
+
           </div>
           {/* </form>*/}
         </div>
       </div>
 
-      <Link href="/main">
+      <Link href={{ pathname: '/comments', query: { id: props.id } }}>
         <button
           className="mx-8 my-8 block w-full mt-6 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
         >
@@ -109,6 +106,7 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
       // @ts-ignore
       console.log(e.stack);
     }
+    window.location.reload();
   }
 }
 
