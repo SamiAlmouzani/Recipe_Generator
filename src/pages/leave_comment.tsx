@@ -12,7 +12,7 @@ import recipe from "./recipe";
 //props is an array of Recipe objects.
 
 type CommentsProps = {commentList: Comment[], id: string}
-const Comments: React.FC<CommentsProps>= (props) => {
+const leave_comment: React.FC<CommentsProps>= (props) => {
   //Import the current user.
   const { currentUser, setCurrentUser } = useGlobalContext();
   const [commentText, setCommentText] = useState("initial comment");
@@ -22,36 +22,37 @@ const Comments: React.FC<CommentsProps>= (props) => {
   // @ts-ignore
   console.log("comment props "+JSON.stringify(props))
 
-  let commentArray: Comment[] = []
-
-  props.commentList.forEach((c) => {
-    if (c !== undefined && c !== null)
-      commentArray.push(c);
-  })
 
   return (
     <div>
-      <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto text-left">
-          <h1 className="text-2xl font-bold sm:text-3xl">Comments</h1>
-        </div>
-        <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-          <div>
-            {commentArray.map((comment) =>
-              <div>
-                <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
-                  <ul className="divide-y-2 divide-gray-100">
-                    <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                                            <pre className="italic">{                                        //@ts-ignore
-                                              comment.username}</pre>
-                      <pre className="italic">{                                        //@ts-ignore
-                        comment.text}</pre>
-                    </li>
-                  </ul>
 
-                </div>
-              </div>)}
+      <div className="flex px-8 py-8">
+        <div className="max-w-lg rounded-lg shadow-md shadow-red-600/50">
+
+          {/*  <form action="" className="w-full p-4 my-8">*/}
+
+          <div className="mb-2">
+            <label htmlFor="comment" className="text-lg text-gray-600">Add a comment</label>
+            <textarea
+              className="w-full h-20 p-2 border rounded focus:outline-none focus:ring-gray-300 focus:ring-1"
+              name="comment"
+              onChange={(event) => {
+                setCommentText(event.target.value);
+              }
+              }
+              placeholder=""></textarea>
           </div>
+          <div>
+            <button className="px-3 py-2 text-sm text-white bg-red-600 rounded" onClick={()=>{saveComment()}}
+            >
+              Comment
+            </button>
+            <button
+              className="px-3 py-2 text-sm text-white-600 border border-red-500 rounded">
+              Cancel
+            </button>
+          </div>
+          {/* </form>*/}
         </div>
       </div>
 
@@ -62,15 +63,6 @@ const Comments: React.FC<CommentsProps>= (props) => {
           Back
         </button>
       </Link>
-
-      <Link href={{ pathname: '/leave_comment', query: { id: props.id } }}>
-        <button
-          className="mx-8 my-8 block w-full mt-6 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
-        >
-          Leave Comment
-        </button>
-      </Link>
-
 
     </div>
   );
@@ -142,10 +134,4 @@ export async function getServerSideProps(context) {
     props: { commentList:comments, id: recipeID }
   }
 }
-
-
-
-
-
-
-export default Comments;
+export default leave_comment;
