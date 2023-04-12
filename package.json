@@ -11,6 +11,7 @@
   "dependencies": {
     "@types/formidable": "^2.0.5",
     "@types/react-icons": "^3.0.0",
+    "@types/react-image-gallery": "^1.2.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-sidebar": "^3.0.2",
@@ -41,6 +42,7 @@
     "reset-css": "^5.0.1",
     "serp": "^2.2.2",
     "serpapi": "^1.1.1",
+    "startbootstrap-full-width-pics": "^5.0.6",
     "styled-components": "^5.3.9",
     "zod": "^3.20.2"
   },

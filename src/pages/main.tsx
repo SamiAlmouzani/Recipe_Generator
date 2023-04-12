@@ -6,13 +6,14 @@ import {getAuth} from "firebase/auth";
 import {FirebaseAuth} from "@firebase/auth-types";
 import Loader from "react-loader-spinner";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import navBar from './navBar'
 import Sidebar from "react-sidebar";
 import UploadRecipe from "./upload_recipe";
 import Favorites from "./favorites";
 import AllSavedRecipes from "./all_saved_recipes";
-
-
+import {height} from "dom-helpers";
+import {min} from "@popperjs/core/lib/utils/math";
+import logo from './vecteezy_hand-drawn-vegetables-seamless-pattern-vegan-food_5490026.jpg';
+import {Container, Nav, Navbar, NavDropdown, NavLink} from "react-bootstrap";
 
 
 //localIngredients is the local value updated every time the contents of the text box are changed
@@ -34,29 +35,20 @@ const RecipeGenerator: NextPage = () => {
     return (
 
     <section className="bg-gray-50">
+            <div className="font-extrabold text-red-700 sm:block text-3xl">
+                <img
+                    src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+                    className="w-32 ml-2"
 
-            <nav className="font-extrabold text-red-700 sm:block text-3xl">
+                />
                 <strong>
                     SuperChef.
                 </strong>
-            </nav>
+            </div>
 
 
   <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center relative">
-    <div className="absolute left-10 top-10">
-      <Link
-        href={{
-          pathname: '/all_saved_recipes',
-          query: {
-            uid: currentUser.uid,
-          },
-        }}
-      >
-        <button className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
-          See All Recipes
-        </button>
-      </Link>
-    </div>
+
     <div className="mx-auto max-w-xl text-center">
       <h1 className="text-3xl font-extrabold sm:text-5xl">
         <strong className="font-extrabold text-red-700 sm:block">
@@ -79,7 +71,7 @@ const RecipeGenerator: NextPage = () => {
             },
           }}
         >
-          <button 
+          <button
             className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
             onClick={() => {
               setIsLoading(true);
@@ -91,43 +83,62 @@ const RecipeGenerator: NextPage = () => {
       </div>
       )
     }
-      <div className="absolute right-10 top-10">
-        <Link
-          href={{
-            pathname: '/favorites',
-            query: {
-              uid: currentUser.uid,
-            },
-          }}
-        >
-          <button className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto">
-            Favorites
-          </button>
-        </Link>
-      </div>
-      <div className="absolute bottom-10 left-10">
-      <Link
-          href={{
-            pathname: '/upload_recipe',
-            query: {
-              uid: currentUser.uid,
-            },
-          }}
-        >
-          <button className="block w-full rounded bg-green-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-green-700 focus:outline-none focus:ring active:bg-green-500 sm:w-auto">
-            Upload Recipe
-          </button>
-        </Link>
-      </div>
+
+    <Navbar className="navbar-container mt-4 sm:text-xl">
+
+        <ul className="align-items:center">
+            <li className="font-bold text-black sm:block">
+                <Link
+                    href={{
+                        pathname: '/upload_recipe',
+                        query: {
+                            uid: currentUser.uid,
+                        },
+                    }}
+                >Upload Recipe
+                </Link>            </li>
+            <li className="font-bold text-black sm:block">
+                <Link
+                    href={{
+                        pathname: '/favorites',
+                        query: {
+                            uid: currentUser.uid,
+                        },
+                    }}
+                >Favorites
+                </Link>            </li>
+
+            <li className="font-bold text-black sm:block">
+                <Link
+                    href={{
+                        pathname: '/all_saved_recipes',
+                        query: {
+                            uid: currentUser.uid,
+                        },
+                    }}>See All Recipes
+                </Link>
+            </li>
+        </ul>
+</Navbar>
+
+
+
+
+
+
     </div>
   </div>
-        <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
+          <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
             <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
-                <a className="hover:text-gray-900" href="#">Home</a>
-                <a className="hover:text-gray-900" href='\index.tsx'>About</a>
+                <a className="hover:text-gray-900" href="#index.tsx">Home</a>
             </nav>
 
             <div className="flex justify-center space-x-5">
+                <img
+                    src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+                    className="w-12 ml-2 justify-left"
+
+                />
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
                     <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
                 </a>

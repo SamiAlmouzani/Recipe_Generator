@@ -24,9 +24,16 @@ const Results: React.FC<RecipeArray> = (props) => {
     return (
         <section>
             <nav className="font-extrabold text-red-700 sm:block text-3xl">
-                <strong>
-                    SuperChef.
-                </strong>
+                <div className="font-extrabold text-red-700 sm:block text-3xl">
+                    <img
+                        src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+                        className="w-32 ml-2"
+
+                    />
+                    <strong>
+                        SuperChef.
+                    </strong>
+                </div>
             </nav>
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto text-left">
@@ -73,6 +80,10 @@ const Results: React.FC<RecipeArray> = (props) => {
             </nav>
 
             <div className="flex justify-center space-x-5">
+                <img
+                    src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+                    className="w-12 ml-2 justify-left"
+                />
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
                     <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
                 </a>

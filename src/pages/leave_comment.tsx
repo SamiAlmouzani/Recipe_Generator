@@ -55,7 +55,7 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
 
       <Link href={{ pathname: '/comments', query: { id: props.id } }}>
         <button
-          className="mx-8 my-8 block w-full mt-6 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
+          className="mx-8 my-8 block w-full mt-4 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
         >
           Back
         </button>

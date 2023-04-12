@@ -127,9 +127,16 @@ const UploadRecipe = () => {
     return (
         <section>
             <nav className="font-extrabold text-red-700 sm:block text-3xl">
-                <strong>
-                    SuperChef.
-                </strong>
+                <div className="font-extrabold text-red-700 sm:block text-3xl">
+                    <img
+                        src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+                        className="w-32 ml-2"
+
+                    />
+                    <strong>
+                        SuperChef.
+                    </strong>
+                </div>
             </nav>
         <div className="bg-gray-100 py-8">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -206,7 +213,7 @@ const UploadRecipe = () => {
                                     <input type="file" name="picture" id="picture" onChange={handlePictureChange} />
                                 </div>
                                 <button
-                                    className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
+                                    className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto mt-4"
                                     type="submit"
                                 >
                                     Upload Recipe
@@ -224,6 +231,10 @@ const UploadRecipe = () => {
                 </nav>
 
                 <div className="flex justify-center space-x-5">
+                    <img
+                        src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+                        className="w-12 ml-2 justify-left"
+                    />
                     <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
                         <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
                     </a>

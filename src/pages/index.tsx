@@ -118,7 +118,7 @@ const Home: NextPage = () => {
 
         <p className="mt-4 sm:text-xl sm:leading-relaxed">
           We think of great recipes that you and your family can enjoy 
-          so you don&apos;t have to 
+          so you don&apos;t have to!
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-4">
@@ -130,7 +130,7 @@ const Home: NextPage = () => {
 
         </div>
         <div className="mx-auto max-w-lg text-center block whitespace-pre-line">
-          <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line">Scroll down to see what you&#39;re missing!</p>
+          <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line mt-4">Scroll down to see what you&#39;re missing!</p>
         </div>
       </div>
     </div>
@@ -148,6 +148,10 @@ const Home: NextPage = () => {
       <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
 
         <div className="flex justify-center space-x-5">
+          <img
+              src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+              className="w-12 ml-2 justify-left"
+          />
           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
             <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
           </a>
