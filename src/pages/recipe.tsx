@@ -192,7 +192,7 @@ function setNewRating(rating:number,recipe:Recipe,uid:string){
     averageRating=ratingSum/totalRatings
     console.log(recipe)
     //Update the recipe object with these values
-    recipe.ratingMap=JSON.stringify(Array.from(tempRatingMap.entries())),
+    recipe.ratingMap=JSON.stringify(Array.from(tempRatingMap.entries()))
     recipe.totalRatings=totalRatings
     recipe.ratingSum=ratingSum
     recipe.averageRating=averageRating
@@ -359,7 +359,7 @@ export async function getServerSideProps(context:RecipeContext){
                 headers: {
                     'Content-Type': 'application/json',
                     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                    'Authorization': "Bearer " + process.env.OPENAI_API_KEY
+                    'Authorization': "Bearer "+process.env.OPENAI_API_KEY
                 },
                 body: JSON.stringify({
                     'model': "text-davinci-003",
@@ -418,9 +418,9 @@ export async function getServerSideProps(context:RecipeContext){
         try{
             //Create a new entry under recipes, and save the automatically generated key
             const key =push(child(ref(getDatabase(app)), 'recipes'),newRecipe).key;
-            //Set the id field of recipe to be equal to the key
-            recipe.id=""
-            recipe.id+=key as string
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            newRecipe.id=key
             console.log("id "+newRecipe.id)
             //Update the entry to the recipe object to store the recipe
             let queryPath="recipes/"

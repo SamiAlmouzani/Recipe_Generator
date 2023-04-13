@@ -26,8 +26,7 @@ const RecipeGenerator: NextPage = () => {
 
   //Import the current user.
   const {currentUser, setCurrentUser}=useGlobalContext();
-
-  // Check if its loading
+    // Check if its loading
   const [isLoading, setIsLoading] = useState(false);
 
   console.log("current user: (accessed from main screen)"+currentUser.displayName)

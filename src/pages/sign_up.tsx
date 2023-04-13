@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import Link from "next/link";
 import React, {useContext} from "react";
-import 'reactjs-popup/dist/index.css';
 import "firebase/compat/auth";
 
 

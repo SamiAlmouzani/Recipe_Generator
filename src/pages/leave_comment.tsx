@@ -12,14 +12,12 @@ import recipe from "./recipe";
 //props is an array of Recipe objects.
 
 type CommentsProps = {commentList: UserComment[], id: string}
-const leave_comment: React.FC<CommentsProps>= (props) => {
+const Leave_comment: React.FC<CommentsProps>= (props) => {
   //Import the current user.
   const { currentUser, setCurrentUser } = useGlobalContext();
   const [commentText, setCommentText] = useState("initial comment");
-  const [userComment, setUserComment] = useState({ username: "", text: "" });
+  const [userComment, setUserComment] = useState({ username: "", text: "",date:new Date() });
 
-  // @ts-ignore
-  // @ts-ignore
   console.log("comment props "+JSON.stringify(props))
   console.log("user display name: " + currentUser.displayName)
 
@@ -67,44 +65,31 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
   function saveComment() {
     console.log("calling saveComment")
 
-
-    let commentBody = commentText
+    const commentBody = commentText
     try {
-      let comments:UserComment[]=[]
+      const comments:UserComment[]=[]
       if (commentBody.length != 0) {
         console.log("comment text from saveComment", commentText);
         // save comment to list of comments in recipe
-        setUserComment({ username: currentUser.displayName, text: commentBody });
+        setUserComment({ username: currentUser.displayName, text: commentBody,date:new Date() });
         console.log("user comment "+JSON.stringify(userComment))
         props.commentList.forEach((f)=>{
           comments.push(f)
         })
-        let comment = {username: currentUser.displayName, text: commentText};
+        const comment = {username: currentUser.displayName, text: commentText,date: new Date()};
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         comments.push(comment)
         console.log("comments props 2"+JSON.stringify(comments))
 
-        // const recipeRef = query(ref(db, "recipes/"))
-
-        // update(ref(db, 'recipes/' + props.id + '/comments/'), comments);          // @ts-ignore
-
         const updates = {};
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         updates["recipes/" + props.id + "/" + "comments/"] = comments;
-
-        update(ref(db), updates)
-
-
-
-        /* await get(recipeRef).then((snapshot) => {
-           if (snapshot.exists()) {
-             update(ref(db, 'recipes/' + JSON.stringify(props.id) + '/comments'), {comments:comments});
-           }
-         });*/
+        update(ref(db), updates).catch(e=>(console.log(e)));
       }
     } catch (e) {
-      // @ts-ignore
-      console.log(e.stack);
+      console.log(e);
     }
     window.location.reload();
   }
@@ -115,21 +100,23 @@ const leave_comment: React.FC<CommentsProps>= (props) => {
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context) {
 
-  let commentList: UserComment[] = []
-  let recipeID = context.query.id
+  const commentList: UserComment[] = []
+  // eslint-disable-next-line
+  const recipeID = context.query.id
 
   //This try/catch block pulls in the recipes from the database
   try {
-    let recipeRef = ref(getDatabase(app), "recipes/" + recipeID)
+    // eslint-disable-next-line
+    const recipeRef = ref(getDatabase(app), "recipes/" + recipeID)
 
     await get(recipeRef).then((snapshot) => {
 
       if (snapshot.exists()) {
-
-        let comments = snapshot.val().comments
+        // eslint-disable-next-line
+        const comments = snapshot.val().comments
 
         console.log("comments:" + JSON.stringify(comments))
-
+        // eslint-disable-next-line
         comments.forEach((c: UserComment | null | undefined) => {
           if (c !== undefined && c !== null)
             commentList.push(c);
@@ -138,12 +125,14 @@ export async function getServerSideProps(context) {
     });
 
     return {
+      // eslint-disable-next-line
       props: { commentList:commentList, id: recipeID}}
   } catch (e) {
     console.log(e)
   }
   return {
+    // eslint-disable-next-line
     props: { commentList:commentList, id: recipeID }
   }
 }
-export default leave_comment;
+export default Leave_comment;

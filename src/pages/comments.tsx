@@ -16,13 +16,11 @@ const Comments: React.FC<CommentsProps>= (props) => {
   //Import the current user.
   const { currentUser, setCurrentUser } = useGlobalContext();
   const [commentText, setCommentText] = useState("initial comment");
-  const [userComment, setUserComment] = useState({ username: "", text: "" });
+  const [userComment, setUserComment] = useState({ username: "", text: "",date:"" });
 
-  // @ts-ignore
-  // @ts-ignore
   console.log("comment props "+JSON.stringify(props))
 
-  let commentArray: UserComment[] = []
+  const commentArray: UserComment[] = []
 
   props.commentList.forEach((c) => {
     if (c !== undefined && c !== null)
@@ -38,21 +36,21 @@ const Comments: React.FC<CommentsProps>= (props) => {
         <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
           <div>
             {commentArray.map((comment) =>
-              <div>
+              <div key={comment.username+comment.date}>
 
                 <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                   <ul className="divide-y-2 divide-gray-100">
                     <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                                            <pre className="italic">{                                        //@ts-ignore
+                                            <pre className="italic">{
                                               comment.username}</pre>
-                      <pre className="italic">{                                        //@ts-ignore
+                      <pre className="italic">{
                         comment.text}</pre>
 
                     </li>
                   </ul>
 
                 </div>
-                <button onClick={() => {deleteComment(comment)}}> Delete </button>
+                <button onClick={() => {deleteComment(comment, props.id)}}> Delete </button>
               </div>)}
           </div>
         </div>
@@ -77,77 +75,33 @@ const Comments: React.FC<CommentsProps>= (props) => {
 
     </div>
   );
-
-
-  async function deleteComment(comment: UserComment) {
-
+   function deleteComment(comment: UserComment, id:string) {
        console.log("username on comment, current user", comment.username, currentUser.displayName)
+     console.log(comment.username)
+     console.log(currentUser.displayName)
       if (comment.username === currentUser.displayName) {
-
           try {
-            let comments:UserComment[]=[]
+            const comments:UserComment[]=[]
             props.commentList.forEach((f)=>{
               if (f != comment) {
                 comments.push(f)
               }
             })
-            const updates = {};
-            // @ts-ignore
-            updates["recipes/" + props.id + "/" + "comments/"] = comments;
-
-            update(ref(db), updates)
+            const updates={};
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            updates["recipes/" + id + "/" + "comments/"] = comments;
+            console.log("about to update")
+            update(ref(db), updates).catch(e=>(console.log(e)));
+            console.log("after update")
           }
           catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             console.log(e.stack);
           }
       }
       window.location.reload()
-  }
-
-
-  function saveComment() {
-    console.log("calling saveComment")
-
-
-    let commentBody = commentText
-    try {
-      let comments:UserComment[]=[]
-      if (commentBody.length != 0) {
-        console.log("comment text from saveComment", commentText);
-        // save comment to list of comments in recipe
-        setUserComment({ username: currentUser.displayName, text: commentBody });
-        console.log("user comment "+JSON.stringify(userComment))
-        props.commentList.forEach((f)=>{
-          comments.push(f)
-        })
-        let comment = {username: currentUser.displayName, text: commentText};
-        // @ts-ignore
-        comments.push(comment)
-        console.log("comments props 2"+JSON.stringify(comments))
-
-        // const recipeRef = query(ref(db, "recipes/"))
-
-        // update(ref(db, 'recipes/' + props.id + '/comments/'), comments);          // @ts-ignore
-
-        const updates = {};
-        // @ts-ignore
-        updates["recipes/" + props.id + "/" + "comments/"] = comments;
-
-        update(ref(db), updates)
-
-
-
-        /* await get(recipeRef).then((snapshot) => {
-           if (snapshot.exists()) {
-             update(ref(db, 'recipes/' + JSON.stringify(props.id) + '/comments'), {comments:comments});
-           }
-         });*/
-      }
-    } catch (e) {
-      // @ts-ignore
-      console.log(e.stack);
-    }
   }
 }
 
@@ -155,22 +109,23 @@ const Comments: React.FC<CommentsProps>= (props) => {
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context) {
-
-  let commentList: UserComment[] = []
-  let recipeID = context.query.id
+  const commentList: UserComment[] = []
+  // eslint-disable-next-line
+  const recipeID = context.query.id
 
   //This try/catch block pulls in the recipes from the database
   try {
-      let recipeRef = ref(getDatabase(app), "recipes/" + recipeID)
+    // eslint-disable-next-line
+    const recipeRef = ref(getDatabase(app), "recipes/" + recipeID)
 
       await get(recipeRef).then((snapshot) => {
 
         if (snapshot.exists()) {
-
-          let comments = snapshot.val().comments
+          // eslint-disable-next-line
+          const comments = snapshot.val().comments
 
           console.log("comments:" + JSON.stringify(comments))
-
+          // eslint-disable-next-line
           comments.forEach((c: UserComment | null | undefined) => {
             if (c !== undefined && c !== null)
               commentList.push(c);
@@ -179,11 +134,13 @@ export async function getServerSideProps(context) {
       });
 
     return {
+      // eslint-disable-next-line
       props: { commentList:commentList, id: recipeID}}
   } catch (e) {
     console.log(e)
   }
   return {
+    // eslint-disable-next-line
     props: { commentList:commentList, id: recipeID }
   }
 }

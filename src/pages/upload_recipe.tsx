@@ -1,4 +1,4 @@
-import React, {useState, ChangeEvent, useEffect} from "react";
+import React, { useState, ChangeEvent } from "react";
 import {useGlobalContext} from "../context";
 import {child, getDatabase, push, ref, update} from "firebase/database";
 import {app, db} from "../context/firebaseSetup";
@@ -11,35 +11,6 @@ const UploadRecipe = () => {
     const [directions, setDirections] = useState("");
     const [picture, setPicture] = useState<File | null>(null);
     const {currentUser, setCurrentUser}=useGlobalContext();
-    const [isSubmitted, setIsSubmitted] = useState(false)
-    const [formData, setFormData] = useState({
-        title: "",
-        ingredients: "",
-        directions: "",
-        picture:picture
-    })
-
-
-    //eslint-disable-next-line
-    const encode = (data:any) => {
-        //eslint-disable-next-line
-        return Object.keys(data)
-            //eslint-disable-next-line
-            .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-            .join("&");}
-
-    useEffect(() => {
-        if(isSubmitted){
-            fetch("/", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: encode({ "form-name": "upload-recipe-form", ...formData })
-            })
-                .then(() => alert("Success!"))
-                .then(() => setIsSubmitted(false))
-                .then(() => setFormData({title: "", ingredients: "",  directions: "",picture:null}))
-                .catch(error => alert(error))}
-    }, [formData, isSubmitted])
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
@@ -100,11 +71,6 @@ const UploadRecipe = () => {
         catch(e){
             console.log(e)
         }
-        setFormData({title: title, ingredients: ingredients, directions: directions, picture: picture
-        })
-        console.log(formData)
-        setIsSubmitted(true)
-        e.preventDefault();
     }
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -125,25 +91,11 @@ const UploadRecipe = () => {
     };
 
     return (
-        <section>
-            <nav className="font-extrabold text-red-700 sm:block text-3xl">
-                <div className="font-extrabold text-red-700 sm:block text-3xl">
-                    <img
-                        src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
-                        className="w-32 ml-2"
-
-                    />
-                    <strong>
-                        SuperChef.
-                    </strong>
-                </div>
-            </nav>
         <div className="bg-gray-100 py-8">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-xl mx-auto">
-                   {/*eslint-disable-next-line*/}
-                    <form className="space-y-8" data-netlify="true" onSubmit={handleSubmit}>
-                        <input type="hidden" name="form-name" value="upload_recipe_form" />
+                    {/*eslint-disable-next-line*/}
+                    <form onSubmit={handleSubmit} className="space-y-8">
                         <div>
                             <h2 className="text-2xl font-bold leading-7 text-gray-800">
                                 Upload a Recipe
@@ -158,11 +110,9 @@ const UploadRecipe = () => {
                                     Title
                                 </label>
                                 <div className="mt-1">
-                                    <input type="hidden" name="form-name" value="upload_recipe_form" />
                                     <input
                                         id="title"
                                         type="text"
-                                        name="title"
                                         required
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
@@ -175,10 +125,8 @@ const UploadRecipe = () => {
                                     Ingredients
                                 </label>
                                 <div className="mt-1">
-                                    <input type="hidden" name="form-name" value="upload_recipe_form" />
                                     <textarea
                                         id="ingredients"
-                                        name="ingredients"
                                         required
                                         value={ingredients}
                                         onChange={(e) => setIngredients(e.target.value)}
@@ -192,10 +140,8 @@ const UploadRecipe = () => {
                                     Directions
                                 </label>
                                 <div className="mt-1">
-                                    <input type="hidden" name="form-name" value="upload_recipe_form" />
                                     <textarea
                                         id="directions"
-                                        name="directions"
                                         required
                                         value={directions}
                                         onChange={(e) => setDirections(e.target.value)}
@@ -209,11 +155,10 @@ const UploadRecipe = () => {
                                     Picture
                                 </label>
                                 <div className="mt-1 flex items-center">
-                                    <input type="hidden" name="form-name" value="upload_recipe_form" />
-                                    <input type="file" name="picture" id="picture" onChange={handlePictureChange} />
+                                    <input type="file" id="picture" onChange={handlePictureChange} />
                                 </div>
                                 <button
-                                    className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto mt-4"
+                                    className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
                                     type="submit"
                                 >
                                     Upload Recipe
@@ -224,30 +169,6 @@ const UploadRecipe = () => {
                 </div>
             </div>
         </div>
-            <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
-                <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
-                    <a className="hover:text-gray-900" href="#">Home</a>
-                    <a className="hover:text-gray-900" href='\index.tsx'>About</a>
-                </nav>
-
-                <div className="flex justify-center space-x-5">
-                    <img
-                        src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
-                        className="w-12 ml-2 justify-left"
-                    />
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                        <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
-                    </a>
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                        <img src="https://img.icons8.com/fluent/30/000000/instagram-new.png"/>
-                    </a>
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                        <img src="https://img.icons8.com/fluent/30/000000/twitter.png"/>
-                    </a>
-                </div>
-                <p className="text-center text-gray-700 font-medium">&copy; 2023 Company Ltd. All rights reserved.</p>
-            </footer>
-        </section>
     );
 };
 

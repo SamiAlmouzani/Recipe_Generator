@@ -119,7 +119,7 @@ export async function getServerSideProps(context) {
             headers: {
                 'Content-Type': 'application/json',
                 // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                'Authorization': "Bearer " + process.env.NEW_OPEN_API_KEY
+                'Authorization': "Bearer " + process.env.OPENAI_API_KEY
             },
             body: JSON.stringify({
                 'model': "text-davinci-003",
