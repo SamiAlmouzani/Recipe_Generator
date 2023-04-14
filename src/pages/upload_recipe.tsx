@@ -50,7 +50,7 @@ const UploadRecipe = () => {
 
         fetch("/", {
             method: "POST",
-            // headers: { "Content-Type": 'multipart/form-data; boundary=random' },
+            headers: { "Content-Type": 'multipart/form-data; boundary=random' },
             body: encode(data)
         })
             .then((r) => {

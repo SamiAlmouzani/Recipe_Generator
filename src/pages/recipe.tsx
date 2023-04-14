@@ -408,7 +408,7 @@ export async function getServerSideProps(context:RecipeContext){
             ingredients:recipe.ingredients,
             averageRating:0,
             uploadedBy:recipe.uploadedBy,
-            UserComments:recipe.UserComments,
+            UserComments:[],
             ratingMap:recipe.ratingMap,
             ratingSum:0,
             totalRatings:0}
