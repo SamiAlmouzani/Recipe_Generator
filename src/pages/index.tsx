@@ -8,7 +8,6 @@ import {useGlobalContext} from "../context";
 import {get, getDatabase, query, ref, set} from "firebase/database";
 import React from "react";
 import 'react-slideshow-image/dist/styles.css'
-
 import {ReactPhotoCollage} from "react-photo-collage";
 
 const Home: NextPage = () => {

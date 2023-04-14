@@ -5,6 +5,7 @@ import {app, db} from "../context/firebaseSetup";
 import axios from "axios";
 import path from "path";
 
+type Data={"form-name":string,"title":string,"ingredients":string,"directions":string,"picture":File|null}
 const UploadRecipe = () => {
     const [title, setTitle] = useState("");
     const [ingredients, setIngredients] = useState("");
@@ -12,8 +13,20 @@ const UploadRecipe = () => {
     const [picture, setPicture] = useState<File | null>(null);
     const {currentUser, setCurrentUser}=useGlobalContext();
 
+    const encode = (data:Data) => {
+        const formData = new FormData();
+        Object.keys(data).forEach((k)=>{
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            formData.append(k,data[k] as string)
+        });
+        console.log(formData)
+        return formData
+    }
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
+        const data = { "form-name": "uploadform", title, ingredients, directions, picture}
+
         console.log(picture)
         let imageURL=""
         //save the image in public/user_images (uses the images.ts file in the api folder)
@@ -71,6 +84,13 @@ const UploadRecipe = () => {
         catch(e){
             console.log(e)
         }
+        fetch("/", {
+            method: "POST",
+            // headers: { "Content-Type": 'multipart/form-data; boundary=random' },
+            body: encode(data)
+        })
+            .then(() => console.log("Form Submission Successful!!"))
+            .catch(error => console.log("Form Submission Failed!"));
     }
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +115,7 @@ const UploadRecipe = () => {
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-xl mx-auto">
                     {/*eslint-disable-next-line*/}
-                    <form name="uploadform" {/*onSubmit={handleSubmit} */ } className="space-y-8" method="post" data-netlify="true">
+                    <form name="uploadform" onSubmit={handleSubmit} className="space-y-8" method="post" data-netlify="true">
                         <input type="hidden" name="form-name" value="uploadform"/>
                         <div>
                             <h2 className="text-2xl font-bold leading-7 text-gray-800">
