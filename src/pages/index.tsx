@@ -164,6 +164,7 @@ const Home: NextPage = () => {
         </div>
         <p className="text-center text-gray-700 font-medium">&copy; 2023 Company Ltd. All rights reserved.</p>
       </footer>
+
   </section>
 
 );
