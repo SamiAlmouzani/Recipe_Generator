@@ -23,14 +23,27 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
 
   return (
     <div>
+      <nav className="font-extrabold text-red-700 sm:block text-3xl">
+        <div className="font-extrabold text-red-700 sm:block text-3xl">
+          <img
+              src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+              className="w-32 ml-2"
+
+          />
+          <strong>
+            SuperChef.
+          </strong>
+        </div>
+      </nav>
+      <p className="text-1xl  sm:text-2xl whitespace-pre-line mt-10">Share your thoughts with a comment!</p>
 
       <div className="flex px-8 py-8">
         <div className="max-w-lg rounded-lg shadow-md shadow-red-600/50">
 
           {/*  <form action="" className="w-full p-4 my-8">*/}
-
           <div className="mb-2">
-            <label htmlFor="comment" className="text-lg text-gray-600">Add a comment</label>
+
+            <label htmlFor="comment" className="text-lg text-gray-600 mt-14">Add a comment</label>
             <textarea
               className="w-full h-20 p-2 border rounded focus:outline-none focus:ring-gray-300 focus:ring-1"
               name="comment"
@@ -58,7 +71,29 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
           Back
         </button>
       </Link>
+      <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
+        <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
+          <a className="hover:text-gray-900" href="#">Home</a>
+          <a className="hover:text-gray-900" href='\index.tsx'>About</a>
+        </nav>
 
+        <div className="flex justify-center space-x-5">
+          <img
+              src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+              className="w-12 ml-2 justify-left"
+          />
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/fluent/30/000000/instagram-new.png"/>
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/fluent/30/000000/twitter.png"/>
+          </a>
+        </div>
+        <p className="text-center text-gray-700 font-medium">&copy; 2023 Company Ltd. All rights reserved.</p>
+      </footer>
     </div>
   );
 

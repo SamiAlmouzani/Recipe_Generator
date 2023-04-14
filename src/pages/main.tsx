@@ -6,15 +6,12 @@ import {getAuth} from "firebase/auth";
 import {FirebaseAuth} from "@firebase/auth-types";
 import Loader from "react-loader-spinner";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Sidebar from "react-sidebar";
-import UploadRecipe from "./upload_recipe";
-import Favorites from "./favorites";
-import AllSavedRecipes from "./all_saved_recipes";
 import {height} from "dom-helpers";
 import {min} from "@popperjs/core/lib/utils/math";
-import logo from './vecteezy_hand-drawn-vegetables-seamless-pattern-vegan-food_5490026.jpg';
-import {Container, Nav, Navbar, NavDropdown, NavLink} from "react-bootstrap";
-
+import {Navbar} from "react-bootstrap";
+import {Slide} from "react-slideshow-image";
+import 'react-slideshow-image/dist/styles.css'
+import  index from "../pages/index"
 
 //localIngredients is the local value updated every time the contents of the text box are changed
 let localIngredientsList:string
@@ -30,129 +27,151 @@ const RecipeGenerator: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   console.log("current user: (accessed from main screen)"+currentUser.displayName)
+    const slideImages = [
+        {
+            url: 'https://media.istockphoto.com/id/1414285963/photo/stuffed-turkey-for-thanksgiving-holidays-with-pumpkin-peas-pecan-berry-pie-cheese-variations.jpg?s=612x612&w=0&k=20&c=Fzz5ncyZ0ZXIxQ76m3AY83gzjDJ0kOI7fbz8-0bEEpM=',
+            altText: 'fruit_bowls'
+        },
+        {
+            url: 'https://www.foodiesfeed.com/wp-content/uploads/2021/02/dining-in-an-iranian-restaurant-768x512.jpg',
+            altText: 'espresso-with-carrot-cake'
+        },
+        {
+            url: 'https://www.foodiesfeed.com/wp-content/uploads/2015/03/basic-italian-pizza-margherita-768x512.jpg',
+            altText: 'basic-italian-pizza-margherita'
+        },
+    ];
+    const spanStyle = {
+        background: '#efefef',
+        color: '#000000'
+    }
+
+    const divStyle = {
+        // display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'align',
+        backgroundSize: 'cover',
+        height: '400px',
+        width: '700px'
+    }
 
     return (
 
     <section className="bg-gray-50">
-            <div className="font-extrabold text-red-700 sm:block text-3xl">
-                <img
-                    src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
-                    className="w-32 ml-2"
-
-                />
-                <strong>
-                    SuperChef.
-                </strong>
+        <div className="font-extrabold text-red-700 sm:block text-3xl">
+              <img
+                  src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+                  className="w-32 ml-2"
+              />
+              <strong>
+                  SuperChef.
+              </strong>
+         </div>
+      <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center relative">
+        <div className="mx-auto max-w-xl text-center mt-6">
+          <h1 className="text-3xl font-extrabold sm:text-5xl">
+            <strong className="font-extrabold text-red-700 sm:block">
+              Enter Ingredients
+            </strong>
+          </h1>
+          {isLoading ? (
+            <div className="flex justify-center items-center mt-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
             </div>
+          ) : (
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <IngredientsInput />
+            <Link
+              href={{
+                pathname: '/results',
+                query: {
+                  ingredients: ingredientsList,
+                },
+              }}
+            >
+              <button
+                className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
+                onClick={() => {
+                  setIsLoading(true);
+                }}
+              >
+                Enter
+              </button>
+            </Link>
+          </div>
+          )
+        }
+        <Navbar className="navbar-container mt-4 sm:text-xl">
 
-
-  <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center relative">
-
-    <div className="mx-auto max-w-xl text-center">
-      <h1 className="text-3xl font-extrabold sm:text-5xl">
-        <strong className="font-extrabold text-red-700 sm:block">
-          Enter Ingredients
-        </strong>
-      </h1>
-
-      {isLoading ? (
-        <div className="flex justify-center items-center mt-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-        </div>
-      ) : (
-      <div className="mt-8 flex flex-wrap justify-center gap-4">
-        <IngredientsInput />
-        <Link
-          href={{
-            pathname: '/results',
-            query: {
-              ingredients: ingredientsList,
-            },
-          }}
-        >
-          <button
-            className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
-            onClick={() => {
-              setIsLoading(true);
-            }}
-          >
-            Enter
-          </button>
-        </Link>
+            <ul className="align-items:center">
+                <li className="font-bold text-black sm:block">
+                    <Link
+                        href={{
+                            pathname: '/upload_recipe',
+                            query: {
+                                uid: currentUser.uid,
+                            },
+                        }}
+                    >Upload Recipe
+                    </Link>
+                </li>
+                <li className="font-bold text-black sm:block">
+                    <Link
+                        href={{
+                            pathname: '/favorites',
+                            query: {
+                                uid: currentUser.uid,
+                            },
+                        }}
+                    >Favorites
+                    </Link>
+                </li>
+                <li className="font-bold text-black sm:block">
+                    <Link
+                        href={{
+                            pathname: '/all_saved_recipes',
+                            query: {
+                                uid: currentUser.uid,
+                            },
+                        }}>See All Recipes
+                    </Link>
+                </li>
+            </ul>
+        </Navbar>
       </div>
-      )
-    }
-
-    <Navbar className="navbar-container mt-4 sm:text-xl">
-
-        <ul className="align-items:center">
-            <li className="font-bold text-black sm:block">
-                <Link
-                    href={{
-                        pathname: '/upload_recipe',
-                        query: {
-                            uid: currentUser.uid,
-                        },
-                    }}
-                >Upload Recipe
-                </Link>            </li>
-            <li className="font-bold text-black sm:block">
-                <Link
-                    href={{
-                        pathname: '/favorites',
-                        query: {
-                            uid: currentUser.uid,
-                        },
-                    }}
-                >Favorites
-                </Link>            </li>
-
-            <li className="font-bold text-black sm:block">
-                <Link
-                    href={{
-                        pathname: '/all_saved_recipes',
-                        query: {
-                            uid: currentUser.uid,
-                        },
-                    }}>See All Recipes
-                </Link>
-            </li>
-        </ul>
-</Navbar>
-
-
-
-
-
-
-    </div>
-  </div>
-          <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
-            <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
-                <a className="hover:text-gray-900" href="#index.tsx">Home</a>
-            </nav>
-
-            <div className="flex justify-center space-x-5">
-                <img
-                    src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
-                    className="w-12 ml-2 justify-left"
-
-                />
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                    <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
-                </a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                    <img src="https://img.icons8.com/fluent/30/000000/instagram-new.png"/>
-                </a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                    <img src="https://img.icons8.com/fluent/30/000000/twitter.png"/>
-                </a>
-            </div>
-            <p className="text-center text-gray-700 font-medium">&copy; 2023 Company Ltd. All rights reserved.</p>
-        </footer>
-    </section>
-
-
+      </div>
+        <div className=" flex flex-col space-y-10 align-middle m-10 position-relative justify-items-center">
+            <Slide>
+                {slideImages.map((slideImage, index)=> (
+                    <div key={index}>
+                        <div style={{ ...divStyle, 'backgroundImage': `url(${slideImage.url})` }}>
+                        </div>
+                    </div>
+                ))}
+            </Slide>
+        </div>
+        <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
+               <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
+                   <Link className="hover:text-gray-900" href="#index">about</Link>
+               </nav>
+               <div className="flex justify-center space-x-5">
+                   <img
+                       src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+                       className="w-12 ml-2 justify-left"
+                   />
+                   <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                       <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png"/>
+                   </a>
+                   <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                       <img src="https://img.icons8.com/fluent/30/000000/instagram-new.png"/>
+                   </a>
+                   <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                       <img src="https://img.icons8.com/fluent/30/000000/twitter.png"/>
+                   </a>
+               </div>
+               <p className="text-center text-gray-700 font-medium">&copy; 2023 Company Ltd. All rights reserved.</p>
+           </footer>
+   </section>
     );
 }
 //Ingredients input field

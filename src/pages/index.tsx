@@ -6,11 +6,10 @@ import { app,db } from "../context/firebaseSetup"
 import {useRouter} from "next/router";
 import {useGlobalContext} from "../context";
 import {get, getDatabase, query, ref, set} from "firebase/database";
-import {Slide} from "react-slideshow-image";
 import React from "react";
 import 'react-slideshow-image/dist/styles.css'
-import { object } from "zod";
-import {text} from "dom-helpers";
+
+import {ReactPhotoCollage} from "react-photo-collage";
 
 const Home: NextPage = () => {
   const { currentUser,setCurrentUser } = useGlobalContext();
@@ -71,39 +70,52 @@ const Home: NextPage = () => {
 
   }
   //formatting the slideshow images
-  const spanStyle = {
-    background: '#efefef',
-    color: '#000000'
-  }
+  const settings = {
+    width: "1300px",
+    height: ["250px", "170px"],
+    layout: [ 2,4,3],
+    photos: [
+      {
+        source:
+        "https://www.foodiesfeed.com/wp-content/uploads/2023/04/pizza-fresh-out-of-oven-close-up.jpg"
+      },
+      {
+        source:
+            "https://www.foodiesfeed.com/wp-content/uploads/2021/03/yeast-dough.jpg"
+      },
+      {
+        source:
+           "https://media.istockphoto.com/id/1316145932/photo/table-top-view-of-spicy-food.jpg?b=1&s=612x612&w=0&k=20&c=X6CkFGpSKhNZeiii8Pp2M_YrBdqs7tRaBytkGi48a0U="
+      },
 
-  const divStyle = {
-    padding: '0px',
-    objectfit: 'cover',
-   // display: 'flex',
-    //alignItems: '',
-    justifyContent: 'align',
-    backgroundSize: 'cover',
-    height: '700px',
-    width: 'natural'
+      {
+        source:
+           "https://www.foodiesfeed.com/wp-content/uploads/2021/02/breakfast-and-berries.jpg"
+      },
+      {
+        source:
+            "https://www.foodiesfeed.com/wp-content/uploads/2015/05/vietnamese-pho-ga-takeaway.jpg"
+      },
+      {
+        source:
+            "https://www.foodiesfeed.com/wp-content/uploads/2017/10/french-toast-for-breakfast.jpg"
+      },
+      {
+        source:
+            "https://media.istockphoto.com/id/1345852382/photo/beef-nihari-pakistani-curry-cuisine.jpg?b=1&s=612x612&w=0&k=20&c=c_V3cjsmr7CXhbKvygKQs1r5F0KNJCsw7FqwCOoXdXo="
+      },
+      {
+        source:
+            "https://media.istockphoto.com/id/533645537/photo/breakfast-with-bacon-eggs-pancakes-and-toast.jpg?b=1&s=612x612&w=0&k=20&c=d4Lg_bgWoLnRbAxBIaducqmq8CVqLOrYiHqHADwyOIA="
+      },
+      {
+        source:
+          "https://media.istockphoto.com/id/1404495570/photo/spicy-hyderabadi-chicken-biryani-served-in-dish-side-view-on-wooden-table-background.jpg?b=1&s=612x612&w=0&k=20&c=N3xwfE2nmpYJI0h5-d7EWMTZz3WSOmeyRAyGRaIPjgA="
+            }
+    ],
+    showNumOfRemainingPhotos: true
+  };
 
-  }
-  //these are the current images, will update later!
-  const slideImages = [
-    {
-      url: 'https://www.foodiesfeed.com/wp-content/uploads/2019/01/smoothie-768x512.jpg',
-      altText: 'fruit_bowls'
-    },
-    {
-      url: 'https://www.foodiesfeed.com/wp-content/uploads/2021/02/dining-in-an-iranian-restaurant-768x512.jpg',
-      altText: 'espresso-with-carrot-cake'
-    },
-    {
-      url: 'https://www.foodiesfeed.com/wp-content/uploads/2015/03/basic-italian-pizza-margherita-768x512.jpg',
-      altText: 'basic-italian-pizza-margherita'
-    },
-
-
-  ];
   return (
     <section className="bg-gray-50">
     <div
@@ -129,24 +141,17 @@ const Home: NextPage = () => {
             </button>
 
         </div>
+
         <div className="mx-auto max-w-lg text-center block whitespace-pre-line">
           <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line mt-4">Scroll down to see what you&#39;re missing!</p>
         </div>
       </div>
     </div>
-
-      <div className="slide-container">
-        <Slide>
-          {slideImages.map((slideImage, index)=> (
-              <div key={index}>
-                <div style={{ ...divStyle, 'backgroundImage': `url(${slideImage.url})` }}>
-                </div>
-              </div>
-          ))}
-        </Slide>
+      <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center relative">
+        <ReactPhotoCollage {...settings} />;
       </div>
-      <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
 
+      <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
         <div className="flex justify-center space-x-5">
           <img
               src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
