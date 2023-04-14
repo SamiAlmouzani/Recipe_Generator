@@ -13,7 +13,7 @@ type RecipeFromAPI = { text: string; index: number; logprobs: object; finish_rea
 //When this page is loaded, the getServerSideProps function (further down) runs first, and returns a prop object to the Results component.
 //props is an array of Recipe objects.
 const Results: React.FC<RecipeArray> = (props) => {
-
+    console.log(process.env.OPENAI_API_KEY)
     const [isLoading, setIsLoading] = useState(false);
 
     //Import the current user.

@@ -48,6 +48,16 @@ const UploadRecipe = () => {
             console.log(error);
         }
 
+        fetch("/", {
+            method: "POST",
+            // headers: { "Content-Type": 'multipart/form-data; boundary=random' },
+            body: encode(data)
+        })
+            .then((r) => {
+                alert("Your recipe has been uploaded!")
+                console.log(r)})
+            .catch(error => console.log("Form Submission Failed!"));
+
         //Create a new recipe using the new image path
         const tempRatingMap:Map<string,number>=new Map<string, number>()
         const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, UserComments:[]as UserComment[],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0}
@@ -84,13 +94,6 @@ const UploadRecipe = () => {
         catch(e){
             console.log(e)
         }
-        fetch("/", {
-            method: "POST",
-            // headers: { "Content-Type": 'multipart/form-data; boundary=random' },
-            body: encode(data)
-        })
-            .then(() => console.log("Form Submission Successful!!"))
-            .catch(error => console.log("Form Submission Failed!"));
     }
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
