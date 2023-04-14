@@ -95,7 +95,8 @@ const UploadRecipe = () => {
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-xl mx-auto">
                     {/*eslint-disable-next-line*/}
-                    <form onSubmit={handleSubmit} className="space-y-8">
+                    <form name="uploadform" onSubmit={handleSubmit} className="space-y-8" method="post">
+                        <input type="hidden" name="form-name" value="uploadform"/>
                         <div>
                             <h2 className="text-2xl font-bold leading-7 text-gray-800">
                                 Upload a Recipe
@@ -112,6 +113,7 @@ const UploadRecipe = () => {
                                 <div className="mt-1">
                                     <input
                                         id="title"
+                                        name="title"
                                         type="text"
                                         required
                                         value={title}
@@ -127,6 +129,7 @@ const UploadRecipe = () => {
                                 <div className="mt-1">
                                     <textarea
                                         id="ingredients"
+                                        name="ingredients"
                                         required
                                         value={ingredients}
                                         onChange={(e) => setIngredients(e.target.value)}
@@ -142,6 +145,7 @@ const UploadRecipe = () => {
                                 <div className="mt-1">
                                     <textarea
                                         id="directions"
+                                        name="directions"
                                         required
                                         value={directions}
                                         onChange={(e) => setDirections(e.target.value)}
@@ -155,7 +159,7 @@ const UploadRecipe = () => {
                                     Picture
                                 </label>
                                 <div className="mt-1 flex items-center">
-                                    <input type="file" id="picture" onChange={handlePictureChange} />
+                                    <input type="file" name="picture" id="picture" onChange={handlePictureChange} />
                                 </div>
                                 <button
                                     className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"

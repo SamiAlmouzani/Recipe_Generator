@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form name="uploadform" method="post" netlify netlify-honeypot="bot-field" hidden>
+  <div>
+    <h2>
+      Upload a Recipe
+    </h2>
+    <p>
+      Enter the details of your recipe below.
+    </p>
+  </div>
+  <div>
+    <div>
+      <label for="title">
+        Title
+      </label>
+      <div>
+        <input
+                name="title"
+                id="title"
+                type="text"
+                required
+        />
+      </div>
+    </div>
+    <div>
+      <label for="ingredients">
+        Ingredients
+      </label>
+      <div>
+        <textarea
+                name="ingredients"
+                id="ingredients"
+                required></textarea>
+        </div>
+        </div>
+        <div>
+        <label for="directions">
+        Directions
+        </label>
+        <div>
+        <textarea
+                name="directions"
+        id="directions"
+        required></textarea>
+        </div>
+        </div>
+        <div>
+        <label for="picture">
+        Picture
+        </label>
+        <div>
+        <input type="file" id="picture" name="picture"/>
+        </div>
+        <button
+        type="submit"
+        >
+        Upload Recipe
+        </button>
+        </div>
+        </div>
+        </form>
+</body>
+</html>
