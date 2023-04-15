@@ -64,11 +64,10 @@ const UploadRecipe = () => {
             .then(response => response.text())
             .then(result => {
                 // eslint-disable-next-line
-                //@ts-ignore
-                let imageURL=JSON.parse(result)[0].data.picture.url
+                const imageURL=JSON.parse(result)[0].data.picture.url as string
                 //Create a new recipe using the new image path
                 const tempRatingMap:Map<string,number>=new Map<string, number>()
-                const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, UserComments:[]as UserComment[],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0}
+                const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, UserComments:[]as UserComment[],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0} as Recipe
                 console.log("new recipe "+JSON.stringify(recipe))
                 //Store this recipe in the database
                 try{
