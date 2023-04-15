@@ -6,6 +6,7 @@ import axios from "axios";
 import path from "path";
 
 type Data={"form-name":string,"title":string,"ingredients":string,"directions":string,"picture":File|null}
+type DataFromNetlify={data:{title:string,ingredients:string,directions:string,picture:{filename:string,type:string,size:number,url:string}}}
 const UploadRecipe = () => {
     const [title, setTitle] = useState("");
     const [ingredients, setIngredients] = useState("");
@@ -26,9 +27,8 @@ const UploadRecipe = () => {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
         const data = { "form-name": "uploadform", title, ingredients, directions, picture}
-
-        console.log(picture)
         let imageURL=""
+        console.log(picture)
         //save the image in public/user_images (uses the images.ts file in the api folder)
         try {
             if(!picture){
@@ -62,9 +62,18 @@ const UploadRecipe = () => {
         fetch("https://v1.nocodeapi.com/lily42/netlify/MnfeAgRtMGegNfPo/listFormSubmissions?form_id=6438a02778d8420008ebef33",
             { method:"GET"})
             .then(response => response.text())
-            .then(result => console.log(result))
+            .then(result => {
+                console.log(result)
+                if(result[0]!==undefined){
+                    // eslint-disable-next-line
+                    //@ts-ignore
+                    const r:DataFromNetlify=result[0] as DataFromNetlify
+                    imageURL=r.data.picture.url
+                }
+            })
             .catch(error => console.log('error', error));
 
+        console.log("image url "+imageURL)
         //Create a new recipe using the new image path
         const tempRatingMap:Map<string,number>=new Map<string, number>()
         const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, UserComments:[]as UserComment[],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0}
