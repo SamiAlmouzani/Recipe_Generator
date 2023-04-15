@@ -167,7 +167,7 @@ export async function getServerSideProps(context) {
                         ingredients: context.query.ingredients as string,
                         averageRating: 0,
                         uploadedBy: "0",
-                        UserComments:[]as UserComment[],
+                        comments:[]as UserComment[],
                         ratingMap: JSON.stringify(Array.from(tempRatingMap.entries())),
                         ratingSum: 0,
                         totalRatings: 0

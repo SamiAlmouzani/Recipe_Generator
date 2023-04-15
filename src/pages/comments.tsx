@@ -14,18 +14,30 @@ import recipe from "./recipe";
 type CommentsProps = {commentList: UserComment[], id: string}
 const Comments: React.FC<CommentsProps>= (props) => {
   //Import the current user.
-  const { currentUser, setCurrentUser } = useGlobalContext();
+//  const { currentUser, setCurrentUser } = useGlobalContext();
   const [commentText, setCommentText] = useState("initial comment");
-  const [userComment, setUserComment] = useState({ username: "", text: "",date:"" });
+  const [userComment, setUserComment] = useState({uid:"", username: "", text: "",date:"" });
+
+  const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
+
+  useEffect(() => {
+    const user:customUser = JSON.parse(localStorage.getItem('user')+"");
+    console.log("Calling useEffect "+JSON.stringify(user))
+    if (user) {
+      // @ts-ignore
+      setCurrentUser(user);
+    }
+  }, []);
 
   console.log("comment props "+JSON.stringify(props))
-
+  console.log("UID in main page "+currentUser.uid)
   const commentArray: UserComment[] = []
 
   props.commentList.forEach((c) => {
     if (c !== undefined && c !== null)
       commentArray.push(c);
   })
+  console.log("uid:"+currentUser.uid)
 
   return (
     <div>
@@ -62,7 +74,13 @@ const Comments: React.FC<CommentsProps>= (props) => {
                   </ul>
 
                 </div>
-                <button onClick={() => {deleteComment(comment, props.id)}}> Delete </button>
+                {
+                  comment.uid===currentUser.uid ? (
+                      <button onClick={() => {deleteComment(comment, props.id)}}> Delete </button>
+                  ):(
+                      <div></div>
+                  )
+                }
               </div>)}
           </div>
         </div>
@@ -81,8 +99,6 @@ const Comments: React.FC<CommentsProps>= (props) => {
           </button>
         </Link>
       </div>
-
-
       <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
         <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
           <a className="hover:text-gray-900" href="#">Home</a>
@@ -109,15 +125,15 @@ const Comments: React.FC<CommentsProps>= (props) => {
 
     </div>
   );
-   function deleteComment(comment: UserComment, id:string) {
+   async function deleteComment(comment: UserComment, id:string) {
        console.log("username on comment, current user", comment.username, currentUser.displayName)
-     console.log(comment.username)
-     console.log(currentUser.displayName)
-      if (comment.username === currentUser.displayName) {
+     console.log("comment uid: "+comment.uid)
+     console.log(currentUser.uid)
+      if (comment.uid === currentUser.uid) {
           try {
             const comments:UserComment[]=[]
             props.commentList.forEach((f)=>{
-              if (f != comment) {
+              if (f !== comment) {
                 comments.push(f)
               }
             })
@@ -126,7 +142,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
             //@ts-ignore
             updates["recipes/" + id + "/" + "comments/"] = comments;
             console.log("about to update")
-            update(ref(db), updates).catch(e=>(console.log(e)));
+            await update(ref(db), updates).catch(e=>(console.log(e)));
             console.log("after update")
           }
           catch (e) {

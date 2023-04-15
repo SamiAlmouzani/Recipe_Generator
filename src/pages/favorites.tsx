@@ -14,10 +14,20 @@ import {useGlobalContext} from "../context";
 //props is an array of Recipe objects.
 const Favorites: React.FC<RecipeArray>= (props) => {
     //Import the current user.
-    const {currentUser, setCurrentUser}=useGlobalContext();
-    console.log("current user: (accessed from main screen)"+currentUser.displayName)
+  //  const {currentUser, setCurrentUser}=useGlobalContext();
     console.log("recipes from props\n")
     console.log(props.recipeList)
+
+    const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:"", uploadedRecipes:""});
+
+    useEffect(() => {
+        const user:customUser = JSON.parse(localStorage.getItem('user')+"");
+        console.log("Calling useEffect "+JSON.stringify(user))
+        if (user) {
+            // @ts-ignore
+            setCurrentUser(user);
+        }
+    }, []);
 
     const recipeArray:Recipe[]=[]
     for(let i=0;i<props.recipeList.length;i++) {

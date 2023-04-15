@@ -16,7 +16,18 @@ import {useGlobalContext} from "../context";
 
 const Recipe: React.FC<Recipe>=(props)=>{
     //Import the current user.
-    const {currentUser, setCurrentUser}=useGlobalContext();
+ //   const {currentUser, setCurrentUser}=useGlobalContext();
+
+    const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
+
+    useEffect(() => {
+        const user:customUser = JSON.parse(localStorage.getItem('user')+"");
+        console.log("Calling useEffect "+JSON.stringify(user))
+        if (user) {
+            // @ts-ignore
+            setCurrentUser(user);
+        }
+    }, []);
     let startingHeartColor
     let startingSavedState
 
@@ -35,7 +46,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
 
     //When updating the id in the database, recipe didn't show the new value immediately. I'm using currentRecipe to set the new values and store them in
     //the database, then also setting those values on recipe.
-    const [recipe, setRecipe] = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, UserComments:props.UserComments,ratingMap:props.ratingMap,ratingSum:parseFloat(String(props.ratingSum)),totalRatings:props.totalRatings});
+    const [recipe, setRecipe] = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments,ratingMap:props.ratingMap,ratingSum:parseFloat(String(props.ratingSum)),totalRatings:props.totalRatings});
     const [heartColor,setHeartColor]=useState(startingHeartColor)
     const[saved, setSaved]=useState(startingSavedState)
 
@@ -342,7 +353,7 @@ export async function getServerSideProps(context:RecipeContext){
                 ingredients:recipe.ingredients,
                 averageRating:recipe.averageRating,
                 uploadedBy:recipe.uploadedBy,
-                UserComments:recipe.UserComments,
+                comments:recipe.comments,
                 ratingMap:recipe.ratingMap,
                 ratingSum:recipe.ratingSum,
                 totalRatings:recipe.totalRatings}
@@ -408,7 +419,7 @@ export async function getServerSideProps(context:RecipeContext){
             ingredients:recipe.ingredients,
             averageRating:0,
             uploadedBy:recipe.uploadedBy,
-            UserComments:[],
+            comments:[{uid:"",username:"",text:"",date:""}],
             ratingMap:recipe.ratingMap,
             ratingSum:0,
             totalRatings:0}
@@ -433,7 +444,7 @@ export async function getServerSideProps(context:RecipeContext){
         }
         //Return the recipe
         return{
-            props:{id:newRecipe.id,title:newRecipe.title,text:newRecipe.text,image:newRecipe.image,ingredients:newRecipe.ingredients,averageRating:newRecipe.averageRating,uploadedBy:newRecipe.uploadedBy,UserComments:newRecipe.UserComments,ratingMap:newRecipe.ratingMap,ratingSum:newRecipe.ratingSum, totalRatings:newRecipe.totalRatings}
+            props:{id:newRecipe.id,title:newRecipe.title,text:newRecipe.text,image:newRecipe.image,ingredients:newRecipe.ingredients,averageRating:newRecipe.averageRating,uploadedBy:newRecipe.uploadedBy,comments:newRecipe.comments,ratingMap:newRecipe.ratingMap,ratingSum:newRecipe.ratingSum, totalRatings:newRecipe.totalRatings}
         }
     }
 }

@@ -14,9 +14,19 @@ import recipe from "./recipe";
 type CommentsProps = {commentList: UserComment[], id: string}
 const Leave_comment: React.FC<CommentsProps>= (props) => {
   //Import the current user.
-  const { currentUser, setCurrentUser } = useGlobalContext();
+ // const { currentUser, setCurrentUser } = useGlobalContext();
+  const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
+
+  useEffect(() => {
+    const user:customUser = JSON.parse(localStorage.getItem('user')+"");
+    console.log("Calling useEffect "+JSON.stringify(user))
+    if (user) {
+      // @ts-ignore
+      setCurrentUser(user);
+    }
+  }, []);
   const [commentText, setCommentText] = useState("initial comment");
-  const [userComment, setUserComment] = useState({ username: "", text: "",date:new Date() });
+  const [userComment, setUserComment] = useState({ uid:"", username: "", text: "",date:new Date() });
 
   console.log("comment props "+JSON.stringify(props))
   console.log("user display name: " + currentUser.displayName)
@@ -97,7 +107,7 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
     </div>
   );
 
-  function saveComment() {
+  async function saveComment() {
     console.log("calling saveComment")
 
     const commentBody = commentText
@@ -106,12 +116,13 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
       if (commentBody.length != 0) {
         console.log("comment text from saveComment", commentText);
         // save comment to list of comments in recipe
-        setUserComment({ username: currentUser.displayName, text: commentBody,date:new Date() });
+        setUserComment({uid:currentUser.uid, username: currentUser.displayName, text: commentBody,date:new Date() });
         console.log("user comment "+JSON.stringify(userComment))
         props.commentList.forEach((f)=>{
-          comments.push(f)
+          if(f.username.length>0)
+            comments.push(f)
         })
-        const comment = {username: currentUser.displayName, text: commentText,date: new Date()};
+        const comment = {uid:currentUser.uid, username: currentUser.displayName, text: commentText,date: new Date()};
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         comments.push(comment)
@@ -121,7 +132,7 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         updates["recipes/" + props.id + "/" + "comments/"] = comments;
-        update(ref(db), updates).catch(e=>(console.log(e)));
+        await update(ref(db), updates).catch(e=>(console.log(e)));
       }
     } catch (e) {
       console.log(e);
@@ -150,7 +161,7 @@ export async function getServerSideProps(context) {
         // eslint-disable-next-line
         const comments = snapshot.val().comments
 
-        console.log("comments:" + JSON.stringify(comments))
+        console.log("comments in getServerSideProps:" + JSON.stringify(comments))
         // eslint-disable-next-line
         comments.forEach((c: UserComment | null | undefined) => {
           if (c !== undefined && c !== null)

@@ -107,8 +107,8 @@ export async function getServerSideProps () {
                 snapshot.forEach((s)=> {
                     let commentsArray:UserComment[]=[]
                     const r:Recipe=s.val() as Recipe
-                    if(r.UserComments!==undefined&&r.UserComments!==null)
-                        commentsArray=r.UserComments
+                    if(r.comments!==undefined&&r.comments!==null)
+                        commentsArray=r.comments
                     recipeList[index]={
                         id: r.id,
                         image: r.image,
@@ -117,7 +117,7 @@ export async function getServerSideProps () {
                         ingredients: r.ingredients,
                         averageRating: r.averageRating,
                         uploadedBy: r.uploadedBy,
-                        UserComments: commentsArray,
+                        comments: commentsArray,
                         ratingMap: r.ratingMap,
                         ratingSum: r.ratingSum,
                         totalRatings: r.totalRatings

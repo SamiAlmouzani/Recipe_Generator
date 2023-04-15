@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, {useState, ChangeEvent, useEffect} from "react";
 import {useGlobalContext} from "../context";
 import {child, getDatabase, push, ref, update} from "firebase/database";
 import {app, db} from "../context/firebaseSetup";
@@ -12,7 +12,18 @@ const UploadRecipe = () => {
     const [ingredients, setIngredients] = useState("");
     const [directions, setDirections] = useState("");
     const [picture, setPicture] = useState<File | null>(null);
-    const {currentUser, setCurrentUser}=useGlobalContext();
+  //  const {currentUser, setCurrentUser}=useGlobalContext();
+
+    const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
+
+    useEffect(() => {
+        const user:customUser = JSON.parse(localStorage.getItem('user')+"");
+        console.log("Calling useEffect "+JSON.stringify(user))
+        if (user) {
+            // @ts-ignore
+            setCurrentUser(user);
+        }
+    }, []);
 
     const encode = (data:Data) => {
         const formData = new FormData();
@@ -67,7 +78,7 @@ const UploadRecipe = () => {
                 const imageURL=JSON.parse(result)[0].data.picture.url as string
                 //Create a new recipe using the new image path
                 const tempRatingMap:Map<string,number>=new Map<string, number>()
-                const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, UserComments:[]as UserComment[],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0} as Recipe
+                const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, comments:[{username:"",text:"",date:""}],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0} as Recipe
                 console.log("new recipe "+JSON.stringify(recipe))
                 //Store this recipe in the database
                 try{

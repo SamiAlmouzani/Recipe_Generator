@@ -42,6 +42,7 @@ const Home: NextPage = () => {
 
           //Set the current user in the global context
           setCurrentUser(returningUser)
+          localStorage.setItem('user', JSON.stringify(returningUser));
         }
         //If the snapshot does not exist, it means there is no user with this uid. They need to be added to the database
         else{
@@ -56,6 +57,7 @@ const Home: NextPage = () => {
 
           //Use the new object to set the currentUser in the global context
           setCurrentUser(newUser);
+          localStorage.setItem('user', JSON.stringify(newUser));
         }
       }).catch(()=>{
         console.log("There was an error")
