@@ -50,13 +50,20 @@ const UploadRecipe = () => {
 
         fetch("/", {
             method: "POST",
-            headers: { "Content-Type": 'multipart/form-data; boundary=random' },
+          //  headers: { "Content-Type": 'multipart/form-data; boundary=random' },
             body: encode(data)
         })
             .then((r) => {
                 alert("Your recipe has been uploaded!")
                 console.log(r)})
             .catch(error => console.log("Form Submission Failed!"));
+
+        //Add a GET request here using Netlify's API to get the most recently submitted form information, and get the image URL
+        fetch("https://v1.nocodeapi.com/lily42/netlify/MnfeAgRtMGegNfPo/listFormSubmissions?form_id=6438a02778d8420008ebef33",
+            { method:"GET"})
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
 
         //Create a new recipe using the new image path
         const tempRatingMap:Map<string,number>=new Map<string, number>()
