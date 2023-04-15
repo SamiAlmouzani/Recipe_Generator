@@ -63,53 +63,49 @@ const UploadRecipe = () => {
             { method:"GET"})
             .then(response => response.text())
             .then(result => {
-                console.log(result)
-                if(result[0]!==undefined){
-                    // eslint-disable-next-line
-                    //@ts-ignore
-                    const r:DataFromNetlify=result[0] as DataFromNetlify
-                    console.log("image url "+r.data.picture.url)
+                // eslint-disable-next-line
+                //@ts-ignore
+                let imageURL=JSON.parse(result)[0].data.picture.url
+                //Create a new recipe using the new image path
+                const tempRatingMap:Map<string,number>=new Map<string, number>()
+                const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, UserComments:[]as UserComment[],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0}
+                console.log("new recipe "+JSON.stringify(recipe))
+                //Store this recipe in the database
+                try{
+                    //Create a new entry under recipes, and save the automatically generated key
+                    const key=push(child(ref(getDatabase(app)), 'recipes'),recipe).key;
+                    //Set the id field of recipe to be equal to the key
+                    if (key != null) {
+                        recipe.id = key
+                    }
+                    console.log("id "+recipe.id)
+                    //Update the entry to the recipe object to store the recipe
+                    let queryPath="recipes/"
+                    queryPath+=key as string
+                    update(ref(getDatabase(app), queryPath), recipe).catch(e=>(console.log(e)));
+
+                    //Update the current user's uploaded recipes array
+                    //Create a temporary array, initialized to the current uploaded recipe array
+                    const tempUploadedRecipes: string[] = currentUser.uploadedRecipes;
+
+                    if(tempUploadedRecipes[0]===""){
+                        tempUploadedRecipes[0]=recipe.id
+                    }else{
+                        tempUploadedRecipes.push(recipe.id)
+                    }
+                    //Update the current user object with the new array
+                    setCurrentUser({
+                        uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,
+                        savedRecipes: currentUser.savedRecipes, uploadedRecipes: tempUploadedRecipes
+                    })
+                    //Update the database with this new object
+                    update(ref(db, '/users/' + currentUser.uid), currentUser).catch(e=>(console.log(e)));
+                }
+                catch(e){
+                    console.log(e)
                 }
             })
             .catch(error => console.log('error', error));
-
-        console.log("image url "+imageURL)
-        //Create a new recipe using the new image path
-        const tempRatingMap:Map<string,number>=new Map<string, number>()
-        const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, UserComments:[]as UserComment[],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0}
-        //Store this recipe in the database
-        try{
-            //Create a new entry under recipes, and save the automatically generated key
-            const key=push(child(ref(getDatabase(app)), 'recipes'),recipe).key;
-            //Set the id field of recipe to be equal to the key
-            recipe.id=""
-            recipe.id+=key as string
-            console.log("id "+recipe.id)
-            //Update the entry to the recipe object to store the recipe
-            let queryPath="recipes/"
-            queryPath+=key as string
-            update(ref(getDatabase(app), queryPath), recipe).catch(e=>(console.log(e)));
-
-            //Update the current user's uploaded recipes array
-            //Create a temporary array, initialized to the current uploaded recipe array
-            const tempUploadedRecipes: string[] = currentUser.uploadedRecipes;
-
-            if(tempUploadedRecipes[0]===""){
-                tempUploadedRecipes[0]=recipe.id
-            }else{
-                tempUploadedRecipes.push(recipe.id)
-            }
-            //Update the current user object with the new array
-            setCurrentUser({
-                uid: currentUser.uid, displayName: currentUser.displayName, photoURL: currentUser.photoURL,
-                savedRecipes: currentUser.savedRecipes, uploadedRecipes: tempUploadedRecipes
-            })
-            //Update the database with this new object
-            update(ref(db, '/users/' + currentUser.uid), currentUser).catch(e=>(console.log(e)));
-        }
-        catch(e){
-            console.log(e)
-        }
     }
 
     const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
