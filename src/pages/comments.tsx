@@ -69,9 +69,11 @@ const Comments: React.FC<CommentsProps>= (props) => {
                     <li className="p-3 hover:bg-red-600 hover:text-red-200">
                                             <pre className="italic">{
                                               comment.username}</pre>
-                      <pre className="italic">{
-                        comment.text}</pre>
-
+                      {
+                        comment.text.length>0 ? (
+                      <pre className="italic">
+                        {comment.text}</pre>):(<div></div>)
+                      }
                     </li>
                   </ul>
 

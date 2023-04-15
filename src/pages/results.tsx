@@ -51,7 +51,7 @@ const Results: React.FC<RecipeArray> = (props) => {
                                     <Link href={{
                                         pathname: '/recipe',
                                         query: {recipeString:JSON.stringify(recipe)}
-                                    }} as={`recipe/$recipeText}`} onClick={() => setIsLoading(true)}>
+                                    }} as={`recipe/`} onClick={() => setIsLoading(true)}>
                                         <ul className="divide-y-2 divide-gray-100">
                                             <li className="p-3 hover:bg-red-600 hover:text-red-200">
                                                 <pre className="italic">{recipe.title}</pre>

@@ -23,7 +23,7 @@ const Favorites: React.FC<RecipeArray>= (props) => {
     useEffect(() => {
         //eslint-disable-next-line
         const user:customUser = JSON.parse(localStorage.getItem('user')+"");
-        console.log("Calling useEffect "+JSON.stringify(user))
+        console.log("Calling useEffect in favorites screen"+JSON.stringify(user))
         if (user) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -66,7 +66,7 @@ const Favorites: React.FC<RecipeArray>= (props) => {
                                 <Link href={{
                                     pathname: '/recipe',
                                     query: {recipeString:JSON.stringify(recipe)}
-                                }} as={`recipe/$recipeText}`}>
+                                }} as={`recipe/`}>
                                     <ul className="divide-y-2 divide-gray-100">
                                         <li className="p-3 hover:bg-red-600 hover:text-red-200">
                                             <pre className="italic">{
