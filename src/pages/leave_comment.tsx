@@ -18,9 +18,11 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
   const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
 
   useEffect(() => {
+    //eslint-disable-next-line
     const user:customUser = JSON.parse(localStorage.getItem('user')+"");
     console.log("Calling useEffect "+JSON.stringify(user))
     if (user) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       setCurrentUser(user);
     }
@@ -64,7 +66,7 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
               placeholder=""></textarea>
           </div>
           <div>
-            <button className="px-3 py-2 text-sm text-white bg-red-600 rounded" onClick={()=>{saveComment()}}
+            <button className="px-3 py-2 text-sm text-white bg-red-600 rounded" onClick={()=>{saveComment().catch((e)=>console.log(e))}}
             >
               Comment
             </button>

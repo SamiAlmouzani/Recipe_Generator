@@ -21,9 +21,11 @@ const Comments: React.FC<CommentsProps>= (props) => {
   const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
 
   useEffect(() => {
+    //eslint-disable-next-line
     const user:customUser = JSON.parse(localStorage.getItem('user')+"");
     console.log("Calling useEffect "+JSON.stringify(user))
     if (user) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       setCurrentUser(user);
     }
@@ -76,7 +78,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
                 </div>
                 {
                   comment.uid===currentUser.uid ? (
-                      <button onClick={() => {deleteComment(comment, props.id)}}> Delete </button>
+                      <button onClick={() => {deleteComment(comment, props.id).catch((e)=>console.log(e))}}> Delete </button>
                   ):(
                       <div></div>
                   )
