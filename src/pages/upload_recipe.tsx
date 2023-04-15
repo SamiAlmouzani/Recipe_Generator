@@ -68,7 +68,7 @@ const UploadRecipe = () => {
                     // eslint-disable-next-line
                     //@ts-ignore
                     const r:DataFromNetlify=result[0] as DataFromNetlify
-                    imageURL=r.data.picture.url
+                    console.log("image url "+r.data.picture.url)
                 }
             })
             .catch(error => console.log('error', error));
