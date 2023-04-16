@@ -390,21 +390,19 @@ export async function getServerSideProps(context:any){
     const req=context.req
     //eslint-disable-next-line
     const res=context.res
-    let recipe:Recipe
     //eslint-disable-next-line
     console.log(JSON.stringify(context.query))
     //eslint-disable-next-line
-    if(context.query.recipeString===undefined){
+   // if(context.query.recipeString===undefined){
         //eslint-disable-next-line
         const c=getCookie('recipe', {req, res});
-        recipe=JSON.parse(c as string) as Recipe
-    }else{
+        const recipe=JSON.parse(c as string) as Recipe
+ //   }else{
         //eslint-disable-next-line
-        recipe=JSON.parse(context.query.recipeString) as Recipe
+      //  recipe=JSON.parse(context.query.recipeString) as Recipe
         //eslint-disable-next-line
-        setCookies('recipe', context.query.recipeString, {req, res, maxAge: 60 * 6 * 24 });
-    }
-
+     //   setCookies('recipe', context.query.recipeString, {req, res, maxAge: 60 * 6 * 24 });
+  //  }
     console.log("RECIPE AFTER COOKIES "+JSON.stringify(recipe))
     //If there is text, it means that this was an existing recipe that is already in the database. Return the recipe.
     if(recipe.text.length>1){
@@ -473,7 +471,6 @@ export async function getServerSideProps(context:any){
             tbm: "isch",
             q: recipe.title
         });
-        console.log("image and text were generated")
         //Create a recipe object using the newly generated text and image
         const newRecipe:Recipe={
             id:recipe.id,

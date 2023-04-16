@@ -6,6 +6,7 @@ import { db, auth, app } from "../context/firebaseSetup";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { useGlobalContext } from "../context";
+import {getCookie, setCookies} from "cookies-next";
 type RecipeFromAPI = { text: string; index: number; logprobs: object; finish_reason: string } | null
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
@@ -51,7 +52,11 @@ const Results: React.FC<RecipeArray> = (props) => {
                                     <Link href={{
                                         pathname: '/recipe',
                                         query: {recipeString:JSON.stringify(recipe)}
-                                    }} as={`recipe/`} onClick={() => setIsLoading(true)}>
+                                    }} as={`recipe/`+recipe.id} onClick={() => {
+                                        setCookies('recipe', recipe);
+                                        //eslint-disable-next-line
+                                        console.log("cookie "+getCookie('recipe'))
+                                        setIsLoading(true)}}>
                                         <ul className="divide-y-2 divide-gray-100">
                                             <li className="p-3 hover:bg-red-600 hover:text-red-200">
                                                 <pre className="italic">{recipe.title}</pre>
