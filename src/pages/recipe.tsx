@@ -465,6 +465,7 @@ export async function getServerSideProps(context:any){
         } catch(e){
             console.log(e)
         }
+        console.log("loading image ")
         //Make the API call to get the image
         const response = await getJson("google", {
             api_key: process.env.GOOGLE_IMAGES_API_KEY,
