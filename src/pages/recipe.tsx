@@ -1,12 +1,10 @@
 import Image from 'next/image'
 import { MdOutlineFavorite } from "react-icons/md";
 import React, {useState, useEffect} from 'react';
-import placeholder_image from './placeholder_image.jpg'
 import Link from "next/link";
 import { getJson } from "serpapi";
 import {child, get, getDatabase, push, query, ref, remove, set, update} from "firebase/database";
 import {app, db} from "../context/firebaseSetup"
-import {useGlobalContext} from "../context";
 import { getCookies, getCookie, setCookies, removeCookies } from 'cookies-next';
 
 
@@ -21,40 +19,39 @@ const Recipe: React.FC<Recipe>=(props)=>{
     const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
     //Create a recipe object and initialize the fields to blank (these will be replaced)
     const [recipe, setRecipe] = useState({id:"", title:"", text:"", image:"", ingredients:"", averageRating:0, uploadedBy:"", comments:[] as UserComment[],ratingMap:"",ratingSum:0,totalRatings:0});
-
-    let startingHeartColor="FF0000"
-    let startingSavedState=false
+    const [currentUserRating, setCurrentUserRating]=useState(0)
+    const startingHeartColor="FF0000"
+    const startingSavedState=false
+    //When updating the id in the database, recipe didn't show the new value immediately. I'm using currentRecipe to set the new values and store them in
+    //the database, then also setting those values on recipe.
+    const [heartColor,setHeartColor]=useState(startingHeartColor)
+    const[saved, setSaved]=useState(startingSavedState)
 
     //When the page is  = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments,ratingMap:props.ratingMap,ratingSum:parseFloat(String(props.ratingSum)),totalRatings:props.totalRatings});loaded or refreshed, get the current user from the local context
     useEffect(() => {
-        console.log("page loaded (or reloaded)")
         //eslint-disable-next-line
         const user:customUser = JSON.parse(localStorage.getItem('user')+"");
-        console.log("Calling useEffect "+JSON.stringify(user))
         if (user) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             setCurrentUser(user);
         }
         const c=getCookie('recipe')
-        const tempRecipe:Recipe=JSON.parse(c as string)
+        const tempRecipe:Recipe=JSON.parse(c as string) as Recipe
         setRecipe({id:tempRecipe.id, title:tempRecipe.title, text:tempRecipe.text, image:tempRecipe.image, ingredients:tempRecipe.ingredients, averageRating:tempRecipe.averageRating, uploadedBy:tempRecipe.uploadedBy, comments:tempRecipe.comments,ratingMap:tempRecipe.ratingMap,ratingSum:parseFloat(String(tempRecipe.ratingSum)),totalRatings:tempRecipe.totalRatings});
         //Check whether the id of this recipe is already in the current user's saved array. If so, set the color of the heart
         //to red and set the initial state of "saved" to true
-        if((currentUser.savedRecipes.indexOf(props.id)>-1)&&props.id!=="0"){
-            startingHeartColor = "FF0000"
-            startingSavedState=true
+        if((user.savedRecipes.indexOf(tempRecipe.id)>-1)){
+            console.log("RECIPE IS SAVED")
+            setHeartColor("FF0000")
+            setSaved(true)
         }else{
-            startingHeartColor="808080"
-            startingSavedState=false
+            console.log("RECIPE IS NOT SAVED")
+            setHeartColor("808080")
+            setSaved(false)
         }
     }, []);
-    //When updating the id in the database, recipe didn't show the new value immediately. I'm using currentRecipe to set the new values and store them in
-    //the database, then also setting those values on recipe.
-    const [heartColor,setHeartColor]=useState(startingHeartColor)
-    const[saved, setSaved]=useState(startingSavedState)
-
-    console.log("props: "+JSON.stringify(props))
+ //   console.log("props: "+JSON.stringify(props))
     //props is used to initialize a currentRecipe object.
     // let currentRecipe={id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments,ratingMap:props.ratingMap,ratingSum:props.ratingSum,totalRatings:props.totalRatings}
 
@@ -79,7 +76,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
                     <h1 className="text-center text-3xl font-bold mb-8">{props.title}</h1>
                     <div className="flex justify-between items-center mb-4">
                         <div>
-                            <StarIcons recipe={recipe} />
+                            <StarIcons recipe={recipe}/>
                         </div>
                         <div>
                             <MdOutlineFavorite
@@ -162,6 +159,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
                     //Update the database with this new object
                     update(ref(db, '/users/' + currentUser.uid), currentUser).catch(e=>(console.log(e)));
                     localStorage.setItem('user',JSON.stringify(currentUser))
+                    console.log(currentUser)
                 }
             }
             else {
@@ -226,30 +224,40 @@ function setNewRating(rating:number,recipe:Recipe,uid:string){
 }
 
 function StarIcons(r: {recipe:Recipe}){
-    const {currentUser, setCurrentUser}=useGlobalContext();
-
     const [star1color,setStar1Color]=useState("grey")
     const [star2color,setStar2Color]=useState("grey")
     const [star3color,setStar3Color]=useState("grey")
     const [star4color,setStar4Color]=useState("grey")
     const [star5color,setStar5Color]=useState("grey")
     const [rating, setRating]=useState(0)
-    console.log("recipe passed into StarIcons "+JSON.stringify(r.recipe.averageRating))
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    console.log("recipe from cookies "+getCookie('recipe'))
     const [averageRating, setAverageRating]=useState(parseFloat(String((r.recipe.averageRating))).toFixed(2))
+    const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
 
     useEffect(() => {
-        console.log("page loaded (or reloaded)")
         //eslint-disable-next-line
         const c=getCookie('recipe')
-        const tempRecipe:Recipe=JSON.parse(c as string)
-        // @ts-ignore
+        const tempRecipe:Recipe=JSON.parse(c as string) as Recipe
         setAverageRating(parseFloat(String((tempRecipe.averageRating))).toFixed(2))
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        setCurrentUser(JSON.parse(localStorage.getItem('user')as string) as customUser);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const user:customUser=JSON.parse(localStorage.getItem('user')as string) as customUser
+        console.log("user in rating component"+user.uid)
+        console.log("recipe map "+tempRecipe.ratingMap)
+        const tempRatingMap:Map<string,number>=new Map(JSON.parse(tempRecipe.ratingMap) as Map<string,number>)
+        console.log(tempRatingMap)
+        if(tempRatingMap.has(user.uid)){
+            setRating(tempRatingMap.get(user.uid) as number)
+            setStarColors(tempRatingMap.get(user.uid) as number)
+        }
     }, []);
-    console.log("average rating "+averageRating)
     return(
         <div>
+            <div><label className="font-bold text-[#F7C600]">Your rating</label><h1></h1></div>
             {/*The fill color for each star icon is grey by default. When the star is clicked, the rating is set to the corresponding number, and
             the color of the other stars is changed to match the new rating (if the rating was 5 and star 3 is clicked, stars 4 and 5 are changed to grey.
             Or if the rating is 1 and star 4 is clicked, set stars 2, 3, and 4 to #F7C600
@@ -267,10 +275,7 @@ function StarIcons(r: {recipe:Recipe}){
                     setAverageRating(setNewRating(0,r.recipe,currentUser.uid).toFixed(2))
                 }
                 else{
-                    setStar2Color("grey")
-                    setStar3Color("grey")
-                    setStar4Color("grey")
-                    setStar5Color("grey")
+                    setStarColors(1)
                     setRating(1)
                     setAverageRating(setNewRating(1,r.recipe,currentUser.uid).toFixed(2))
                 }
@@ -283,15 +288,7 @@ function StarIcons(r: {recipe:Recipe}){
             </svg>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star2color} className="w-8 h-8 inline" onClick={()=>
             {
-                if(rating<2){
-                    setStar1Color("#F7C600")
-                    setStar2Color("#F7C600")
-                }
-                else if(rating>2){
-                    setStar3Color("grey")
-                    setStar4Color("grey")
-                    setStar5Color("grey")
-                }
+                setStarColors(2)
                 setAverageRating(setNewRating(2,r.recipe,currentUser.uid).toFixed(2))
                 setRating(2)
             }}>
@@ -301,15 +298,7 @@ function StarIcons(r: {recipe:Recipe}){
             </svg>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star3color} className="w-8 h-8 inline" onClick={()=>
             {
-                if(rating<3){
-                    setStar1Color("#F7C600")
-                    setStar2Color("#F7C600")
-                    setStar3Color("#F7C600")
-                }
-                else if(rating>3){
-                    setStar4Color("grey")
-                    setStar5Color("grey")
-                }
+                setStarColors(3)
                 setRating(3)
                 setAverageRating(setNewRating(3,r.recipe,currentUser.uid).toFixed(2))
             }}>
@@ -319,15 +308,7 @@ function StarIcons(r: {recipe:Recipe}){
             </svg>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star4color} className="w-8 h-8 inline" onClick={()=>
             {
-                if(rating<4){
-                    setStar1Color("#F7C600")
-                    setStar2Color("#F7C600")
-                    setStar3Color("#F7C600")
-                    setStar4Color("#F7C600")
-                }
-                else if(rating>4){
-                    setStar5Color("grey")
-                }
+                setStarColors(4)
                 setRating(4)
                 setAverageRating(setNewRating(4,r.recipe,currentUser.uid).toFixed(2))
 
@@ -338,13 +319,7 @@ function StarIcons(r: {recipe:Recipe}){
             </svg>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={star5color} className="w-8 h-8 inline" onClick={()=>
             {
-                if(rating<5){
-                    setStar1Color("#F7C600")
-                    setStar2Color("#F7C600")
-                    setStar3Color("#F7C600")
-                    setStar4Color("#F7C600")
-                    setStar5Color("#F7C600")
-                }
+                setStarColors(5)
                 setRating(5)
                 setAverageRating(setNewRating(5,r.recipe,currentUser.uid).toFixed(2))
             }}>
@@ -352,26 +327,79 @@ function StarIcons(r: {recipe:Recipe}){
                       d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
                       clipRule="evenodd"/>
             </svg>
+
             <div> <label className="font-bold text-[#F7C600]">Average rating</label><h1 className="font-bold text-3xl text-[#F7C600]">{averageRating}</h1></div>
 
         </div>
-
     )
+    function setStarColors(rating:number){
+       switch(rating){
+           case 0:
+               setStar1Color("grey")
+               setStar2Color("grey")
+               setStar3Color("grey")
+               setStar4Color("grey")
+               setStar5Color("grey")
+               break;
+           case 1:
+               setStar1Color("#F7C600")
+               setStar2Color("grey")
+               setStar3Color("grey")
+               setStar4Color("grey")
+               setStar5Color("grey")
+               break;
+           case 2:
+               setStar1Color("#F7C600")
+               setStar2Color("#F7C600")
+               setStar3Color("grey")
+               setStar4Color("grey")
+               setStar5Color("grey")
+               break;
+           case 3:
+               setStar1Color("#F7C600")
+               setStar2Color("#F7C600")
+               setStar3Color("#F7C600")
+               setStar4Color("grey")
+               setStar5Color("grey")
+               break;
+           case 4:
+               setStar1Color("#F7C600")
+               setStar2Color("#F7C600")
+               setStar3Color("#F7C600")
+               setStar4Color("#F7C600")
+               setStar5Color("grey")
+               break;
+           case 5:
+               setStar1Color("#F7C600")
+               setStar2Color("#F7C600")
+               setStar3Color("#F7C600")
+               setStar4Color("#F7C600")
+               setStar5Color("#F7C600")
+                break;
+       }
+    }
 }
 //When this page is loaded, it is passed the recipe object from the preceding screen. This function checks whether this recipe
 //already exists in the database, or whether it is a new one (meaning the text and photo need to be added). It passes the recipe
 //back up to the main page through the props object.
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export async function getServerSideProps(context:any){
-    let cookies = context.req.headers.cookie
-    let req=context.req
-    let res=context.res
+    //eslint-disable-next-line
+    const req=context.req
+    //eslint-disable-next-line
+    const res=context.res
     let recipe:Recipe
-    console.log("get serverside props is running "+context.query.recipeString)
+    //eslint-disable-next-line
     if(context.query.recipeString===undefined){
-        let c=getCookie('recipe', { req, res});
-        recipe=JSON.parse(c as string)
+        //eslint-disable-next-line
+        const c=getCookie('recipe', {req, res});
+        recipe=JSON.parse(c as string) as Recipe
     }else{
+        //eslint-disable-next-line
         recipe=JSON.parse(context.query.recipeString) as Recipe
+        //eslint-disable-next-line
         setCookies('recipe', context.query.recipeString, {req, res, maxAge: 60 * 6 * 24 });
     }
 
@@ -473,6 +501,7 @@ export async function getServerSideProps(context:any){
             queryPath+=key as string
             update(ref(getDatabase(app), queryPath), newRecipe).catch(e=>(console.log(e)));
             console.log("updated database, id is "+newRecipe.id)
+            //eslint-disable-next-line
             setCookies('recipe', JSON.stringify(newRecipe), {req, res, maxAge: 60 * 6 * 24 });
         }
         catch(e){
