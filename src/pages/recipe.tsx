@@ -391,6 +391,7 @@ export async function getServerSideProps(context:any){
     //eslint-disable-next-line
     const res=context.res
     let recipe:Recipe
+    console.log(JSON.stringify(context.query))
     //eslint-disable-next-line
     if(context.query.recipeString===undefined){
         //eslint-disable-next-line
