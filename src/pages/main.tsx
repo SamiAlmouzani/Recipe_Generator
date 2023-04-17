@@ -39,15 +39,15 @@ const RecipeGenerator: NextPage = () => {
   console.log("current user: (accessed from main screen)"+currentUser.displayName)
     const slideImages = [
         {
-            url: 'https://media.istockphoto.com/id/1414285963/photo/stuffed-turkey-for-thanksgiving-holidays-with-pumpkin-peas-pecan-berry-pie-cheese-variations.jpg?s=612x612&w=0&k=20&c=Fzz5ncyZ0ZXIxQ76m3AY83gzjDJ0kOI7fbz8-0bEEpM=',
+            url: 'https://www.foodiesfeed.com/wp-content/uploads/2019/02/pizza-ready-for-baking-1024x683.jpg',
             altText: 'fruit_bowls'
         },
         {
-            url: 'https://www.foodiesfeed.com/wp-content/uploads/2021/02/dining-in-an-iranian-restaurant-768x512.jpg',
+            url: 'https://www.foodiesfeed.com/wp-content/uploads/2019/06/beautiful-vibrant-shot-of-traditional-korean-meals-1024x683.jpg',
             altText: 'espresso-with-carrot-cake'
         },
         {
-            url: 'https://www.foodiesfeed.com/wp-content/uploads/2015/03/basic-italian-pizza-margherita-768x512.jpg',
+            url: 'https://media.istockphoto.com/id/1455050837/photo/super-bowl-or-football-theme-food-table-scene-overhead-view-on-dark-wood.jpg?s=612x612&w=0&k=20&c=dnel7s-AOdR_cJWfc3ItoCHml18DJlTDmKUBR93aJ44=',
             altText: 'basic-italian-pizza-margherita'
         },
     ];
@@ -58,7 +58,7 @@ const RecipeGenerator: NextPage = () => {
 
     const divStyle = {
         backgroundSize: 'cover',
-        height: '300px',
+        height: '500px',
         width: '1000px'
     }
 
