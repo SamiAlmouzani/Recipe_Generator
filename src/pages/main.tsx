@@ -39,6 +39,10 @@ const RecipeGenerator: NextPage = () => {
   console.log("current user: (accessed from main screen)"+currentUser.displayName)
     const slideImages = [
         {
+            url: 'https://media.istockphoto.com/id/1345890540/photo/honey-baklava-with-walnuts-on-black-slate-portions-of-oriental-sweets-turkish-sugary-pieces.jpg?s=612x612&w=0&k=20&c=Zxn3pdiLLrdqIAVGqSsLc3fgKz3k4BwAkJrOxMIU2y4=',
+            altText: 'fruit_bowls'
+        },
+        {
             url: 'https://www.foodiesfeed.com/wp-content/uploads/2019/02/pizza-ready-for-baking-1024x683.jpg',
             altText: 'fruit_bowls'
         },
@@ -47,9 +51,16 @@ const RecipeGenerator: NextPage = () => {
             altText: 'espresso-with-carrot-cake'
         },
         {
-            url: 'https://media.istockphoto.com/id/1455050837/photo/super-bowl-or-football-theme-food-table-scene-overhead-view-on-dark-wood.jpg?s=612x612&w=0&k=20&c=dnel7s-AOdR_cJWfc3ItoCHml18DJlTDmKUBR93aJ44=',
-            altText: 'basic-italian-pizza-margherita'
+            url: 'https://media.istockphoto.com/id/185406000/photo/authentic-crawfish-etoufee-in-a-clean-white-dish.jpg?s=612x612&w=0&k=20&c=DG14_XyJiuz6NpfMDENOE4NrdciAsTmc5Jz0BwHcJiA=',
+            altText: 'espresso-with-carrot-cake'
         },
+        {
+            url: 'https://media.istockphoto.com/id/692557700/photo/burger.jpg?s=612x612&w=0&k=20&c=8ajzPWqvrLvl779OI3XMFR_tZV5V-7VSDlSeaX47Uhk='
+        },
+        {//new slide
+            url: 'https://media.istockphoto.com/id/543663322/photo/meat-lasagna.jpg?s=612x612&w=0&k=20&c=nYLF1yuCTxIMwQ0JjnAT3_fd7ZqsAds1RO4FOinimZ4=',
+            altText: 'fruit_bowls'
+        }
     ];
     const spanStyle = {
         background: '#efefef',
@@ -108,7 +119,7 @@ const RecipeGenerator: NextPage = () => {
           </div>
           )
         }
-        <Navbar className="navbar-container mt-4 sm:text-xl">
+        <Navbar className="navbar-container mt-8 sm:text-xl">
 
             <ul className="align-items:center">
                 <li className="font-bold text-black sm:block">
@@ -147,7 +158,7 @@ const RecipeGenerator: NextPage = () => {
         </Navbar>
       </div>
       </div>
-        <div className="mx-auto max-w-screen-xl px-20 py-20 lg:justify-items-center relative">
+        <div className="mx-auto max-w-screen-lg px-20 py-20 lg:justify-items-center relative">
             <Slide>
                 {slideImages.map((slideImage, index)=> (
                     <div key={index}>
