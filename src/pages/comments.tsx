@@ -67,17 +67,18 @@ const Comments: React.FC<CommentsProps>= (props) => {
                 <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
                   <ul className="divide-y-2 divide-gray-100">
                     <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                                            <pre className="italic">{
+                                            <pre className="italic font-bold text-red-500">{
                                               comment.username}</pre>
                       {
                         comment.text.length>0 ? (
-                      <pre className="italic">
+                      <pre className="italic ">
                         {comment.text}</pre>):(<div></div>)
                       }
                     </li>
                   </ul>
 
                 </div>
+              <div className="mt-0 font-bold">
                 {
                   comment.uid===currentUser.uid ? (
                       <button onClick={() => {deleteComment(comment, props.id).catch((e)=>console.log(e))}}> Delete </button>
@@ -85,6 +86,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
                       <div></div>
                   )
                 }
+                </div>
               </div>)}
           </div>
         </div>

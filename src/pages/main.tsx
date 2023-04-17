@@ -57,12 +57,9 @@ const RecipeGenerator: NextPage = () => {
     }
 
     const divStyle = {
-        // display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'align',
         backgroundSize: 'cover',
-        height: '400px',
-        width: '700px'
+        height: '300px',
+        width: '1000px'
     }
 
     return (
@@ -150,11 +147,12 @@ const RecipeGenerator: NextPage = () => {
         </Navbar>
       </div>
       </div>
-        <div className=" flex flex-col space-y-10 align-middle m-10 position-relative justify-items-center">
+        <div className="mx-auto max-w-screen-xl px-20 py-20 lg:justify-items-center relative">
             <Slide>
                 {slideImages.map((slideImage, index)=> (
                     <div key={index}>
                         <div style={{ ...divStyle, 'backgroundImage': `url(${slideImage.url})` }}>
+
                         </div>
                     </div>
                 ))}
@@ -162,7 +160,7 @@ const RecipeGenerator: NextPage = () => {
         </div>
         <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
                <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
-                   <Link className="hover:text-gray-900" href="#index">about</Link>
+                   <Link className="hover:text-gray-900" href="#index">About</Link>
                </nav>
                <div className="flex justify-center space-x-5">
                    <img
