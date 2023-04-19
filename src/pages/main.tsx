@@ -8,10 +8,9 @@ import Loader from "react-loader-spinner";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {height} from "dom-helpers";
 import {min} from "@popperjs/core/lib/utils/math";
-import {Navbar} from "react-bootstrap";
+import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {Slide} from "react-slideshow-image";
 import 'react-slideshow-image/dist/styles.css'
-import  index from "../pages/index"
 
 //localIngredients is the local value updated every time the contents of the text box are changed
 let localIngredientsList:string
@@ -60,6 +59,7 @@ const RecipeGenerator: NextPage = () => {
         {//new slide
             url: 'https://media.istockphoto.com/id/543663322/photo/meat-lasagna.jpg?s=612x612&w=0&k=20&c=nYLF1yuCTxIMwQ0JjnAT3_fd7ZqsAds1RO4FOinimZ4=',
             altText: 'fruit_bowls'
+
         }
     ];
     const spanStyle = {
@@ -68,14 +68,13 @@ const RecipeGenerator: NextPage = () => {
     }
 
     const divStyle = {
-        backgroundSize: 'cover',
-        height: '500px',
-        width: '1000px'
+        backgroundSize: 'center',
+        height: '375px',
+        width: '800px'
     }
 
     return (
-
-    <section className="bg-gray-50">
+    <section className="bg-gray-30">
         <div className="font-extrabold text-red-700 sm:block text-3xl">
               <img
                   src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
@@ -97,7 +96,7 @@ const RecipeGenerator: NextPage = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
             </div>
           ) : (
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
             <IngredientsInput />
             <Link
               href={{
@@ -119,16 +118,28 @@ const RecipeGenerator: NextPage = () => {
           </div>
           )
         }
-        <Navbar className="navbar-container mt-8 sm:text-xl">
+            <div className="mx-auto max-w-screen-lg px-10 py-10 lg:justify-items-center relative">
+                <Slide>
+                    {slideImages.map((slideImage, index)=> (
+                        <div key={index}>
+                            <div style={{ ...divStyle, 'backgroundImage': `url(${slideImage.url})` }}>
+
+                            </div>
+                        </div>
+                    ))}
+                </Slide>
+            </div>
+        <Navbar className="navbar-container mt-2 sm:text-xl">
 
             <ul className="align-items:center">
-                <li className="font-bold text-black sm:block">
+                <li className="font-bold text-black sm:block ">
                     <Link
                         href={{
                             pathname: '/upload_recipe',
                             query: {
                                 uid: currentUser.uid,
                             },
+
                         }}
                     >Upload Recipe
                     </Link>
@@ -158,18 +169,7 @@ const RecipeGenerator: NextPage = () => {
         </Navbar>
       </div>
       </div>
-        <div className="mx-auto max-w-screen-lg px-20 py-20 lg:justify-items-center relative">
-            <Slide>
-                {slideImages.map((slideImage, index)=> (
-                    <div key={index}>
-                        <div style={{ ...divStyle, 'backgroundImage': `url(${slideImage.url})` }}>
-
-                        </div>
-                    </div>
-                ))}
-            </Slide>
-        </div>
-        <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
+        <footer className="flex flex-col space-y-5 justify-center m-10 position-relative">
                <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
                    <Link className="hover:text-gray-900" href="#index">About</Link>
                </nav>

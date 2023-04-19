@@ -9,6 +9,7 @@ import {get, getDatabase, query, ref, set} from "firebase/database";
 import React from "react";
 import 'react-slideshow-image/dist/styles.css'
 import {ReactPhotoCollage} from "react-photo-collage";
+import {position} from "dom-helpers";
 
 const Home: NextPage = () => {
   const { currentUser,setCurrentUser } = useGlobalContext();
@@ -72,8 +73,8 @@ const Home: NextPage = () => {
   }
   //formatting the slideshow images
   const settings = {
-    width: "1300px",
-    height: ["250px", "170px"],
+    width: "1200px",
+    height: ["200px", "150px"],
     layout: [ 2,4,3],
     photos: [
       {
@@ -115,44 +116,47 @@ const Home: NextPage = () => {
             }
     ],
     showNumOfRemainingPhotos: true
+  }
+  const background = {
+    image: 'url(img1.gif), url(img2.png), url(img3.gif)',
+    background:'center top, right top, center bottom,no-repeat, repeat-x, repeat-y',
   };
 
   return (
-    <section className="bg-gray-50">
-    <div
-      className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center"
-    >
+    <section className="bg-gray-20" >
+      <img
+        src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
+        className="w-32 ml-2 justify-items-center"
+
+    />
+      <div className="mx-auto max-w-screen-xl px-4 py-20 lg:flex lg:h-screen lg:items-center opacity-100"    >
+
       <div className="mx-auto max-w-xl text-center">
         <h1 className="text-3xl font-extrabold sm:text-5xl">
           <strong className="font-extrabold text-red-700 sm:block">
             SuperChef.
           </strong>
         </h1>
-
-        <p className="mt-4 sm:text-xl sm:leading-relaxed">
+        <p className="mt-4 sm:text-xl sm:leading-relaxed ">
           We think of great recipes that you and your family can enjoy 
           so you don&apos;t have to!
         </p>
-
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <button onClick={handleLogin}
-            className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
-            >
-              Get Started
-            </button>
-
-        </div>
-
-        <div className="mx-auto max-w-lg text-center block whitespace-pre-line">
-          <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line mt-4">Scroll down to see what you&#39;re missing!</p>
+        <div className="mx-auto max-w-md text-center ">
+          <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line mt-2">Scroll down to get started!</p>
         </div>
       </div>
     </div>
-      <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center relative">
-        <ReactPhotoCollage {...settings} />;
+      <div className="mx-auto max-w-screen-xl px-4 py-22 lg:flex lg:h-screen lg:items-center relative">
+        <ReactPhotoCollage {...settings} />
       </div>
-
-      <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
+      <div className="mt-2 flex flex-wrap justify-center gap-sm-2">
+        <button onClick={handleLogin}
+                className="block w-full rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
+        >
+          Get Started
+        </button>
+      </div>
+      <footer className="flex flex-col space-y-5 justify-center mt-10 position-relative">
         <div className="flex justify-center space-x-5">
           <img
               src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'

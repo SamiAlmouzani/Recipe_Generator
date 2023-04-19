@@ -66,7 +66,6 @@ const Results: React.FC<RecipeArray> = (props) => {
                                 </div>
                             </div>)}
                     </div>
-
                     <Link href="/main">
                         <button
                             className="block w-full mt-6 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
@@ -77,12 +76,11 @@ const Results: React.FC<RecipeArray> = (props) => {
                 </div>
             )}
         </div>
-            <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
+            <footer className="flex flex-col space-y-5 justify-center m-10 position-relative">
             <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
                 <a className="hover:text-gray-900" href="#">Home</a>
                 <a className="hover:text-gray-900" href='\index.tsx'>About</a>
             </nav>
-
             <div className="flex justify-center space-x-5">
                 <img
                     src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
