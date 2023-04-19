@@ -5,6 +5,8 @@ import { child, get, getDatabase, push, query, ref, update } from "firebase/data
 import {db, auth, app} from "../context/firebaseSetup";
 import {useGlobalContext} from "../context";
 import recipe from "./recipe";
+import { getCookies, getCookie, setCookies, removeCookies } from 'cookies-next';
+
 
 //----For definitions for the Recipe, RecipeFromAPI, RecipeContext, and Comment types, see index.d.ts in the types folder----
 
@@ -16,6 +18,7 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
   //Import the current user.
  // const { currentUser, setCurrentUser } = useGlobalContext();
   const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
+  const [recipe, setRecipe] = useState({id:"", title:"", text:"", image:"", ingredients:"", averageRating:0, uploadedBy:"", comments:[] as UserComment[],ratingMap:"",ratingSum:0,totalRatings:0});
 
   useEffect(() => {
     //eslint-disable-next-line
@@ -26,6 +29,9 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
       // @ts-ignore
       setCurrentUser(user);
     }
+    const c=getCookie('recipe')
+    const tempRecipe:Recipe=JSON.parse(c as string) as Recipe
+    setRecipe({id:tempRecipe.id, title:tempRecipe.title, text:tempRecipe.text, image:tempRecipe.image, ingredients:tempRecipe.ingredients, averageRating:tempRecipe.averageRating, uploadedBy:tempRecipe.uploadedBy, comments:tempRecipe.comments,ratingMap:tempRecipe.ratingMap,ratingSum:parseFloat(String(tempRecipe.ratingSum)),totalRatings:tempRecipe.totalRatings});
   }, []);
   const [commentText, setCommentText] = useState("initial comment");
   const [userComment, setUserComment] = useState({ uid:"", username: "", text: "",date:new Date() });
@@ -76,7 +82,7 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
         </div>
       </div>
 
-      <Link href={{ pathname: '/comments', query: { id: props.id } }}>
+      <Link href={{ pathname: '/comments', query: { id: recipe.id } }}>
         <button
           className="mx-8 my-8 block w-full mt-4 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
         >
@@ -127,11 +133,18 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
         comments.push(comment)
         console.log("comments props 2"+JSON.stringify(comments))
 
-        const updates = {};
+        recipe.comments=comments;
+        //eslint-disable-next-line
+        setCookies('recipe', JSON.stringify(recipe));
+
+      /*  const updates = {};
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         updates["recipes/" + props.id + "/" + "comments/"] = comments;
-        await update(ref(db), updates).catch(e=>(console.log(e)));
+        await update(ref(db), updates).catch(e=>(console.log(e)));*/
+        let queryPath="recipes/"
+        queryPath+=recipe.id
+        update(ref(getDatabase(app), queryPath), recipe).catch(e=>(console.log(e)));
       }
     } catch (e) {
       console.log(e);
