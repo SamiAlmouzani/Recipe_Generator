@@ -144,7 +144,7 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
         await update(ref(db), updates).catch(e=>(console.log(e)));*/
         let queryPath="recipes/"
         queryPath+=recipe.id
-        update(ref(getDatabase(app), queryPath), recipe).catch(e=>(console.log(e)));
+        await update(ref(getDatabase(app), queryPath), recipe).catch(e=>(console.log(e)));
       }
     } catch (e) {
       console.log(e);
