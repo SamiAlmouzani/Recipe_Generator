@@ -482,7 +482,7 @@ export async function getServerSideProps(context:any){
             ingredients:recipe.ingredients,
             averageRating:0,
             uploadedBy:recipe.uploadedBy,
-            comments:[{uid:"",username:"",text:"",date:""}],
+            comments:[],
             ratingMap:recipe.ratingMap,
             ratingSum:0,
             totalRatings:0}
