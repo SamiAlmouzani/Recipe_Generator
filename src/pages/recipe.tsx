@@ -19,7 +19,6 @@ const Recipe: React.FC<Recipe>=(props)=>{
     const [currentUser, setCurrentUser] = useState({uid:"",displayName:"", photoURL:"", savedRecipes:[""], uploadedRecipes:[""]});
     //Create a recipe object and initialize the fields to blank (these will be replaced)
     const [recipe, setRecipe] = useState({id:"", title:"", text:"", image:"", ingredients:"", averageRating:0, uploadedBy:"", comments:[] as UserComment[],ratingMap:"",ratingSum:0,totalRatings:0});
-    const [currentUserRating, setCurrentUserRating]=useState(0)
     const startingHeartColor="FF0000"
     const startingSavedState=false
     //When updating the id in the database, recipe didn't show the new value immediately. I'm using currentRecipe to set the new values and store them in
@@ -27,7 +26,6 @@ const Recipe: React.FC<Recipe>=(props)=>{
     const [heartColor,setHeartColor]=useState(startingHeartColor)
     const[saved, setSaved]=useState(startingSavedState)
 
-    //When the page is  = useState({id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments,ratingMap:props.ratingMap,ratingSum:parseFloat(String(props.ratingSum)),totalRatings:props.totalRatings});loaded or refreshed, get the current user from the local context
     useEffect(() => {
         //eslint-disable-next-line
         const user:customUser = JSON.parse(localStorage.getItem('user')+"");
@@ -50,13 +48,11 @@ const Recipe: React.FC<Recipe>=(props)=>{
             setHeartColor("808080")
             setSaved(false)
         }
+        let queryPath="recipes/"
+        queryPath+=tempRecipe.id
+        update(ref(getDatabase(app), queryPath), tempRecipe).catch(e=>(console.log(e)));
     }, []);
- //   console.log("props: "+JSON.stringify(props))
-    //props is used to initialize a currentRecipe object.
-    // let currentRecipe={id:props.id, title:props.title, text:props.text, image:props.image, ingredients:props.ingredients, averageRating:props.averageRating, uploadedBy:props.uploadedBy, comments:props.comments,ratingMap:props.ratingMap,ratingSum:props.ratingSum,totalRatings:props.totalRatings}
-
     console.log("Rating sum in main page :"+typeof parseFloat(String(recipe.ratingSum)))
-
     return (
         <section>
             <nav className="font-extrabold text-red-700 sm:block text-3xl">
@@ -137,7 +133,7 @@ const Recipe: React.FC<Recipe>=(props)=>{
     );
 
     /*When a user clicks the save button this function will
-    a) Save this recipe to the database (if it is not already there), and update the current user's savedRecipes array
+    a) Update the current user's savedRecipes array or
     b) Remove this recipe from the current users's savedRecipes array*/
     function toggleSaved(saved:boolean){
         try {
@@ -393,16 +389,9 @@ export async function getServerSideProps(context:any){
     //eslint-disable-next-line
     console.log(JSON.stringify(context.query))
     //eslint-disable-next-line
-   // if(context.query.recipeString===undefined){
-        //eslint-disable-next-line
-        const c=getCookie('recipe', {req, res});
-        const recipe=JSON.parse(c as string) as Recipe
- //   }else{
-        //eslint-disable-next-line
-      //  recipe=JSON.parse(context.query.recipeString) as Recipe
-        //eslint-disable-next-line
-     //   setCookies('recipe', context.query.recipeString, {req, res, maxAge: 60 * 6 * 24 });
-  //  }
+    const c=getCookie('recipe', {req, res});
+    const recipe=JSON.parse(c as string) as Recipe
+
     console.log("RECIPE AFTER COOKIES "+JSON.stringify(recipe))
     //If there is text, it means that this was an existing recipe that is already in the database. Return the recipe.
     if(recipe.text.length>1){

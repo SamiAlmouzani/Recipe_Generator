@@ -110,13 +110,10 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
   );
 
   async function saveComment() {
-    console.log("calling saveComment")
-
     const commentBody = commentText
     try {
       const comments:UserComment[]=[]
       if (commentBody.length != 0) {
-        console.log("comment text from saveComment", commentText);
         // save comment to list of comments in recipe
         setUserComment({uid:currentUser.uid, username: currentUser.displayName, text: commentBody,date:new Date() });
         console.log("user comment "+JSON.stringify(userComment))
