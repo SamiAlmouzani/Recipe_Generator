@@ -83,7 +83,7 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
             Back
           </button>
         </Link>
-        <footer className="flex flex-col space-y-5 justify-center m-10 position-relative">
+        <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
           <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
             <a className="hover:text-gray-900" href="#">Home</a>
             <a className="hover:text-gray-900" href='\index.tsx'>About</a>
@@ -110,10 +110,13 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
   );
 
   async function saveComment() {
+    console.log("calling saveComment")
+
     const commentBody = commentText
     try {
       const comments:UserComment[]=[]
       if (commentBody.length != 0) {
+        console.log("comment text from saveComment", commentText);
         // save comment to list of comments in recipe
         setUserComment({uid:currentUser.uid, username: currentUser.displayName, text: commentBody,date:new Date() });
         console.log("user comment "+JSON.stringify(userComment))
