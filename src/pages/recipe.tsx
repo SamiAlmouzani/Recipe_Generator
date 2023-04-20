@@ -329,50 +329,50 @@ function StarIcons(r: {recipe:Recipe}){
         </div>
     )
     function setStarColors(rating:number){
-       switch(rating){
-           case 0:
-               setStar1Color("grey")
-               setStar2Color("grey")
-               setStar3Color("grey")
-               setStar4Color("grey")
-               setStar5Color("grey")
-               break;
-           case 1:
-               setStar1Color("#F7C600")
-               setStar2Color("grey")
-               setStar3Color("grey")
-               setStar4Color("grey")
-               setStar5Color("grey")
-               break;
-           case 2:
-               setStar1Color("#F7C600")
-               setStar2Color("#F7C600")
-               setStar3Color("grey")
-               setStar4Color("grey")
-               setStar5Color("grey")
-               break;
-           case 3:
-               setStar1Color("#F7C600")
-               setStar2Color("#F7C600")
-               setStar3Color("#F7C600")
-               setStar4Color("grey")
-               setStar5Color("grey")
-               break;
-           case 4:
-               setStar1Color("#F7C600")
-               setStar2Color("#F7C600")
-               setStar3Color("#F7C600")
-               setStar4Color("#F7C600")
-               setStar5Color("grey")
-               break;
-           case 5:
-               setStar1Color("#F7C600")
-               setStar2Color("#F7C600")
-               setStar3Color("#F7C600")
-               setStar4Color("#F7C600")
-               setStar5Color("#F7C600")
+        switch(rating){
+            case 0:
+                setStar1Color("grey")
+                setStar2Color("grey")
+                setStar3Color("grey")
+                setStar4Color("grey")
+                setStar5Color("grey")
                 break;
-       }
+            case 1:
+                setStar1Color("#F7C600")
+                setStar2Color("grey")
+                setStar3Color("grey")
+                setStar4Color("grey")
+                setStar5Color("grey")
+                break;
+            case 2:
+                setStar1Color("#F7C600")
+                setStar2Color("#F7C600")
+                setStar3Color("grey")
+                setStar4Color("grey")
+                setStar5Color("grey")
+                break;
+            case 3:
+                setStar1Color("#F7C600")
+                setStar2Color("#F7C600")
+                setStar3Color("#F7C600")
+                setStar4Color("grey")
+                setStar5Color("grey")
+                break;
+            case 4:
+                setStar1Color("#F7C600")
+                setStar2Color("#F7C600")
+                setStar3Color("#F7C600")
+                setStar4Color("#F7C600")
+                setStar5Color("grey")
+                break;
+            case 5:
+                setStar1Color("#F7C600")
+                setStar2Color("#F7C600")
+                setStar3Color("#F7C600")
+                setStar4Color("#F7C600")
+                setStar5Color("#F7C600")
+                break;
+        }
     }
 }
 //When this page is loaded, it is passed the recipe object from the preceding screen. This function checks whether this recipe
