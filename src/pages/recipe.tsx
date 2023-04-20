@@ -499,7 +499,7 @@ export async function getServerSideProps(context:any){
             //Update the entry to the recipe object to store the recipe
             let queryPath="recipes/"
             queryPath+=key as string
-            await update(ref(getDatabase(app), queryPath), newRecipe).catch(e=>(console.log(e)));
+            update(ref(getDatabase(app), queryPath), newRecipe).catch(e=>(console.log(e)));
             console.log("updated database, id is "+newRecipe.id)
             //eslint-disable-next-line
             setCookies('recipe', JSON.stringify(newRecipe), {req, res, maxAge: 60 * 6 * 24 });
