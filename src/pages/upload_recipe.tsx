@@ -40,7 +40,7 @@ const UploadRecipe = () => {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
         const data = { "form-name": "uploadform", title, ingredients, directions, picture}
-        let imageURL=""
+        const imageURL=""
         let imageURL2=""
         console.log(picture)
         //save the image in public/user_images (uses the images.ts file in the api folder)
