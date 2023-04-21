@@ -467,19 +467,19 @@ export async function getServerSideProps(context:any){
         }
         console.log("loading image ")
         //Make the API call to get the image
-        const response = await getJson("google", {
+      /*  const response = await getJson("google", {
             api_key: process.env.GOOGLE_IMAGES_API_KEY,
             tbm: "isch",
             q: recipe.title
-        });
+        });*/
         //Create a recipe object using the newly generated text and image
         const newRecipe:Recipe={
             id:recipe.id,
             title:recipe.title,
             text:text,
             //eslint-disable-next-line
-            image:response["images_results"][0].original as string,
-            ingredients:recipe.ingredients,
+            image:""//response["images_results"][0].original as string,
+            ,ingredients:recipe.ingredients,
             averageRating:0,
             uploadedBy:recipe.uploadedBy,
             comments:[{uid:"",username:"",text:"",date:""}],
@@ -508,6 +508,7 @@ export async function getServerSideProps(context:any){
             console.log(e)
         }
         goOffline(db)
+        goOffline(getDatabase(app))
         //Return the recipe
         return{
             props:{id:newRecipe.id,title:newRecipe.title,text:newRecipe.text,image:newRecipe.image,ingredients:newRecipe.ingredients,averageRating:newRecipe.averageRating,uploadedBy:newRecipe.uploadedBy,comments:newRecipe.comments,ratingMap:newRecipe.ratingMap,ratingSum:newRecipe.ratingSum, totalRatings:newRecipe.totalRatings}
