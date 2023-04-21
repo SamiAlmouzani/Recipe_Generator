@@ -38,8 +38,15 @@ if (getApps().length == 0) {
     db = getDatabase(app);
     analytics = isSupported().then(yes => yes ? getAnalytics(app) : null);
     auth = getAuth(app);
+}else{
+    app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+    goOffline(db);
+    app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+    analytics = isSupported().then(yes => yes ? getAnalytics(app) : null);
+    auth = getAuth(app);
 }
-// otherwise just return the reference to the database
 export {db as db, auth as auth, app as app}
 
 //export default firebase;

@@ -508,7 +508,7 @@ export async function getServerSideProps(context:any){
             console.log(e)
         }
         goOffline(db)
-        goOffline(getDatabase(app))
+      //  goOffline(getDatabase(app))
         //Return the recipe
         return{
             props:{id:newRecipe.id,title:newRecipe.title,text:newRecipe.text,image:newRecipe.image,ingredients:newRecipe.ingredients,averageRating:newRecipe.averageRating,uploadedBy:newRecipe.uploadedBy,comments:newRecipe.comments,ratingMap:newRecipe.ratingMap,ratingSum:newRecipe.ratingSum, totalRatings:newRecipe.totalRatings}
