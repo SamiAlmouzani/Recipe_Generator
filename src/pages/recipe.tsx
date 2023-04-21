@@ -403,7 +403,7 @@ export async function getServerSideProps(context:any){
     //eslint-disable-next-line
     //   setCookies('recipe', context.query.recipeString, {req, res, maxAge: 60 * 6 * 24 });
     //  }
-    console.log("RECIPE AFTER COOKIES "+JSON.stringify(recipe))
+    console.log("RECIPE AFTER COOKIES (1)"+JSON.stringify(recipe))
     //If there is text, it means that this was an existing recipe that is already in the database. Return the recipe.
     if(recipe.text.length>1){
         console.log("recipe already exists")
@@ -425,6 +425,7 @@ export async function getServerSideProps(context:any){
         //If the text is empty, it means this is a new recipe, and so far only the title has been generated.
     //Generate the text with the openAI API, and generate the image with SerpAPI. The recipe will then need to be saved in the database.
     else {
+        console.log("generating recipe")
         let text=""
         //This try/catch block makes the API call to generate the text
         try {
@@ -461,7 +462,7 @@ export async function getServerSideProps(context:any){
                 }).catch(err => {
                     console.log(err);
                 });
-
+            console.log(text)
         } catch(e){
             console.log(e)
         }
@@ -489,6 +490,8 @@ export async function getServerSideProps(context:any){
 
         console.log(newRecipe)
         //Store this recipe in the database
+        goOffline(db)
+      //  goOffline(getDatabase(app))
         try{
             //Create a new entry under recipes, and save the automatically generated key
             const key =push(child(ref(getDatabase(app)), 'recipes'),newRecipe).key;
@@ -508,7 +511,7 @@ export async function getServerSideProps(context:any){
             console.log(e)
         }
         goOffline(db)
-      //  goOffline(getDatabase(app))
+     //   goOffline(getDatabase(app))
         //Return the recipe
         return{
             props:{id:newRecipe.id,title:newRecipe.title,text:newRecipe.text,image:newRecipe.image,ingredients:newRecipe.ingredients,averageRating:newRecipe.averageRating,uploadedBy:newRecipe.uploadedBy,comments:newRecipe.comments,ratingMap:newRecipe.ratingMap,ratingSum:newRecipe.ratingSum, totalRatings:newRecipe.totalRatings}
