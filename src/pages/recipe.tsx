@@ -3,7 +3,7 @@ import { MdOutlineFavorite } from "react-icons/md";
 import React, {useState, useEffect} from 'react';
 import Link from "next/link";
 import { getJson } from "serpapi";
-import {child, get, getDatabase, push, query, ref, remove, set, update} from "firebase/database";
+import {child, get, getDatabase, goOffline, push, query, ref, remove, set, update} from "firebase/database";
 import {app, db} from "../context/firebaseSetup"
 import { getCookies, getCookie, setCookies, removeCookies } from 'cookies-next';
 
@@ -482,7 +482,7 @@ export async function getServerSideProps(context:any){
             ingredients:recipe.ingredients,
             averageRating:0,
             uploadedBy:recipe.uploadedBy,
-            comments:[],
+            comments:[{uid:"",username:"",text:"",date:""}],
             ratingMap:recipe.ratingMap,
             ratingSum:0,
             totalRatings:0}
@@ -507,6 +507,7 @@ export async function getServerSideProps(context:any){
         catch(e){
             console.log(e)
         }
+        goOffline(db)
         //Return the recipe
         return{
             props:{id:newRecipe.id,title:newRecipe.title,text:newRecipe.text,image:newRecipe.image,ingredients:newRecipe.ingredients,averageRating:newRecipe.averageRating,uploadedBy:newRecipe.uploadedBy,comments:newRecipe.comments,ratingMap:newRecipe.ratingMap,ratingSum:newRecipe.ratingSum, totalRatings:newRecipe.totalRatings}

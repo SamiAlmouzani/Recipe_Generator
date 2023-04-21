@@ -41,6 +41,7 @@ const UploadRecipe = () => {
         e.preventDefault();
         const data = { "form-name": "uploadform", title, ingredients, directions, picture}
         let imageURL=""
+        let imageURL2=""
         console.log(picture)
         //save the image in public/user_images (uses the images.ts file in the api folder)
         try {
@@ -54,8 +55,8 @@ const UploadRecipe = () => {
                 //eslint-disable-next-line
                 const { data } = await axios.post("/api/images", formData);
                 //eslint-disable-next-line
-                imageURL=path.join("/user_images",data["url"])
-                console.log(imageURL)
+                imageURL2=path.join("/user_images",data["url"])
+                console.log(imageURL2)
             }
         } catch (error: any) {
             console.log(error);
@@ -80,7 +81,7 @@ const UploadRecipe = () => {
                 const imageURL=JSON.parse(result)[0].data.picture.url as string
                 //Create a new recipe using the new image path
                 const tempRatingMap:Map<string,number>=new Map<string, number>()
-                const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, comments:[{username:"",text:"",date:""}],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0} as Recipe
+                const recipe:Recipe={id:"", title:title, text:ingredients+"\n\n"+directions, image:imageURL2, ingredients:ingredients, averageRating:0, uploadedBy:currentUser.uid, comments:[{username:"",text:"",date:""}],ratingMap:JSON.stringify(Array.from(tempRatingMap.entries())), ratingSum:0, totalRatings:0} as Recipe
                 console.log("new recipe "+JSON.stringify(recipe))
                 //Store this recipe in the database
                 try{
