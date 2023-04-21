@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import Link from "next/link";
 import React, {useEffect, useState} from 'react';
 import {set} from "zod";
-import {child, get, getDatabase, query, ref} from "firebase/database";
+import {child, get, getDatabase, goOffline, query, ref} from "firebase/database";
 import {db, auth, app} from "../context/firebaseSetup";
 import {getAnalytics} from "firebase/analytics";
 import {getAuth} from "firebase/auth";
@@ -162,6 +162,8 @@ export async function getServerSideProps (context:UserContext) {
     catch(e){
         console.log(e)
     }
+    goOffline(db)
+    goOffline(getDatabase(app))
     return{
         props:{recipeList}
     }

@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
 import Link from "next/link";
 import React, {useEffect, useState} from 'react';
-import { child, get, getDatabase, push, query, ref, update } from "firebase/database";
+import {child, get, getDatabase, goOffline, push, query, ref, update} from "firebase/database";
 import {db, auth, app} from "../context/firebaseSetup";
 import {useGlobalContext} from "../context";
 import recipe from "./recipe";
@@ -136,6 +136,8 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
         updates["recipes/" + props.id + "/" + "comments/"] = comments;
         await update(ref(db), updates).catch(e=>(console.log(e)));
       }
+      goOffline(db)
+      goOffline(getDatabase(app))
     } catch (e) {
       console.log(e);
     }
@@ -171,6 +173,8 @@ export async function getServerSideProps(context) {
         })
       }
     });
+    goOffline(db)
+    goOffline(getDatabase(app))
 
     return {
       // eslint-disable-next-line
@@ -178,6 +182,8 @@ export async function getServerSideProps(context) {
   } catch (e) {
     console.log(e)
   }
+  goOffline(db)
+  goOffline(getDatabase(app))
   return {
     // eslint-disable-next-line
     props: { commentList:commentList, id: recipeID }

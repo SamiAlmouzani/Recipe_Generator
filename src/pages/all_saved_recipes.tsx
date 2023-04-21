@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from 'react';
-import {child, get, getDatabase, ref} from "firebase/database";
-import {app} from "../context/firebaseSetup";
+import {child, get, getDatabase, goOffline, ref} from "firebase/database";
+import {app, db} from "../context/firebaseSetup";
 import {useGlobalContext} from "../context"
 import {getCookie, setCookies} from "cookies-next";
 
@@ -138,6 +138,8 @@ export async function getServerSideProps () {
     catch(e){
         console.log(e)
     }
+    goOffline(db)
+    goOffline(getDatabase(app))
     return {
         props: {recipeList}
     }

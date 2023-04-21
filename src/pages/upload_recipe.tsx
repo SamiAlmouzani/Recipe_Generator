@@ -1,6 +1,6 @@
 import React, {useState, ChangeEvent, useEffect} from "react";
 import {useGlobalContext} from "../context";
-import {child, getDatabase, push, ref, update} from "firebase/database";
+import {child, getDatabase, goOffline, push, ref, update} from "firebase/database";
 import {app, db} from "../context/firebaseSetup";
 import axios from "axios";
 import path from "path";
@@ -72,7 +72,6 @@ const UploadRecipe = () => {
                 console.log(r)})
             .catch(error => console.log("Form Submission Failed!"));
 
-        //Add a GET request here using Netlify's API to get the most recently submitted form information, and get the image URL
         fetch("https://v1.nocodeapi.com/lily42/netlify/MnfeAgRtMGegNfPo/listFormSubmissions?form_id=6438a02778d8420008ebef33",
             { method:"GET"})
             .then(response => response.text())
@@ -113,10 +112,14 @@ const UploadRecipe = () => {
                     })
                     //Update the database with this new object
                     update(ref(db, '/users/' + currentUser.uid), currentUser).catch(e=>(console.log(e)));
+                    goOffline(db)
+                    goOffline(getDatabase(app))
                 }
                 catch(e){
                     console.log(e)
                 }
+                goOffline(db)
+                goOffline(getDatabase(app))
             })
             .catch(error => console.log('error', error));
     }

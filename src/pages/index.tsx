@@ -5,7 +5,7 @@ import {getAuth, GoogleAuthProvider, signInWithPopup} from "@firebase/auth";
 import { app,db } from "../context/firebaseSetup"
 import {useRouter} from "next/router";
 import {useGlobalContext} from "../context";
-import {get, getDatabase, query, ref, set} from "firebase/database";
+import {get, getDatabase, goOffline, query, ref, set} from "firebase/database";
 import React from "react";
 import 'react-slideshow-image/dist/styles.css'
 import {ReactPhotoCollage} from "react-photo-collage";
@@ -59,6 +59,8 @@ const Home: NextPage = () => {
           //Use the new object to set the currentUser in the global context
           setCurrentUser(newUser);
           localStorage.setItem('user', JSON.stringify(newUser));
+          goOffline(db)
+          goOffline(getDatabase(app))
         }
       }).catch(()=>{
         console.log("There was an error")
