@@ -150,8 +150,8 @@ const Comments: React.FC<CommentsProps>= (props) => {
         console.log("about to update")
         await update(ref(db), updates).catch(e=>(console.log(e)));
         console.log("after update")
-        goOffline(db)
-        goOffline(getDatabase(app))
+      /*  goOffline(db)
+        goOffline(getDatabase(app))*/
       }
       catch (e) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -190,16 +190,16 @@ export async function getServerSideProps(context) {
         })
       }
     });
-    goOffline(db)
-    goOffline(getDatabase(app))
+   /* goOffline(db)
+    goOffline(getDatabase(app))*/
     return {
       // eslint-disable-next-line
       props: { commentList:commentList, id: recipeID}}
   } catch (e) {
     console.log(e)
   }
-  goOffline(db)
-  goOffline(getDatabase(app))
+ /* goOffline(db)
+  goOffline(getDatabase(app))*/
   return {
     // eslint-disable-next-line
     props: { commentList:commentList, id: recipeID }

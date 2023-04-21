@@ -162,8 +162,8 @@ export async function getServerSideProps (context:UserContext) {
     catch(e){
         console.log(e)
     }
-    goOffline(db)
-    goOffline(getDatabase(app))
+    /*goOffline(db)
+    goOffline(getDatabase(app))*/
     return{
         props:{recipeList}
     }

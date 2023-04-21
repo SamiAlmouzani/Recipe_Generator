@@ -4,7 +4,7 @@ import "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from 'firebase/auth';
-import {Database, DatabaseReference, getDatabase} from "firebase/database";
+import {Database, DatabaseReference, getDatabase, goOffline} from "firebase/database";
 import { FirebaseDatabase } from "@firebase/database-types";
 
 

@@ -59,8 +59,8 @@ const Home: NextPage = () => {
           //Use the new object to set the currentUser in the global context
           setCurrentUser(newUser);
           localStorage.setItem('user', JSON.stringify(newUser));
-          goOffline(db)
-          goOffline(getDatabase(app))
+         /* goOffline(db)
+          goOffline(getDatabase(app))*/
         }
       }).catch(()=>{
         console.log("There was an error")
