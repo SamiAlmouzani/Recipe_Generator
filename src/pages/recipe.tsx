@@ -386,6 +386,7 @@ function StarIcons(r: {recipe:Recipe}){
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export async function getServerSideProps(context:any){
+    goOffline(db)
     //eslint-disable-next-line
     const req=context.req
     //eslint-disable-next-line
@@ -429,6 +430,7 @@ export async function getServerSideProps(context:any){
         let text=""
         //This try/catch block makes the API call to generate the text
         try {
+            console.log("in try block")
             const requestOptions = {
                 method: 'POST',
                 headers: {
@@ -452,6 +454,7 @@ export async function getServerSideProps(context:any){
                     'stop': ["\"\"\""],
                 })
             };
+            console.log("right before API call")
             await fetch('https://api.openai.com/v1/completions', requestOptions)
                 .then(response => response.json())
                 .then(data => {
