@@ -386,7 +386,6 @@ function StarIcons(r: {recipe:Recipe}){
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export async function getServerSideProps(context:any){
-    goOffline(db)
     //eslint-disable-next-line
     const req=context.req
     //eslint-disable-next-line
@@ -394,16 +393,8 @@ export async function getServerSideProps(context:any){
     //eslint-disable-next-line
     console.log(JSON.stringify(context.query))
     //eslint-disable-next-line
-    // if(context.query.recipeString===undefined){
-    //eslint-disable-next-line
     const c=getCookie('recipe', {req, res});
     const recipe=JSON.parse(c as string) as Recipe
-    //   }else{
-    //eslint-disable-next-line
-    //  recipe=JSON.parse(context.query.recipeString) as Recipe
-    //eslint-disable-next-line
-    //   setCookies('recipe', context.query.recipeString, {req, res, maxAge: 60 * 6 * 24 });
-    //  }
     console.log("RECIPE AFTER COOKIES (1)"+JSON.stringify(recipe))
     //If there is text, it means that this was an existing recipe that is already in the database. Return the recipe.
     if(recipe.text.length>1){
@@ -427,6 +418,8 @@ export async function getServerSideProps(context:any){
     //Generate the text with the openAI API, and generate the image with SerpAPI. The recipe will then need to be saved in the database.
     else {
         console.log("generating recipe")
+        goOffline(db)
+        console.log("database going offline")
         let text=""
         //This try/catch block makes the API call to generate the text
         try {
