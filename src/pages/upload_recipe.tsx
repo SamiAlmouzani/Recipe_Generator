@@ -4,6 +4,7 @@ import {child, getDatabase, goOffline, push, ref, update} from "firebase/databas
 import {app, db} from "../context/firebaseSetup";
 import axios from "axios";
 import path from "path";
+import Link from "next/link";
 
 type Data={"form-name":string,"title":string,"ingredients":string,"directions":string,"picture":File|null}
 type DataFromNetlify={data:{title:string,ingredients:string,directions:string,picture:{filename:string,type:string,size:number,url:string}}}
@@ -238,10 +239,8 @@ const UploadRecipe = () => {
         </div>
             <footer className="flex flex-col space-y-5 justify-center m-10 position-relative">
                 <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
-                    <a className="hover:text-gray-900" href="main.tsx">Home</a>
-                    <a className="hover:text-gray-900" href="#">About</a>
-                    <a className="hover:text-gray-900" href="index.tsx">Gallery</a>
-                    <a className="hover:text-gray-900" href="#">Contact</a>
+                    <Link href="/main">
+                            Home</Link>
                 </nav>
                 <div className="flex justify-center space-x-5">
                     <img

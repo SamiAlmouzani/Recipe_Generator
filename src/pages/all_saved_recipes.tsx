@@ -65,10 +65,8 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
                 </Link>
                 <footer className="flex flex-col space-y-5 justify-center m-10 position-relative">
                 <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
-                    <a className="hover:text-gray-900" href="main.tsx">Home</a>
-                    <a className="hover:text-gray-900" href="#">About</a>
-                    <a className="hover:text-gray-900" href="index.tsx">Gallery</a>
-                    <a className="hover:text-gray-900" href="#">Contact</a>
+                    <Link href="/main">
+                        Home</Link>
                 </nav>
                 <div className="flex justify-center space-x-5">
                     <img

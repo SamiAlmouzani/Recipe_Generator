@@ -89,9 +89,8 @@ const Home: NextPage = () => {
       },
       {
         source:
-           "https://media.istockphoto.com/id/1316145932/photo/table-top-view-of-spicy-food.jpg?b=1&s=612x612&w=0&k=20&c=X6CkFGpSKhNZeiii8Pp2M_YrBdqs7tRaBytkGi48a0U="
+            "https://www.foodiesfeed.com/wp-content/uploads/2017/10/french-toast-for-breakfast.jpg"
       },
-
       {
         source:
            "https://www.foodiesfeed.com/wp-content/uploads/2021/02/breakfast-and-berries.jpg"
@@ -102,8 +101,13 @@ const Home: NextPage = () => {
       },
       {
         source:
-            "https://www.foodiesfeed.com/wp-content/uploads/2017/10/french-toast-for-breakfast.jpg"
+            "https://media.istockphoto.com/id/1404495570/photo/spicy-hyderabadi-chicken-biryani-served-in-dish-side-view-on-wooden-table-background.jpg?b=1&s=612x612&w=0&k=20&c=N3xwfE2nmpYJI0h5-d7EWMTZz3WSOmeyRAyGRaIPjgA="
       },
+      {
+        source:
+            "https://media.istockphoto.com/id/1316145932/photo/table-top-view-of-spicy-food.jpg?b=1&s=612x612&w=0&k=20&c=X6CkFGpSKhNZeiii8Pp2M_YrBdqs7tRaBytkGi48a0U="
+      },
+
       {
         source:
             "https://media.istockphoto.com/id/1345852382/photo/beef-nihari-pakistani-curry-cuisine.jpg?b=1&s=612x612&w=0&k=20&c=c_V3cjsmr7CXhbKvygKQs1r5F0KNJCsw7FqwCOoXdXo="
@@ -112,10 +116,7 @@ const Home: NextPage = () => {
         source:
             "https://media.istockphoto.com/id/533645537/photo/breakfast-with-bacon-eggs-pancakes-and-toast.jpg?b=1&s=612x612&w=0&k=20&c=d4Lg_bgWoLnRbAxBIaducqmq8CVqLOrYiHqHADwyOIA="
       },
-      {
-        source:
-          "https://media.istockphoto.com/id/1404495570/photo/spicy-hyderabadi-chicken-biryani-served-in-dish-side-view-on-wooden-table-background.jpg?b=1&s=612x612&w=0&k=20&c=N3xwfE2nmpYJI0h5-d7EWMTZz3WSOmeyRAyGRaIPjgA="
-            }
+
     ],
     showNumOfRemainingPhotos: true
   }
@@ -129,10 +130,8 @@ const Home: NextPage = () => {
       <img
         src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'
         className="w-32 ml-2 justify-items-center"
-
     />
-      <div className="mx-auto max-w-screen-xl px-4 py-20 lg:flex lg:h-screen lg:items-center opacity-100"    >
-
+      <div className="mx-auto max-w-screen-xl px-4 py-20 lg:flex lg:h-screen lg:items-center" >
       <div className="mx-auto max-w-xl text-center">
         <h1 className="text-3xl font-extrabold sm:text-5xl">
           <strong className="font-extrabold text-red-700 sm:block">
@@ -144,7 +143,7 @@ const Home: NextPage = () => {
           so you don&apos;t have to!
         </p>
         <div className="mx-auto max-w-md text-center ">
-          <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line mt-2">Scroll down to get started!</p>
+          <p className="text-1xl font-bold sm:text-2xl whitespace-pre-line mt-4">Scroll down to get started!</p>
         </div>
       </div>
     </div>
@@ -158,7 +157,7 @@ const Home: NextPage = () => {
           Get Started
         </button>
       </div>
-      <footer className="flex flex-col space-y-5 justify-center mt-10 position-relative">
+      <footer className="flex flex-col space-y-5 justify-center mt-20 position-relative">
         <div className="flex justify-center space-x-5">
           <img
               src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW47TpryE5rmsWr5aef5ZLXJMYr-socetxFw&usqp=CAU'

@@ -112,8 +112,8 @@ const Recipe: React.FC<Recipe>=(props)=>{
             </div>
             <footer className="flex flex-col space-y-10 justify-center m-10 position-relative">
                 <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
-                    <a className="hover:text-gray-900" href="#">Home</a>
-                    <a className="hover:text-gray-900" href='\index.tsx'>About</a>
+                    <Link href="/main">
+                        Home</Link>
                 </nav>
 
                 <div className="flex justify-center space-x-5">

@@ -12,6 +12,7 @@ import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {Slide} from "react-slideshow-image";
 import 'react-slideshow-image/dist/styles.css'
 
+
 //localIngredients is the local value updated every time the contents of the text box are changed
 let localIngredientsList:string
 const RecipeGenerator: NextPage = () => {
@@ -169,9 +170,10 @@ const RecipeGenerator: NextPage = () => {
         </Navbar>
       </div>
       </div>
-        <footer className="flex flex-col space-y-5 justify-center m-20 position-relative">
+        <footer className="flex flex-col space-y-5 justify-center m-10 position-relative">
                <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
-                   <Link className="hover:text-gray-900" href="#index">About</Link>
+                   <Link href="/">
+                       Home</Link>
                </nav>
                <div className="flex justify-center space-x-5">
                    <img

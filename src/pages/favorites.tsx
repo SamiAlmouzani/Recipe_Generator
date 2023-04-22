@@ -94,8 +94,8 @@ const Favorites: React.FC<RecipeArray>= (props) => {
         </div>
             <footer className="flex flex-col space-y-5 justify-center m-10 position-relative">
                 <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
-                    <a className="hover:text-gray-900" href="#main">Home</a>
-
+                    <Link href="/main">
+                        Home</Link>
                 </nav>
 
                 <div className="flex justify-center space-x-5">
