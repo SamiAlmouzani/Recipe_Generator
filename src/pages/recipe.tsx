@@ -418,7 +418,7 @@ export async function getServerSideProps(context:any){
     //Generate the text with the openAI API, and generate the image with SerpAPI. The recipe will then need to be saved in the database.
     else {
         console.log("generating recipe")
-        goOffline(db)
+       // goOffline(db)
         console.log("database going offline")
         let text=""
         //This try/catch block makes the API call to generate the text
@@ -454,7 +454,6 @@ export async function getServerSideProps(context:any){
                     console.log(data)
                     //eslint-disable-next-line
                     text=data.choices[0].text as string
-
                 }).catch(err => {
                     console.log(err);
                 });
@@ -464,19 +463,19 @@ export async function getServerSideProps(context:any){
         }
         console.log("loading image ")
         //Make the API call to get the image
-        /*  const response = await getJson("google", {
+          const response = await getJson("google", {
               api_key: process.env.GOOGLE_IMAGES_API_KEY,
               tbm: "isch",
               q: recipe.title
-          });*/
+          });
         //Create a recipe object using the newly generated text and image
         const newRecipe:Recipe={
             id:recipe.id,
             title:recipe.title,
             text:text,
             //eslint-disable-next-line
-            image:""//response["images_results"][0].original as string,
-            ,ingredients:recipe.ingredients,
+            image:response["images_results"][0].original as string,
+            ingredients:recipe.ingredients,
             averageRating:0,
             uploadedBy:recipe.uploadedBy,
             comments:[{uid:"",username:"",text:"",date:""}],
@@ -486,7 +485,7 @@ export async function getServerSideProps(context:any){
 
         console.log(newRecipe)
         //Store this recipe in the database
-        goOffline(db)
+      //  goOffline(db)
         //  goOffline(getDatabase(app))
         try{
             //Create a new entry under recipes, and save the automatically generated key
@@ -506,7 +505,7 @@ export async function getServerSideProps(context:any){
         catch(e){
             console.log(e)
         }
-        goOffline(db)
+     //   goOffline(db)
         //   goOffline(getDatabase(app))
         //Return the recipe
         return{

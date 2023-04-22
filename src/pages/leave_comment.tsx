@@ -133,10 +133,10 @@ const Leave_comment: React.FC<CommentsProps>= (props) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         updates["recipes/" + props.id + "/" + "comments/"] = comments;
+        console.log(JSON.stringify(updates))
         await update(ref(db), updates).catch(e=>(console.log(e)));
+        console.log("after the update")
       }
-     /* goOffline(db)
-      goOffline(getDatabase(app))*/
     } catch (e) {
       console.log(e);
     }
@@ -172,8 +172,6 @@ export async function getServerSideProps(context) {
         })
       }
     });
-   /* goOffline(db)
-    goOffline(getDatabase(app))*/
 
     return {
       // eslint-disable-next-line
@@ -181,8 +179,6 @@ export async function getServerSideProps(context) {
   } catch (e) {
     console.log(e)
   }
- /* goOffline(db)
-  goOffline(getDatabase(app))*/
   return {
     // eslint-disable-next-line
     props: { commentList:commentList, id: recipeID }

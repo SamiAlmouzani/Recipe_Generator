@@ -113,14 +113,14 @@ const UploadRecipe = () => {
                     })
                     //Update the database with this new object
                     update(ref(db, '/users/' + currentUser.uid), currentUser).catch(e=>(console.log(e)));
-                    goOffline(db)
-                    goOffline(getDatabase(app))
+                 //   goOffline(db)
+                 //   goOffline(getDatabase(app))
                 }
                 catch(e){
                     console.log(e)
                 }
-                goOffline(db)
-                goOffline(getDatabase(app))
+           //     goOffline(db)
+           //     goOffline(getDatabase(app))
             })
             .catch(error => console.log('error', error));
     }

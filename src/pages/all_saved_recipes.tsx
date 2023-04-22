@@ -31,7 +31,7 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
         </nav>
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto text-left">
-                <h1 className="text-2xl font-bold sm:text-3xl">Previously generated recipes:</h1>
+                <h1 className="text-2xl font-bold sm:text-3xl">All Recipes:</h1>
             </div>
 
             <div className="mt-6 w-full bg-white rounded-lg shadow-lg lg:w">
@@ -48,7 +48,11 @@ const AllSavedRecipes: React.FC<RecipeArray>= (props) => {
                                     console.log("cookie "+getCookie('recipe'))}}>
                                     <ul className="divide-y-2 divide-gray-100">
                                         <li className="p-3 hover:bg-red-600 hover:text-red-200">
-                                            <pre className="italic">{recipe.title}</pre>
+                                            <pre className="font-bold sm:text-2xl">{recipe.title}</pre>
+                                            {
+                                            recipe.uploadedBy==="0" ? (<pre className="italic sm:text-1xl">AI Generated</pre>
+                                            ):(<pre>User Uploaded</pre>
+                                            )}
                                         </li>
                                     </ul>
                                 </Link>

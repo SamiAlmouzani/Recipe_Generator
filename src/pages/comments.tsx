@@ -101,7 +101,7 @@ const Comments: React.FC<CommentsProps>= (props) => {
             <button
                 className="my-8 block w-full mt-0 rounded bg-red-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-red-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
             >
-              Leave Comment
+              Leave A Comment
             </button>
           </Link>
         </div>
